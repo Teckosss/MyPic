@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+            android:id="@+id/bnv_main"
+            android:enabled="true"
+            android:icon="@drawable/baseline_home_black_24"
+            android:title="@string/bottom_navigation_view_home"
+            app:showAsAction="ifRoom"
+            />
+    <item
+            android:id="@+id/bnv_map"
+            android:enabled="true"
+            android:icon="@drawable/baseline_map_black_24"
+            android:title="@string/bottom_navigation_view_map"
+            app:showAsAction="ifRoom"
+    />
+    <item
+            android:id="@+id/bnv_my_pic"
+            android:enabled="true"
+            android:icon="@drawable/baseline_photo_camera_black_24"
+            android:title="@string/bottom_navigation_view_my_pic"
+            app:showAsAction="ifRoom"
+    />
+    <item
+            android:id="@+id/bnv_profile"
+            android:enabled="true"
+            android:icon="@drawable/baseline_person_black_24"
+            android:title="@string/bottom_navigation_view_profile"
+            app:showAsAction="ifRoom"
+    />
+</menu>

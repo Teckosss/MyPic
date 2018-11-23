@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">ProjetPhoto</string>
+
+    <!-- BOTTOM NAVIGATION VIEW -->
+    <string name="bottom_navigation_view_home">Home</string>
+    <string name="bottom_navigation_view_map">Map</string>
+    <string name="bottom_navigation_view_my_pic">My Pic</string>
+    <string name="bottom_navigation_view_profile">Profile</string>
+
+    <!-- AUTH ERROR -->
+    <string name="error_authentication_canceled">Authentication canceled</string>
+    <string name="error_no_internet">No internet connection!</string>
+    <string name="error_unknown_error">An unknown error has occurred</string>
+
 </resources>
