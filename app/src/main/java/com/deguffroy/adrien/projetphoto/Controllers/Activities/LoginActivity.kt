@@ -3,11 +3,15 @@ package com.deguffroy.adrien.projetphoto.Controllers.Activities
 import android.os.Bundle
 import com.deguffroy.adrien.projetphoto.R
 import android.content.Intent
+import android.util.Log
 import com.firebase.ui.auth.AuthUI
 import java.util.*
 import android.widget.Toast
 import com.firebase.ui.auth.ErrorCodes
 import com.firebase.ui.auth.IdpResponse
+import com.deguffroy.adrien.projetphoto.Api.UserHelper
+
+
 
 class LoginActivity : BaseActivity() {
 
@@ -40,6 +44,7 @@ class LoginActivity : BaseActivity() {
                 .setAvailableProviders(
                     Arrays.asList(
                         AuthUI.IdpConfig.GoogleBuilder().build(),
+                        AuthUI.IdpConfig.EmailBuilder().build(),
                         AuthUI.IdpConfig.AnonymousBuilder().build()
                     )
                 )
@@ -47,6 +52,26 @@ class LoginActivity : BaseActivity() {
                 .build(),
             RC_SIGN_IN
         )
+    }
+
+    // --------------------
+    // REST REQUEST
+    // --------------------
+
+    // Http request that create user in firestore
+    private fun createUserInFirestore() {
+
+        if (this.getCurrentUser() != null) {
+            Log.e("LOGIN_ACTIVITY", "createUserInFirestore: LOGGED")
+            val urlPicture =
+                if (this.getCurrentUser()!!.photoUrl != null) this.getCurrentUser()!!.photoUrl!!.toString() else null
+            val username = this.getCurrentUser()!!.displayName
+            val uid = this.getCurrentUser()!!.uid
+            //this.mViewModel.updateCurrentUserUID(uid)
+            UserHelper().createUser(uid, username, urlPicture).addOnFailureListener(this.onFailureListener())
+        } else {
+            Log.e("LOGIN_ACTIVITY", "createUserInFirestore: NOT LOGGED")
+        }
     }
 
     // --------------------
@@ -59,7 +84,7 @@ class LoginActivity : BaseActivity() {
 
         if (requestCode == RC_SIGN_IN) {
             if (resultCode == RESULT_OK) { // SUCCESS
-                //this.createUserInFirestore()
+                this.createUserInFirestore()
                 launchMainActivity()
             } else { // ERRORS
                 when {
@@ -67,8 +92,8 @@ class LoginActivity : BaseActivity() {
                         Toast.makeText(this, getString(R.string.error_authentication_canceled), Toast.LENGTH_SHORT).show()
                         startSignInActivity()
                     }
-                    response.error!!.errorCode == ErrorCodes.NO_NETWORK -> Toast.makeText(this, getString(R.string.error_no_internet), Toast.LENGTH_SHORT).show()
-                    response.error!!.errorCode == ErrorCodes.UNKNOWN_ERROR -> Toast.makeText(this, getString(R.string.error_unknown_error), Toast.LENGTH_SHORT).show()
+                    response.error!!.errorCode == ErrorCodes.NO_NETWORK -> showSnackbarMessage(getString(R.string.error_no_internet))
+                    response.error!!.errorCode == ErrorCodes.UNKNOWN_ERROR -> showSnackbarMessage(getString(R.string.error_unknown_error))
                 }
             }
         }
