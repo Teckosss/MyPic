@@ -19,13 +19,10 @@ class LoginActivity : BaseActivity() {
 
     // FOR DATA
     private val RC_SIGN_IN = 1000
-    private lateinit var mViewModel: CommunicationViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-
-        mViewModel = ViewModelProviders.of(this).get(CommunicationViewModel::class.java)
 
         if(!this.isCurrentUserLogged()!!){
             this.startSignInActivity()
