@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "517406008142",
+    "firebase_url": "https://projetphoto-a2f5e.firebaseio.com",
+    "project_id": "projetphoto-a2f5e",
+    "storage_bucket": "projetphoto-a2f5e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:517406008142:android:b1c750a1e9be6c5f",
+        "android_client_info": {
+          "package_name": "com.deguffroy.adrien.projetphoto"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "517406008142-0arrpk8eosrdt4n2o26n86cgb1jq44dj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.deguffroy.adrien.projetphoto",
+            "certificate_hash": "91fba23228cf36bf8ed93d8edbdf4b6199e42170"
+          }
+        },
+        {
+          "client_id": "517406008142-agkrql0k8q1j9cgpd2nkol4omidufu76.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDHeycC7o-DhGL5TLQQCDXOJMlPNujJgLI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "517406008142-agkrql0k8q1j9cgpd2nkol4omidufu76.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

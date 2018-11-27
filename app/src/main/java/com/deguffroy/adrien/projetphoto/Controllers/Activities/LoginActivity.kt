@@ -7,20 +7,25 @@ import android.util.Log
 import com.firebase.ui.auth.AuthUI
 import java.util.*
 import android.widget.Toast
+import androidx.lifecycle.ViewModelProviders
 import com.firebase.ui.auth.ErrorCodes
 import com.firebase.ui.auth.IdpResponse
 import com.deguffroy.adrien.projetphoto.Api.UserHelper
-
+import com.deguffroy.adrien.projetphoto.ViewModels.CommunicationViewModel
+import kotlinx.android.synthetic.main.activity_login.*
 
 
 class LoginActivity : BaseActivity() {
 
     // FOR DATA
     private val RC_SIGN_IN = 1000
+    private lateinit var mViewModel: CommunicationViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
+        mViewModel = ViewModelProviders.of(this).get(CommunicationViewModel::class.java)
 
         if(!this.isCurrentUserLogged()!!){
             this.startSignInActivity()
@@ -65,9 +70,10 @@ class LoginActivity : BaseActivity() {
             Log.e("LOGIN_ACTIVITY", "createUserInFirestore: LOGGED")
             val urlPicture =
                 if (this.getCurrentUser()!!.photoUrl != null) this.getCurrentUser()!!.photoUrl!!.toString() else null
-            val username = this.getCurrentUser()!!.displayName
+            val username =
+                if (this.getCurrentUser()!!.displayName != null) this.getCurrentUser()!!.displayName else resources.getString(R.string.user_default_name)
             val uid = this.getCurrentUser()!!.uid
-            //this.mViewModel.updateCurrentUserUID(uid)
+            this.mViewModel.updateCurrentUserUID(uid)
             UserHelper().createUser(uid, username, urlPicture).addOnFailureListener(this.onFailureListener())
         } else {
             Log.e("LOGIN_ACTIVITY", "createUserInFirestore: NOT LOGGED")
@@ -92,8 +98,8 @@ class LoginActivity : BaseActivity() {
                         Toast.makeText(this, getString(R.string.error_authentication_canceled), Toast.LENGTH_SHORT).show()
                         startSignInActivity()
                     }
-                    response.error!!.errorCode == ErrorCodes.NO_NETWORK -> showSnackbarMessage(getString(R.string.error_no_internet))
-                    response.error!!.errorCode == ErrorCodes.UNKNOWN_ERROR -> showSnackbarMessage(getString(R.string.error_unknown_error))
+                    response.error!!.errorCode == ErrorCodes.NO_NETWORK -> showSnackbarMessage(coordinator_layout_login_activity,getString(R.string.error_no_internet))
+                    response.error!!.errorCode == ErrorCodes.UNKNOWN_ERROR -> showSnackbarMessage(coordinator_layout_login_activity,getString(R.string.error_unknown_error))
                 }
             }
         }

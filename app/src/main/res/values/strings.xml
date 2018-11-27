@@ -1,6 +1,20 @@
 <resources>
     <string name="app_name">ProjetPhoto</string>
 
+    <!-- USER -->
+    <string name="user_default_name">Guest</string>
+
+    <!-- PROFILE FRAGMENT-->
+    <string name="profile_fragment_sign_out">SIGN OUT</string>
+
+    <!-- ADD ACTIVITY-->
+    <string name="add_activity_public_checkbox_text">Set this picture public?</string>
+    <string name="add_activity_cancel_button_text">Cancel</string>
+    <string name="add_activity_description">Description</string>
+
+    <!-- MY PIC FRAGMENT-->
+    <string name="my_pic_fragment_no_image_yet">You have not taken any pictures yet</string>
+
     <!-- BOTTOM NAVIGATION VIEW -->
     <string name="bottom_navigation_view_home">Home</string>
     <string name="bottom_navigation_view_map">Map</string>

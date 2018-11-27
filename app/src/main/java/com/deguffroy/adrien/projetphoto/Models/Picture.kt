@@ -17,4 +17,6 @@ data class Picture(var userSender:User,
                    var likes:Int? = 0,
                    var comments:Int? = 0) {
 
+    constructor() : this(User(),false,false,"")
+
 }

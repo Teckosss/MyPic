@@ -15,6 +15,9 @@ object Constants{
 
     const val MAP_FRAGMENT_DEFAULT_ZOOM = 8F
 
+    // CONSTANT FOR DATA
     const val RC_TAKE_PHOTO = 100
     const val RC_PERM_LOCATION = 200
+
+    const val SIGN_OUT_TASK = 10
 }

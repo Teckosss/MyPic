@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProviders
 import com.deguffroy.adrien.projetphoto.Api.PicturesHelper
 import com.deguffroy.adrien.projetphoto.Api.UserHelper
 import com.deguffroy.adrien.projetphoto.Controllers.Fragments.HomeFragment
+import com.deguffroy.adrien.projetphoto.Models.Picture
 import com.deguffroy.adrien.projetphoto.Models.User
 import com.deguffroy.adrien.projetphoto.R
 import com.deguffroy.adrien.projetphoto.Utils.Constants
@@ -38,39 +39,38 @@ import java.lang.Exception
 import java.lang.NullPointerException
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
-class MainActivity : BaseActivity(), GeoQueryDataEventListener {
+class MainActivity : BaseActivity() {
 
     private val geoPointCenter = GeoPoint(50.3663336,3.5577161999999998)
-    private val geoRadius: Double = 100.0 // Kilometers Radius
+    private val geoRadius: Double = 20.0 // Kilometers Radius
 
-    private lateinit var photoURI: Uri
-    private lateinit var photoFilePath: String
-
-    private val picturesList = arrayListOf<String>()
-
-    private lateinit var geoFirestore:GeoFirestore
-    private lateinit var geoQuery: GeoQuery
-
-    private lateinit var modelCurrentUser:User
+    private lateinit var picturesList:ArrayList<String>
 
     private var mUserCurrentLocation:LatLng? = null
+
+    private lateinit var geoQuery: GeoQuery
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        this.picturesList = ArrayList()
 
         mViewModel.currentUserPosition.observe(this, androidx.lifecycle.Observer {
             Log.e("MainActivity", " Location changed : $it")
             mUserCurrentLocation = it
         })
 
+        this.initDb()
         this.configureBottomView()
         this.showFragment(HomeFragment.newInstance())
-        this.retrieveData()
+        //this.retrieveData()
         this.getCurrentUserFromFirestore()
         //this.populateDB()
         this.setOnClickListener()
+        mViewModel.updateCurrentUserUID(this.getCurrentUser()?.uid!!)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -98,11 +98,10 @@ class MainActivity : BaseActivity(), GeoQueryDataEventListener {
                     null
                 }
                 photoFile?.also {
-                    photoURI = FileProvider.getUriForFile(this,"com.deguffroy.adrien.projetphoto.fileprovider",it)
-                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI )
+                    this.photoURI = FileProvider.getUriForFile(this,"com.deguffroy.adrien.projetphoto.fileprovider",it)
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, this.photoURI )
                     startActivityForResult(takePictureIntent, Constants.RC_TAKE_PHOTO)
                 }
-
             }
         }
     }
@@ -126,31 +125,10 @@ class MainActivity : BaseActivity(), GeoQueryDataEventListener {
     private fun handleResponse(requestCode: Int, resultCode: Int, data: Intent?) {
         if(requestCode == Constants.RC_TAKE_PHOTO) {
             if (resultCode == Activity.RESULT_OK) {
-                val uuid:String = UUID.randomUUID().toString()
-                val mImageRef =  FirebaseStorage.getInstance().getReference(uuid)
-                val uploadTask = mImageRef.putFile(photoURI)
-
-                uploadTask.continueWithTask { task ->
-                    if (!task.isSuccessful) {
-                        throw task.exception!!
-                    }
-
-                    // Continue with the task to get the download URL
-                    mImageRef.downloadUrl
-                }.addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        val downloadUri = task.result
-                        PicturesHelper().createPicture(modelCurrentUser,downloadUri.toString()).addOnSuccessListener{
-                            if ( mUserCurrentLocation != null){
-                                this.geoFirestore.setLocation(it.id,GeoPoint(mUserCurrentLocation!!.latitude, mUserCurrentLocation!!.longitude))
-                            }
-                        }
-
-                    } else {
-                        // Handle failures
-                        // ...
-                    }
-                }
+                Log.e("MainActivity","PhotoURI : $this.photo")
+                mViewModel.updateCurrentPhotoURI(this.photoURI)
+                val intent = Intent(this,AddActivity::class.java)
+                startActivity(intent)
             }
 
         }else {
@@ -162,14 +140,7 @@ class MainActivity : BaseActivity(), GeoQueryDataEventListener {
     // REST REQUESTS
     // --------------------
 
-    private fun getCurrentUserFromFirestore() {
-        UserHelper().getUser(getCurrentUser()?.uid!!)
-            .addOnSuccessListener {
-                modelCurrentUser = it.toObject<User>(User::class.java)!!
-            }
-    }
-
-    private fun populateDB(){
+   /* private fun populateDB(){
         val db = FirebaseFirestore.getInstance()
         val picturesCollection = db.collection("pictures")
 
@@ -191,48 +162,8 @@ class MainActivity : BaseActivity(), GeoQueryDataEventListener {
 
         this.geoFirestore = GeoFirestore(picturesCollection)
 
-
-
         this.geoQuery = geoFirestore.queryAtLocation(geoPointCenter,geoRadius)
         this.geoQuery.removeAllListeners()
         this.geoQuery.addGeoQueryDataEventListener(this)
-    }
-
-    override fun onGeoQueryReady() {
-        Log.e("onGeoQueryReady","Enter, list size : ${picturesList.size}")
-        this.geoQuery.removeGeoQueryEventListener(this)
-
-        (0 until picturesList.size).forEach{
-            Log.e("onGeoQueryReady","Data : ${picturesList[it]}")
-        }
-    }
-
-    override fun onDocumentExited(p0: DocumentSnapshot?) {
-        Log.e("onDocumentExited","Enter")
-    }
-
-    override fun onDocumentChanged(p0: DocumentSnapshot?, p1: GeoPoint?) {
-        Log.e("onDocumentChanged","Enter")
-    }
-
-    override fun onDocumentEntered(p0: DocumentSnapshot?, p1: GeoPoint?) {
-        Log.e("onDocumentEntered","Enter, data : ${p0?.data}")
-     try {
-         val data:Map<String,Any>? = p0?.data
-         val description:String = data?.get("desc") as String
-         if (description != null) picturesList.add(description)
-     }catch (e:NullPointerException){
-         Log.e("DocumentEntered", " Error : ${e.localizedMessage}")
-     }catch (e:ClassCastException){
-         Log.e("DocumentEntered", " Error : ${e.localizedMessage}")
-     }
-    }
-
-    override fun onDocumentMoved(p0: DocumentSnapshot?, p1: GeoPoint?) {
-        Log.e("onDocumentMoved","Enter")
-    }
-
-    override fun onGeoQueryError(p0: Exception?) {
-     Log.e("GEO_QUERY","Error : ${p0?.localizedMessage}")
-    }
+    }*/
 }

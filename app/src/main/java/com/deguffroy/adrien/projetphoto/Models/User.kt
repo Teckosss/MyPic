@@ -1,5 +1,8 @@
 package com.deguffroy.adrien.projetphoto.Models
 
+import android.content.res.Resources
+import com.deguffroy.adrien.projetphoto.R
+
 /**
  * Created by Adrien Deguffroy on 23/11/2018.
  */

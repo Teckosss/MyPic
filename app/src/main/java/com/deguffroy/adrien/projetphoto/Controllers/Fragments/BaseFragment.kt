@@ -13,18 +13,28 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
+import com.deguffroy.adrien.projetphoto.Controllers.Activities.BaseActivity
 import com.deguffroy.adrien.projetphoto.Utils.Constants
 import com.deguffroy.adrien.projetphoto.ViewModels.CommunicationViewModel
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.GeoPoint
 import com.livinglifetechway.quickpermissions_kotlin.runWithPermissions
+import org.imperiumlabs.geofirestore.GeoFirestore
+import org.imperiumlabs.geofirestore.GeoQuery
+import org.imperiumlabs.geofirestore.GeoQueryDataEventListener
+import java.lang.ClassCastException
+import java.lang.Exception
+import java.lang.NullPointerException
 
 /**
  * Created by Adrien Deguffroy on 23/11/2018.
  */
-open class BaseFragment : Fragment(), GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, LocationListener {
+open class BaseFragment : Fragment(), GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, LocationListener, GeoQueryDataEventListener {
 
     lateinit var mViewModel: CommunicationViewModel
 
@@ -32,12 +42,19 @@ open class BaseFragment : Fragment(), GoogleApiClient.OnConnectionFailedListener
     private lateinit var mLocationRequest : LocationRequest
     private lateinit var mLocationCallback : LocationCallback
 
+    private val picturesList = arrayListOf<String>()
+
+    private lateinit var geoFirestore: GeoFirestore
+    private lateinit var geoQuery: GeoQuery
+
     var mGoogleApiClient: GoogleApiClient? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         mViewModel = ViewModelProviders.of(activity!!).get(CommunicationViewModel::class.java)
+
+        this.initDb("pictures")
 
         if (locationPermissionsGranted()){
             // Permission is granted
@@ -190,5 +207,59 @@ open class BaseFragment : Fragment(), GoogleApiClient.OnConnectionFailedListener
                 // Ignore all other requests.
             }
         }
+    }
+
+    // --------------------
+    // GEO FIRESTORE
+    // --------------------
+
+    private fun initDb(collection:String){
+        val db = FirebaseFirestore.getInstance()
+        val picturesCollection = db.collection(collection)
+        this.geoFirestore = GeoFirestore(picturesCollection)
+    }
+
+    fun getGeoFirestoreData(center:GeoPoint, radius:Double){
+        this.geoQuery = geoFirestore.queryAtLocation(center,radius)
+        this.geoQuery.removeAllListeners()
+        this.geoQuery.addGeoQueryDataEventListener(this)
+    }
+
+    override fun onGeoQueryReady() {
+        Log.e("onGeoQueryReady","Enter, list size : ${picturesList.size}")
+        this.geoQuery.removeGeoQueryEventListener(this)
+
+        (0 until picturesList.size).forEach{
+            Log.e("onGeoQueryReady","Data : ${picturesList[it]}")
+        }
+    }
+
+    override fun onDocumentExited(p0: DocumentSnapshot?) {
+        Log.e("onDocumentExited","Enter")
+    }
+
+    override fun onDocumentChanged(p0: DocumentSnapshot?, p1: GeoPoint?) {
+        Log.e("onDocumentChanged","Enter")
+    }
+
+    override fun onDocumentEntered(p0: DocumentSnapshot?, p1: GeoPoint?) {
+        Log.e("onDocumentEntered","Enter, data : ${p0?.data}")
+        try {
+            val data:Map<String,Any>? = p0?.data
+            val description:String = data?.get("desc") as String
+            if (description != null) picturesList.add(description)
+        }catch (e: NullPointerException){
+            Log.e("DocumentEntered", " Error : ${e.localizedMessage}")
+        }catch (e: ClassCastException){
+            Log.e("DocumentEntered", " Error : ${e.localizedMessage}")
+        }
+    }
+
+    override fun onDocumentMoved(p0: DocumentSnapshot?, p1: GeoPoint?) {
+        Log.e("onDocumentMoved","Enter")
+    }
+
+    override fun onGeoQueryError(p0: Exception?) {
+        Log.e("GEO_QUERY","Error : ${p0?.localizedMessage}")
     }
 }
