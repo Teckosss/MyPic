@@ -14,43 +14,83 @@
             app:layout_constraintHeight_percent=".5"
     />
 
-    <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/add_activity_desc_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:hint="@string/add_activity_description"
+    <androidx.constraintlayout.widget.ConstraintLayout
             app:layout_constraintTop_toBottomOf="@id/add_activity_image"
-            app:layout_constraintStart_toStartOf="parent"
-            android:paddingBottom="10dp"
-    >
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_width="match_parent"
+            android:padding="@dimen/FAB_margin"
+            android:layout_height="0dp">
 
-        <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/add_activity_desc"
+        <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/add_activity_desc_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textMultiLine"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:hint="@string/add_activity_description"
+
+                app:layout_constraintStart_toStartOf="parent"
+                android:paddingBottom="10dp"
+        >
+
+            <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/add_activity_desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textMultiLine"
+            />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <androidx.appcompat.widget.AppCompatCheckBox
+                android:id="@+id/add_activity_public_checkbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/add_activity_public_checkbox_text"
+                app:layout_constraintTop_toBottomOf="@id/add_activity_desc_layout"
         />
 
-    </com.google.android.material.textfield.TextInputLayout>
+        <Button
+                android:id="@+id/add_activity_cancel_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:text="@string/add_activity_cancel_button_text"
 
-    <androidx.appcompat.widget.AppCompatCheckBox
-            android:id="@+id/add_activity_public_checkbox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/add_activity_public_checkbox_text"
-            app:layout_constraintTop_toBottomOf="@id/add_activity_desc_layout"
-    />
+        />
 
-    <Button
-            android:id="@+id/add_activity_cancel_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:text="@string/add_activity_cancel_button_text"
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/add_activity_upload_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginEnd="8dp">
 
-    />
+            <TextView
+                    android:id="@+id/add_activity_upload_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="@+id/add_activity_progressBar"
+                    app:layout_constraintTop_toTopOf="@+id/add_activity_progressBar"
+                    app:layout_constraintEnd_toEndOf="@+id/add_activity_progressBar"
+                    app:layout_constraintStart_toStartOf="@+id/add_activity_progressBar"
+                    android:textSize="@dimen/text_small"
+                    android:textStyle="bold"
+            />
+            <ProgressBar
+                    style="?android:attr/progressBarStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/add_activity_progressBar"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/add_activity_save_fab"
@@ -60,6 +100,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             android:src="@drawable/baseline_save_white_24"
+            app:borderWidth="0dp"
     />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

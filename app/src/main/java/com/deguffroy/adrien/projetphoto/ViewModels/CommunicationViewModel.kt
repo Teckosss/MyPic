@@ -4,6 +4,7 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.deguffroy.adrien.projetphoto.Models.Picture
 import com.deguffroy.adrien.projetphoto.Models.User
 import com.google.android.gms.maps.model.LatLng
 import java.net.URI
@@ -15,8 +16,9 @@ class CommunicationViewModel : ViewModel() {
 
     var currentUserPosition:MutableLiveData<LatLng> = MutableLiveData()
     var currentUserUID:MutableLiveData<String> = MutableLiveData()
-    var currentPhotoURI: MutableLiveData<Uri> = MutableLiveData()
-    var currentModelUser: MutableLiveData<User> = MutableLiveData()
+
+    var currentListImagesToDelete = arrayListOf<Picture>()
+    var myPicSelectingMode = false
 
     fun updateCurrentUserPosition(latLng: LatLng){
         this.currentUserPosition.value = latLng
@@ -29,17 +31,4 @@ class CommunicationViewModel : ViewModel() {
     }
 
     fun getCurrentUserUID() = currentUserUID.value
-
-    fun updateCurrentPhotoURI(uri:Uri){
-        this.currentPhotoURI.value = uri
-        Log.e("ViewModel","¨PhotoURI : ${this.currentPhotoURI.value}")
-    }
-
-    fun getCurrentPhotoURI() = this.currentPhotoURI.value
-
-    fun updateCurrentModelUser(user: User){
-        this.currentModelUser.value = user
-    }
-
-    fun getCurrentModelUser() = this.currentModelUser.value
 }

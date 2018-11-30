@@ -32,9 +32,16 @@ open class PicturesHelper {
         .whereEqualTo("userSender.uid", uid)
         .orderBy("dateCreated",Query.Direction.DESCENDING)
 
-
+    fun getPictureById(uid:String) = PicturesHelper().getPicturesCollection().document(uid).get()
 
     // --- UPDATE ---
 
+    fun updatePictureDocumentID(uid:String){
+        PicturesHelper().getPicturesCollection().document(uid).update("documentId",uid)
+    }
+
     // --- DELETE ---
+
+    fun deletePictureByID(uid:String) = PicturesHelper().getPicturesCollection().document(uid).delete()
+
 }

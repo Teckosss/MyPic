@@ -4,16 +4,24 @@
     <!-- USER -->
     <string name="user_default_name">Guest</string>
 
-    <!-- PROFILE FRAGMENT-->
-    <string name="profile_fragment_sign_out">SIGN OUT</string>
+    <!-- MENU STRING-->
+    <string name="selected_menu_delete_text">Delete</string>
 
     <!-- ADD ACTIVITY-->
     <string name="add_activity_public_checkbox_text">Set this picture public?</string>
+    <string name="add_activity_upload_progress">%1$d%%</string>
     <string name="add_activity_cancel_button_text">Cancel</string>
     <string name="add_activity_description">Description</string>
 
+    <!-- PROFILE FRAGMENT-->
+    <string name="profile_fragment_sign_out">SIGN OUT</string>
+
+    <!-- DETAIL FRAGMENT-->
+    <string name="detail_fragment_error_retrieving_document_uid">An error occurred, unable to retrieve this image. Please try again</string>
+
     <!-- MY PIC FRAGMENT-->
     <string name="my_pic_fragment_no_image_yet">You have not taken any pictures yet</string>
+    <string name="my_pic_fragment_action_bar_text">Selected : %1$d</string>
 
     <!-- BOTTOM NAVIGATION VIEW -->
     <string name="bottom_navigation_view_home">Home</string>

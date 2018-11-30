@@ -2,4 +2,10 @@
 <resources>
     <dimen name="margin_small">2dip</dimen>
     <dimen name="FAB_margin">16dip</dimen>
+    <dimen name="icon_margin">8dip</dimen>
+
+    <dimen name="text_small">12sp</dimen>
+    <dimen name="text_large">20sp</dimen>
+
+    <dimen name="image_height">150dp</dimen>
 </resources>

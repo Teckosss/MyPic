@@ -20,4 +20,15 @@ object Constants{
     const val RC_PERM_LOCATION = 200
 
     const val SIGN_OUT_TASK = 10
+
+    const val URI_EXTRA_NAME = "URI"
+    const val UID_EXTRA_NAME = "UID"
+
+    // FRAGMENT TAG
+    const val FRAGMENT_TAG_KEY = "FRAGMENT_TAG_KEY"
+
+    const val FRAGMENT_HOME = "HOME"
+    const val FRAGMENT_MAP = "MAP"
+    const val FRAGMENT_MY_PIC = "MY_PIC"
+    const val FRAGMENT_PROFILE = "PROFILE"
 }

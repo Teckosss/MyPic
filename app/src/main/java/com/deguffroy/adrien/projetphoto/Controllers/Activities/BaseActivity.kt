@@ -1,11 +1,14 @@
 package com.deguffroy.adrien.projetphoto.Controllers.Activities
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import androidx.annotation.Nullable
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.deguffroy.adrien.projetphoto.Controllers.Fragments.MapFragment
 import com.deguffroy.adrien.projetphoto.R
@@ -42,6 +45,9 @@ open class BaseActivity : AppCompatActivity(){
 
     private lateinit var snackbar:Snackbar
 
+    lateinit var mFragmentTag:String
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -75,6 +81,13 @@ open class BaseActivity : AppCompatActivity(){
     // -------------------
 
     fun showFragment(newFragment:Fragment){
+        when(newFragment){
+            is HomeFragment -> this.mFragmentTag = Constants.FRAGMENT_HOME
+            is MapFragment -> this.mFragmentTag = Constants.FRAGMENT_MAP
+            is MyPicFragment -> this.mFragmentTag = Constants.FRAGMENT_MY_PIC
+            is ProfileFragment -> this.mFragmentTag = Constants.FRAGMENT_PROFILE
+        }
+
             val transaction = supportFragmentManager.beginTransaction()
             transaction.replace(R.id.fragment_view, newFragment)
             transaction.commit()
@@ -102,7 +115,6 @@ open class BaseActivity : AppCompatActivity(){
         UserHelper().getUser(getCurrentUser()?.uid!!)
             .addOnSuccessListener {
                 this.modelCurrentUser = it.toObject<User>(User::class.java)!!
-                mViewModel.updateCurrentModelUser(this.modelCurrentUser)
             }
     }
 

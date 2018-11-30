@@ -176,7 +176,7 @@ open class BaseFragment : Fragment(), GoogleApiClient.OnConnectionFailedListener
     // PERMISSIONS
     // -------------------
 
-    fun locationPermissionsGranted():Boolean = (ContextCompat.checkSelfPermission(activity!!, Manifest.permission.ACCESS_COARSE_LOCATION)
+    fun locationPermissionsGranted(): Boolean = (ContextCompat.checkSelfPermission(activity!!, Manifest.permission.ACCESS_COARSE_LOCATION)
             == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(activity!!, Manifest.permission.ACCESS_FINE_LOCATION)
             == PackageManager.PERMISSION_GRANTED)
 

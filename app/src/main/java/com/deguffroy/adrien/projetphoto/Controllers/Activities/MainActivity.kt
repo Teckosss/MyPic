@@ -12,6 +12,9 @@ import androidx.lifecycle.ViewModelProviders
 import com.deguffroy.adrien.projetphoto.Api.PicturesHelper
 import com.deguffroy.adrien.projetphoto.Api.UserHelper
 import com.deguffroy.adrien.projetphoto.Controllers.Fragments.HomeFragment
+import com.deguffroy.adrien.projetphoto.Controllers.Fragments.MapFragment
+import com.deguffroy.adrien.projetphoto.Controllers.Fragments.MyPicFragment
+import com.deguffroy.adrien.projetphoto.Controllers.Fragments.ProfileFragment
 import com.deguffroy.adrien.projetphoto.Models.Picture
 import com.deguffroy.adrien.projetphoto.Models.User
 import com.deguffroy.adrien.projetphoto.R
@@ -48,26 +51,30 @@ class MainActivity : BaseActivity() {
 
     private lateinit var picturesList:ArrayList<String>
 
-    private var mUserCurrentLocation:LatLng? = null
-
-    private lateinit var geoQuery: GeoQuery
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         this.picturesList = ArrayList()
 
-        mViewModel.currentUserPosition.observe(this, androidx.lifecycle.Observer {
-            Log.e("MainActivity", " Location changed : $it")
-            mUserCurrentLocation = it
-        })
-
         this.initDb()
         this.configureBottomView()
-        this.showFragment(HomeFragment.newInstance())
-        //this.retrieveData()
+        if (savedInstanceState != null){
+            val tag = savedInstanceState.getString(Constants.FRAGMENT_TAG_KEY) ?: null
+            if (tag != null){
+                when(tag){
+                    Constants.FRAGMENT_HOME -> showFragment(HomeFragment.newInstance())
+                    Constants.FRAGMENT_MAP -> showFragment(MapFragment.newInstance())
+                    Constants.FRAGMENT_MY_PIC -> showFragment(MyPicFragment.newInstance())
+                    Constants.FRAGMENT_PROFILE -> showFragment(ProfileFragment.newInstance())
+                }
+            }
+        }else{
+            this.showFragment(HomeFragment.newInstance())
+        }
+
         this.getCurrentUserFromFirestore()
+        //this.retrieveData()
         //this.populateDB()
         this.setOnClickListener()
         mViewModel.updateCurrentUserUID(this.getCurrentUser()?.uid!!)
@@ -125,9 +132,8 @@ class MainActivity : BaseActivity() {
     private fun handleResponse(requestCode: Int, resultCode: Int, data: Intent?) {
         if(requestCode == Constants.RC_TAKE_PHOTO) {
             if (resultCode == Activity.RESULT_OK) {
-                Log.e("MainActivity","PhotoURI : $this.photo")
-                mViewModel.updateCurrentPhotoURI(this.photoURI)
                 val intent = Intent(this,AddActivity::class.java)
+                intent.putExtra(Constants.URI_EXTRA_NAME, this.photoURI.toString())
                 startActivity(intent)
             }
 

@@ -41,6 +41,8 @@
         </activity>
         <activity android:name=".Controllers.Activities.AddActivity">
         </activity>
+        <activity android:name=".Controllers.Activities.FullScreenActivity">
+        </activity>
     </application>
 
 </manifest>
