@@ -18,8 +18,6 @@ import kotlinx.android.synthetic.main.fragment_my_pic_item.view.*
  */
 class MyPicAdapter(var callback:Listener, @NonNull options: FirestoreRecyclerOptions<Picture>, var selectedItems:SparseBooleanArray = SparseBooleanArray()) : FirestoreRecyclerAdapter<Picture, MyPicViewHolder>(options) {
 
-    private var selectedPosition = 0
-
     interface Listener{
         fun onDataChanged()
     }
