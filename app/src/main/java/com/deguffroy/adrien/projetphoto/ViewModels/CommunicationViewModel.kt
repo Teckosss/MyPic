@@ -20,6 +20,8 @@ class CommunicationViewModel : ViewModel() {
     var currentListImagesToDelete = arrayListOf<Picture>()
     var myPicSelectingMode = false
 
+    var ListImageToCluster = arrayListOf<Picture>()
+
     fun updateCurrentUserPosition(latLng: LatLng){
         this.currentUserPosition.value = latLng
     }

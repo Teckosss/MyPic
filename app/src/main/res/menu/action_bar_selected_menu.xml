@@ -6,4 +6,16 @@
             android:icon="@drawable/baseline_delete_forever_white_24"
             app:showAsAction="ifRoom"
         />
+    <item
+            android:id="@+id/selected_menu_check_all"
+            android:title="@string/selected_menu_check_all_text"
+            android:icon="@drawable/baseline_done_all_white_24"
+            app:showAsAction="ifRoom"
+    />
+    <item
+            android:id="@+id/selected_menu_clear_all"
+            android:title="@string/selected_menu_clear_all_text"
+            android:icon="@drawable/baseline_clear_white_24"
+            app:showAsAction="ifRoom"
+    />
 </menu>

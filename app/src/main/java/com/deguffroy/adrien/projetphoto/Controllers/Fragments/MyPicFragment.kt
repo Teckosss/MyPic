@@ -53,13 +53,11 @@ class MyPicFragment : BaseFragment(), MyPicAdapter.Listener, ActionMode.Callback
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.e("MyPicFragment","OnDestroy")
         this.clearListAndActionMode()
     }
 
     override fun onPause() {
         super.onPause()
-        Log.e("MyPicFragment","OnPause")
         this.clearListAndActionMode()
     }
 
@@ -72,6 +70,14 @@ class MyPicFragment : BaseFragment(), MyPicAdapter.Listener, ActionMode.Callback
             R.id.selected_menu_delete -> {
                 this.deleteSelectedImageFromFirebase()
                 p0?.finish() }
+            R.id.selected_menu_check_all -> {
+                adapter.setAllItemsSelected()
+                this.manageListFromMenu(p1.itemId)
+            }
+            R.id.selected_menu_clear_all -> {
+                adapter.clearSelection()
+                this.manageListFromMenu(p1.itemId)
+            }
         }
         return true
     }
@@ -209,6 +215,21 @@ class MyPicFragment : BaseFragment(), MyPicAdapter.Listener, ActionMode.Callback
 
         }
         //adapter.triggerAction(mViewModel.currentListImagesToDelete.size, position)
+    }
+
+    private fun manageListFromMenu(action:Int){
+        if (action == R.id.selected_menu_check_all){
+            mViewModel.currentListImagesToDelete.clear()
+            val listToAdd = arrayListOf<Picture>()
+            (0 until adapter.itemCount).forEach {
+                val image = adapter.getItem(it)
+                listToAdd.add(image)
+            }
+            mViewModel.currentListImagesToDelete.addAll(listToAdd)
+        }else{
+            mViewModel.currentListImagesToDelete.clear()
+        }
+        actionMode?.title = resources.getString(R.string.my_pic_fragment_action_bar_text, adapter.getSelectedItemCount())
     }
 
     private fun deleteSelectedImageFromFirebase(){

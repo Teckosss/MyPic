@@ -28,26 +28,8 @@ class MyPicAdapter(var callback:Listener, @NonNull options: FirestoreRecyclerOpt
         return MyPicViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.fragment_my_pic_item, parent,false))
     }
 
-   /* fun triggerAction(listSize:Int, position: Int){
-        Log.e("MyPicAdapter", "ENTRY STATE : ListSize = $listSize || Position = $position || SelectMode = $selectMode")
-        if (listSize > 0 && !selectMode){
-            selectMode = true
-            notifyDataSetChanged()
-        }else if (listSize > 0 && selectMode){
-
-            notifyItemChanged(position)
-
-        }else if (listSize <= 0 && selectMode){
-            selectMode = false
-
-            notifyDataSetChanged()
-        }
-    }*/
-
     override fun onBindViewHolder(p0: MyPicViewHolder, p1: Int, @NonNull p2: Picture) {
         p0.updateWithData(p2, isSelected(p1))
-
-        //p0.itemView.fragment_my_pic_constraint_layout.visibility = if (isSelected(p1)) View.VISIBLE else View.GONE
     }
 
     override fun onDataChanged() {
@@ -72,6 +54,13 @@ class MyPicAdapter(var callback:Listener, @NonNull options: FirestoreRecyclerOpt
         for (i:Int in selection){
             notifyItemChanged(i)
         }
+    }
+
+    fun setAllItemsSelected(){
+        (0 until this.itemCount).forEach {
+            if (!selectedItems.get(it,false)){selectedItems.put(it, true)}
+        }
+        notifyDataSetChanged()
     }
 
     fun getSelectedItemCount() = selectedItems.size()

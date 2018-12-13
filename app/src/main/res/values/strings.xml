@@ -6,6 +6,8 @@
 
     <!-- MENU STRING-->
     <string name="selected_menu_delete_text">Delete</string>
+    <string name="selected_menu_check_all_text">Select all</string>
+    <string name="selected_menu_clear_all_text">Clear Selection</string>
 
     <!-- ADD ACTIVITY-->
     <string name="add_activity_public_checkbox_text">Set this picture public?</string>

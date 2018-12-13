@@ -13,7 +13,7 @@ object Constants{
     const val PERM_COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION
     const val PERM_CAMERA = Manifest.permission.CAMERA
 
-    const val MAP_FRAGMENT_DEFAULT_ZOOM = 8F
+    const val MAP_FRAGMENT_DEFAULT_ZOOM = 4F
 
     // CONSTANT FOR DATA
     const val RC_TAKE_PHOTO = 100

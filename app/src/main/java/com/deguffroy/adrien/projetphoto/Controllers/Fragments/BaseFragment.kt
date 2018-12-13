@@ -58,7 +58,7 @@ open class BaseFragment : Fragment(), GoogleApiClient.OnConnectionFailedListener
 
         if (locationPermissionsGranted()){
             // Permission is granted
-            this.configureLocationFunctions()
+            this.configureLocationFunctions(true)
         }else{
             // Permission is not granted
             this.requestLocationPermissions()
@@ -98,11 +98,13 @@ open class BaseFragment : Fragment(), GoogleApiClient.OnConnectionFailedListener
     // LOCATION
     // -------------------
 
-    open fun configureLocationFunctions(){
-        Log.e("BaseFragment","ENTER configureLocationFunctions")
-        this.configureLocationRequest()
-        this.configureLocationCallback()
-        this.configureGoogleApiClient()
+    open fun configureLocationFunctions(hasPermissions:Boolean){
+        Log.e("BaseFragment","ENTER configureLocationFunctions, permissions value = $hasPermissions")
+        if (hasPermissions){
+            this.configureLocationRequest()
+            this.configureLocationCallback()
+            this.configureGoogleApiClient()
+        }
     }
 
     private fun stopLocationUpdateAndDisconnectGoogleApiClient(){
@@ -144,6 +146,11 @@ open class BaseFragment : Fragment(), GoogleApiClient.OnConnectionFailedListener
     }
 
     @SuppressLint("MissingPermission")
+    fun forceRequestLocation(){
+        mFusedLocationClient!!.requestLocationUpdates(mLocationRequest,mLocationCallback,null)
+    }
+
+    @SuppressLint("MissingPermission")
     override fun onConnected(p0: Bundle?) {
         if (mFusedLocationClient != null){
             mFusedLocationClient!!.lastLocation.addOnSuccessListener {
@@ -181,6 +188,7 @@ open class BaseFragment : Fragment(), GoogleApiClient.OnConnectionFailedListener
             == PackageManager.PERMISSION_GRANTED)
 
     fun requestLocationPermissions(){
+        Log.e("BaseFragment","Request location permissions")
         requestPermissions(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION),
             Constants.RC_PERM_LOCATION)
     }
@@ -193,10 +201,11 @@ open class BaseFragment : Fragment(), GoogleApiClient.OnConnectionFailedListener
             Constants.RC_PERM_LOCATION -> {
                 // If request is cancelled, the result arrays are empty.
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    this.configureLocationFunctions()
+                    this.configureLocationFunctions(true)
                 } else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
+                    this.configureLocationFunctions(false)
                 }
                 return
             }

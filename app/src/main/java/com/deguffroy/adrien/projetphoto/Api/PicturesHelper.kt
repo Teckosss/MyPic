@@ -32,6 +32,8 @@ open class PicturesHelper {
         .whereEqualTo("userSender.uid", uid)
         .orderBy("dateCreated",Query.Direction.DESCENDING)
 
+    fun getAllPictures() = PicturesHelper().getPicturesCollection().whereGreaterThan("g","").get()
+
     fun getPictureById(uid:String) = PicturesHelper().getPicturesCollection().document(uid).get()
 
     // --- UPDATE ---
