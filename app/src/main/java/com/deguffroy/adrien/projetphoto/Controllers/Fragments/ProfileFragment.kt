@@ -11,7 +11,6 @@ import com.deguffroy.adrien.projetphoto.Controllers.Activities.BaseActivity
 import com.deguffroy.adrien.projetphoto.Controllers.Activities.LoginActivity
 
 import com.deguffroy.adrien.projetphoto.R
-import com.deguffroy.adrien.projetphoto.Utils.Constants.SIGN_OUT_TASK
 import com.firebase.ui.auth.AuthUI
 import kotlinx.android.synthetic.main.fragment_profile.*
 import com.google.android.gms.tasks.OnSuccessListener

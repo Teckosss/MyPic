@@ -6,15 +6,12 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
-import com.deguffroy.adrien.projetphoto.Controllers.Activities.BaseActivity
-import com.deguffroy.adrien.projetphoto.Utils.Constants
+import com.deguffroy.adrien.projetphoto.Controllers.Activities.MainActivity
+import com.deguffroy.adrien.projetphoto.Utils.RC_PERM_LOCATION
 import com.deguffroy.adrien.projetphoto.ViewModels.CommunicationViewModel
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
@@ -23,7 +20,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
-import com.livinglifetechway.quickpermissions_kotlin.runWithPermissions
 import org.imperiumlabs.geofirestore.GeoFirestore
 import org.imperiumlabs.geofirestore.GeoQuery
 import org.imperiumlabs.geofirestore.GeoQueryDataEventListener
@@ -53,6 +49,12 @@ open class BaseFragment : Fragment(), GoogleApiClient.OnConnectionFailedListener
         super.onViewCreated(view, savedInstanceState)
 
         mViewModel = ViewModelProviders.of(activity!!).get(CommunicationViewModel::class.java)
+
+        if (this is DetailFragment){
+            (activity as MainActivity).hideFab()
+        }else{
+            (activity as MainActivity).showFab()
+        }
 
         this.initDb("pictures")
 
@@ -190,7 +192,7 @@ open class BaseFragment : Fragment(), GoogleApiClient.OnConnectionFailedListener
     fun requestLocationPermissions(){
         Log.e("BaseFragment","Request location permissions")
         requestPermissions(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION),
-            Constants.RC_PERM_LOCATION)
+            RC_PERM_LOCATION)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int,
@@ -198,7 +200,7 @@ open class BaseFragment : Fragment(), GoogleApiClient.OnConnectionFailedListener
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
         when (requestCode) {
-            Constants.RC_PERM_LOCATION -> {
+            RC_PERM_LOCATION -> {
                 // If request is cancelled, the result arrays are empty.
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     this.configureLocationFunctions(true)

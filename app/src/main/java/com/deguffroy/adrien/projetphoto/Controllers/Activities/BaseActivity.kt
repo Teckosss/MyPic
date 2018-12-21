@@ -1,31 +1,26 @@
 package com.deguffroy.adrien.projetphoto.Controllers.Activities
 
-import android.Manifest
-import android.content.Intent
-import android.content.pm.PackageManager
+
 import android.net.Uri
 import android.os.Bundle
 import androidx.annotation.Nullable
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.deguffroy.adrien.projetphoto.Controllers.Fragments.MapFragment
 import com.deguffroy.adrien.projetphoto.R
 import kotlinx.android.synthetic.main.activity_main.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import androidx.lifecycle.ViewModelProviders
 import com.deguffroy.adrien.projetphoto.Api.UserHelper
-import com.deguffroy.adrien.projetphoto.Controllers.Fragments.HomeFragment
-import com.deguffroy.adrien.projetphoto.Controllers.Fragments.MyPicFragment
-import com.deguffroy.adrien.projetphoto.Controllers.Fragments.ProfileFragment
+import com.deguffroy.adrien.projetphoto.Controllers.Fragments.*
 import com.deguffroy.adrien.projetphoto.Models.User
-import com.deguffroy.adrien.projetphoto.Utils.Constants
+import com.deguffroy.adrien.projetphoto.Utils.FRAGMENT_HOME
+import com.deguffroy.adrien.projetphoto.Utils.FRAGMENT_MAP
+import com.deguffroy.adrien.projetphoto.Utils.FRAGMENT_MY_PIC
+import com.deguffroy.adrien.projetphoto.Utils.FRAGMENT_PROFILE
 import com.deguffroy.adrien.projetphoto.ViewModels.CommunicationViewModel
-import com.firebase.ui.auth.AuthUI
 import com.google.android.gms.tasks.OnFailureListener
-import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.firestore.FirebaseFirestore
 import org.imperiumlabs.geofirestore.GeoFirestore
@@ -82,15 +77,16 @@ open class BaseActivity : AppCompatActivity(){
 
     fun showFragment(newFragment:Fragment){
         when(newFragment){
-            is HomeFragment -> this.mFragmentTag = Constants.FRAGMENT_HOME
-            is MapFragment -> this.mFragmentTag = Constants.FRAGMENT_MAP
-            is MyPicFragment -> this.mFragmentTag = Constants.FRAGMENT_MY_PIC
-            is ProfileFragment -> this.mFragmentTag = Constants.FRAGMENT_PROFILE
+            is HomeFragment -> this.mFragmentTag = FRAGMENT_HOME
+            is MapFragment -> this.mFragmentTag = FRAGMENT_MAP
+            is MyPicFragment -> this.mFragmentTag = FRAGMENT_MY_PIC
+            is ProfileFragment -> this.mFragmentTag = FRAGMENT_PROFILE
+
         }
 
-            val transaction = supportFragmentManager.beginTransaction()
-            transaction.replace(R.id.fragment_view, newFragment)
-            transaction.commit()
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.fragment_view, newFragment)
+        transaction.commit()
     }
 
     fun showSnackbarMessage(coordinatorLayout: CoordinatorLayout,messageToShow:String){

@@ -23,7 +23,9 @@
 
     <!-- MY PIC FRAGMENT-->
     <string name="my_pic_fragment_no_image_yet">You have not taken any pictures yet</string>
-    <string name="my_pic_fragment_action_bar_text">Selected : %1$d</string>
+    <string name="my_pic_fragment_action_bar_text">Selected : %1$d / %2$d</string>
+
+    <string name="my_pic_fragment_too_much_image_to_delete">You can\'t delete more than %1$d pictures at a time</string>
 
     <!-- BOTTOM NAVIGATION VIEW -->
     <string name="bottom_navigation_view_home">Home</string>

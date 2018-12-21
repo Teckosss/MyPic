@@ -9,11 +9,11 @@ import com.google.maps.android.clustering.ClusterItem
 data class PictureCluster(var picture:Picture, var latLng: LatLng) : ClusterItem {
 
     override fun getSnippet(): String {
-        return "Snippet"
+        return picture.description.toString()
     }
 
     override fun getTitle(): String {
-        return "Title"
+        return picture.userSender.username.toString()
     }
 
     override fun getPosition() = latLng

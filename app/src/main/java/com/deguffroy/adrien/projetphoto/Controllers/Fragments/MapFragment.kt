@@ -13,7 +13,7 @@ import com.deguffroy.adrien.projetphoto.Models.Picture
 import com.deguffroy.adrien.projetphoto.Models.PictureCluster
 
 import com.deguffroy.adrien.projetphoto.R
-import com.deguffroy.adrien.projetphoto.Utils.Constants
+import com.deguffroy.adrien.projetphoto.Utils.MAP_FRAGMENT_DEFAULT_ZOOM
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.clustering.ClusterManager
@@ -120,6 +120,6 @@ class MapFragment : BaseFragment() {
 
     private fun moveCameraOnMap(latLng: LatLng){
         mMap?.moveCamera(CameraUpdateFactory.newLatLng(latLng))
-        mMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, Constants.MAP_FRAGMENT_DEFAULT_ZOOM))
+        mMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, MAP_FRAGMENT_DEFAULT_ZOOM))
     }
 }

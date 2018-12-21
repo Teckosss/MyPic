@@ -11,7 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 
 import com.deguffroy.adrien.projetphoto.R
-import com.deguffroy.adrien.projetphoto.Utils.Constants
 import com.deguffroy.adrien.projetphoto.Views.HomeAdapter
 
 

@@ -35,21 +35,4 @@ class MyPicViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             itemView.fragment_my_pic_background.setBackgroundColor(ContextCompat.getColor(itemView.context, R.color.colorTransparentBackground))
         }
     }
-
-   /* private fun onClick(selectedPosition: Int){
-        if (adapterPosition == RecyclerView.NO_POSITION) return
-
-
-
-
-
-        filter = if (isThisPictureSelected){
-            LightingColorFilter(colorSelected,colorSelected)
-        }else{
-            LightingColorFilter(colorWhite,colorWhite)
-        }
-        icon.colorFilter = filter
-        itemView.fragment_my_pic_item_selected_icon.background = icon
-
-    }*/
 }

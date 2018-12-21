@@ -9,6 +9,7 @@ import androidx.annotation.NonNull
 import androidx.recyclerview.widget.RecyclerView
 import com.deguffroy.adrien.projetphoto.Models.Picture
 import com.deguffroy.adrien.projetphoto.R
+import com.deguffroy.adrien.projetphoto.Utils.MAX_NUMBER_IMAGE_DELETE
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import kotlinx.android.synthetic.main.fragment_my_pic_item.view.*
@@ -20,6 +21,7 @@ class MyPicAdapter(var callback:Listener, @NonNull options: FirestoreRecyclerOpt
 
     interface Listener{
         fun onDataChanged()
+        fun onTooMuchItem()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyPicViewHolder {
@@ -35,13 +37,17 @@ class MyPicAdapter(var callback:Listener, @NonNull options: FirestoreRecyclerOpt
         this.callback.onDataChanged()
     }
 
+    private fun onTooMuchItem(){
+       this.callback.onTooMuchItem()
+    }
+
     fun isSelected(position:Int):Boolean = getSelectedItems().contains(position)
 
     fun toggleSelection(position: Int){
-        if (selectedItems.get(position,false)){
-            selectedItems.delete(position)
-        }else{
-            selectedItems.put(position, true)
+        when {
+            selectedItems.get(position,false) -> selectedItems.delete(position)
+            getSelectedItemCount() < MAX_NUMBER_IMAGE_DELETE -> selectedItems.put(position, true)
+            else -> this.onTooMuchItem()
         }
         notifyItemChanged(position)
     }
@@ -55,8 +61,9 @@ class MyPicAdapter(var callback:Listener, @NonNull options: FirestoreRecyclerOpt
     }
 
     fun setAllItemsSelected(){
-        (0 until this.itemCount).forEach {
-            if (!selectedItems.get(it,false)){selectedItems.put(it, true)}
+        this.clearSelection()
+        for (i in 0 until MAX_NUMBER_IMAGE_DELETE){
+            if (!selectedItems.get(i,false)){selectedItems.put(i, true)}
         }
         notifyDataSetChanged()
     }

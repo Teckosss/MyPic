@@ -9,9 +9,10 @@ import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.deguffroy.adrien.projetphoto.Api.PicturesHelper
 import com.deguffroy.adrien.projetphoto.Controllers.Activities.BaseActivity
+import com.deguffroy.adrien.projetphoto.Controllers.Activities.MainActivity
 
 import com.deguffroy.adrien.projetphoto.R
-import com.deguffroy.adrien.projetphoto.Utils.Constants
+import com.deguffroy.adrien.projetphoto.Utils.UID_EXTRA_NAME
 import kotlinx.android.synthetic.main.fragment_detail.*
 
 
@@ -28,7 +29,7 @@ class DetailFragment : BaseFragment() {
             val newFragment = DetailFragment()
             if(documentId != null){
                 val args = Bundle()
-                args.putString(Constants.UID_EXTRA_NAME,documentId)
+                args.putString(UID_EXTRA_NAME,documentId)
                 newFragment.arguments = args
             }
             return newFragment
@@ -43,7 +44,9 @@ class DetailFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        this.documentId = arguments?.get(Constants.UID_EXTRA_NAME) as String?
+        (activity as MainActivity).hideFab()
+
+        this.documentId = arguments?.get(UID_EXTRA_NAME) as String?
         if (documentId != null){
             updateUIWhenCreating()
         }else{

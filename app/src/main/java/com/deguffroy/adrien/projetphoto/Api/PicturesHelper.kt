@@ -7,6 +7,7 @@ import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.storage.FirebaseStorage
 
 /**
  * Created by Adrien Deguffroy on 23/11/2018.
@@ -16,7 +17,8 @@ open class PicturesHelper {
     private val COLLECTION_NAME = "pictures"
 
     // COLLECTION REFERENCE
-    private fun getPicturesCollection() = FirebaseFirestore.getInstance().collection(COLLECTION_NAME)
+    private fun getDatabaseReference() = FirebaseFirestore.getInstance()
+    fun getPicturesCollection() = getDatabaseReference().collection(COLLECTION_NAME)
 
     // --- CREATE ---
 
@@ -45,5 +47,5 @@ open class PicturesHelper {
     // --- DELETE ---
 
     fun deletePictureByID(uid:String) = PicturesHelper().getPicturesCollection().document(uid).delete()
-
+    
 }

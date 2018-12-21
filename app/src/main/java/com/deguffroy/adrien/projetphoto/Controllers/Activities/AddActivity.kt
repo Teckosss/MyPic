@@ -14,10 +14,9 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.deguffroy.adrien.projetphoto.Api.PicturesHelper
 import com.deguffroy.adrien.projetphoto.R
-import com.deguffroy.adrien.projetphoto.Utils.Constants
+import com.deguffroy.adrien.projetphoto.Utils.URI_EXTRA_NAME
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.activity_add.*
@@ -32,7 +31,7 @@ class AddActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add)
 
-        this.retrievedURI = Uri.parse(intent.getStringExtra(Constants.URI_EXTRA_NAME))
+        this.retrievedURI = Uri.parse(intent.getStringExtra(URI_EXTRA_NAME))
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
@@ -70,7 +69,7 @@ class AddActivity : BaseActivity() {
         add_activity_upload_layout.visibility = View.VISIBLE
 
         val uuid: String = UUID.randomUUID().toString()
-        val mImageRef = FirebaseStorage.getInstance().getReference(uuid)
+        val mImageRef = FirebaseStorage.getInstance().reference.child("images/${this.modelCurrentUser.uid}/$uuid.jpg")
         val uploadTask = mImageRef.putFile(this.retrievedURI)
 
         uploadTask.addOnProgressListener {

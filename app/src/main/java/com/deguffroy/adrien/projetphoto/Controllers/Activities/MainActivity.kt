@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
+import android.view.View
 import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModelProviders
 import com.deguffroy.adrien.projetphoto.Api.PicturesHelper
@@ -18,7 +19,7 @@ import com.deguffroy.adrien.projetphoto.Controllers.Fragments.ProfileFragment
 import com.deguffroy.adrien.projetphoto.Models.Picture
 import com.deguffroy.adrien.projetphoto.Models.User
 import com.deguffroy.adrien.projetphoto.R
-import com.deguffroy.adrien.projetphoto.Utils.Constants
+import com.deguffroy.adrien.projetphoto.Utils.*
 import com.deguffroy.adrien.projetphoto.ViewModels.CommunicationViewModel
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.tasks.Continuation
@@ -60,13 +61,13 @@ class MainActivity : BaseActivity() {
         this.initDb()
         this.configureBottomView()
         if (savedInstanceState != null){
-            val tag = savedInstanceState.getString(Constants.FRAGMENT_TAG_KEY) ?: null
+            val tag = savedInstanceState.getString(FRAGMENT_TAG_KEY) ?: null
             if (tag != null){
                 when(tag){
-                    Constants.FRAGMENT_HOME -> showFragment(HomeFragment.newInstance())
-                    Constants.FRAGMENT_MAP -> showFragment(MapFragment.newInstance())
-                    Constants.FRAGMENT_MY_PIC -> showFragment(MyPicFragment.newInstance())
-                    Constants.FRAGMENT_PROFILE -> showFragment(ProfileFragment.newInstance())
+                    FRAGMENT_HOME -> showFragment(HomeFragment.newInstance())
+                    FRAGMENT_MAP -> showFragment(MapFragment.newInstance())
+                    FRAGMENT_MY_PIC -> showFragment(MyPicFragment.newInstance())
+                    FRAGMENT_PROFILE -> showFragment(ProfileFragment.newInstance())
                 }
             }
         }else{
@@ -90,7 +91,7 @@ class MainActivity : BaseActivity() {
         main_activity_fab.setOnClickListener { this.onClickPictureFAB() }
     }
 
-    private fun onClickPictureFAB()= runWithPermissions(Constants.PERM_CAMERA){this.takePhotoFromCamera()}
+    private fun onClickPictureFAB()= runWithPermissions(PERM_CAMERA){this.takePhotoFromCamera()}
 
     // ---------------------
     // FILE MANAGEMENT
@@ -107,7 +108,7 @@ class MainActivity : BaseActivity() {
                 photoFile?.also {
                     this.photoURI = FileProvider.getUriForFile(this,"com.deguffroy.adrien.projetphoto.fileprovider",it)
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, this.photoURI )
-                    startActivityForResult(takePictureIntent, Constants.RC_TAKE_PHOTO)
+                    startActivityForResult(takePictureIntent, RC_TAKE_PHOTO)
                 }
             }
         }
@@ -130,10 +131,10 @@ class MainActivity : BaseActivity() {
 
     //  Handle activity response (after user has chosen or not a picture)
     private fun handleResponse(requestCode: Int, resultCode: Int, data: Intent?) {
-        if(requestCode == Constants.RC_TAKE_PHOTO) {
+        if(requestCode == RC_TAKE_PHOTO) {
             if (resultCode == Activity.RESULT_OK) {
                 val intent = Intent(this,AddActivity::class.java)
-                intent.putExtra(Constants.URI_EXTRA_NAME, this.photoURI.toString())
+                intent.putExtra(URI_EXTRA_NAME, this.photoURI.toString())
                 startActivity(intent)
             }
 
@@ -172,4 +173,8 @@ class MainActivity : BaseActivity() {
         this.geoQuery.removeAllListeners()
         this.geoQuery.addGeoQueryDataEventListener(this)
     }*/
+
+    fun showFab() = main_activity_fab.show()
+
+    fun hideFab() = main_activity_fab.hide()
 }
