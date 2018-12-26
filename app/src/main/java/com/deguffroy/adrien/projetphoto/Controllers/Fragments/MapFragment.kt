@@ -9,6 +9,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.deguffroy.adrien.projetphoto.Api.PicturesHelper
+import com.deguffroy.adrien.projetphoto.ClusterRenderer.PictureRenderer
+import com.deguffroy.adrien.projetphoto.Controllers.Activities.BaseActivity
+import com.deguffroy.adrien.projetphoto.Controllers.Activities.MainActivity
 import com.deguffroy.adrien.projetphoto.Models.Picture
 import com.deguffroy.adrien.projetphoto.Models.PictureCluster
 
@@ -16,7 +19,10 @@ import com.deguffroy.adrien.projetphoto.R
 import com.deguffroy.adrien.projetphoto.Utils.MAP_FRAGMENT_DEFAULT_ZOOM
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.material.snackbar.Snackbar
 import com.google.maps.android.clustering.ClusterManager
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_map.*
 
 /**
  * A simple [Fragment] subclass.
@@ -83,6 +89,7 @@ class MapFragment : BaseFragment() {
         Log.e("MapFragment","SetUp Cluster!")
         mClusterManager = ClusterManager(activity!!, mMap)
         mClusterManager.clearItems()
+        mClusterManager.renderer = PictureRenderer(activity!!, mMap!!, mClusterManager)
         mMap!!.setOnCameraIdleListener(mClusterManager)
         mMap!!.setOnMarkerClickListener(mClusterManager)
         this.addItemsToCluster()
@@ -90,7 +97,8 @@ class MapFragment : BaseFragment() {
     }
 
     private fun addItemsToCluster(){
-        PicturesHelper().getAllPictures().addOnCompleteListener {
+        PicturesHelper().getAllPicturesWithGeoLocAndPublicVerified().addOnCompleteListener {
+            Log.e("MapFragment","Result's number : ${it.result?.size()}")
             if (it.isSuccessful){
                 val listPicture = arrayListOf<PictureCluster>()
                 for (document in it.result!!){ // ADDING EVERY PIC FROM FIRESTORE TO LIST
@@ -99,6 +107,11 @@ class MapFragment : BaseFragment() {
                     listPicture.add(pictureCluster)
                 }
                 this.updateUI(listPicture)
+            }else{
+               BaseActivity().showSnackbarMessage(coordinator_layout_map_fragment,
+                   resources.getString(R.string.map_fragment_no_result_message),
+                   Snackbar.LENGTH_LONG,
+                   (activity!! as MainActivity).main_activity_fab)
             }
         }
     }

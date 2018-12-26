@@ -1,12 +1,11 @@
 package com.deguffroy.adrien.projetphoto.Views
 
-import android.content.res.ColorStateList
 import android.graphics.LightingColorFilter
-import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.deguffroy.adrien.projetphoto.Models.Picture
 import com.deguffroy.adrien.projetphoto.R
@@ -23,7 +22,7 @@ class MyPicViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val colorSelected = ContextCompat.getColor(itemView.context,R.color.colorPrimaryDark)
         val icon = itemView.resources.getDrawable(R.drawable.baseline_check_circle_outline_white_24)
         val filter = LightingColorFilter(colorSelected,colorSelected)
-        glide.load(data.urlImage).apply(RequestOptions().centerCrop()).into(itemView.fragment_my_pic_item_image)
+        glide.load(data.urlImage).apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).centerCrop()).into(itemView.fragment_my_pic_item_image)
 
         if (isSelected){
             itemView.fragment_my_pic_background.setBackgroundColor(ContextCompat.getColor(itemView.context, R.color.colorBlackBackground))

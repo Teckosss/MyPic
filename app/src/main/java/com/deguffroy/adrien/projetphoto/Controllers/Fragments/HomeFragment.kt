@@ -9,9 +9,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.deguffroy.adrien.projetphoto.Api.PicturesHelper
+import com.deguffroy.adrien.projetphoto.Models.Picture
 
 import com.deguffroy.adrien.projetphoto.R
 import com.deguffroy.adrien.projetphoto.Views.HomeAdapter
+import kotlinx.android.synthetic.main.fragment_home.*
 
 
 /**
@@ -21,6 +25,7 @@ import com.deguffroy.adrien.projetphoto.Views.HomeAdapter
 class HomeFragment : BaseFragment() {
 
     private lateinit var adapter:HomeAdapter
+    private lateinit var listPictures:ArrayList<Picture>
 
     companion object {
         fun newInstance(): HomeFragment {
@@ -35,6 +40,11 @@ class HomeFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        fragment_home_swipe_container.isRefreshing = true
+        this.configureListener()
+        this.configureRecyclerView()
+        this.retrievePicture()
     }
 
     // -------------------
@@ -42,7 +52,42 @@ class HomeFragment : BaseFragment() {
     // -------------------
 
     private fun configureRecyclerView(){
-        this.adapter = HomeAdapter()
+        this.listPictures = ArrayList()
+        this.adapter = HomeAdapter(this.listPictures)
+        fragment_home_recycler_view.adapter = adapter
+        fragment_home_recycler_view.layoutManager = LinearLayoutManager(activity)
+    }
+
+    private fun configureListener(){
+        fragment_home_swipe_container.setOnRefreshListener {
+            fragment_home_swipe_container.isRefreshing = true
+            this.retrievePicture()
+        }
+    }
+
+    private fun retrievePicture(){
+        Log.e("HomeFragment","Enter RetrievePicture!")
+        PicturesHelper().getAllPublicAndVerifiedPictures().get().addOnCompleteListener {
+            if (it.isSuccessful){
+                val listToAdd = arrayListOf<Picture>()
+                for (document in it.result!!){
+                    val picture = document.toObject(Picture::class.java)
+                    listToAdd.add(picture)
+                }
+                this.updateUI(listToAdd)
+            }else{
+                Log.e("HomeFragment","No result!")
+            }
+        }.addOnFailureListener {
+            Log.e("HomeFragment", it.localizedMessage)
+        }
+    }
+
+    private fun updateUI(listPic:ArrayList<Picture>){
+        fragment_home_swipe_container.isRefreshing = false
+        listPictures.clear()
+        listPictures.addAll(listPic)
+        adapter.notifyDataSetChanged()
     }
 
 }

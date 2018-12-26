@@ -36,6 +36,18 @@ open class PicturesHelper {
 
     fun getAllPictures() = PicturesHelper().getPicturesCollection().whereGreaterThan("g","").get()
 
+    fun getAllPicturesWithGeoLocAndPublicVerified() = PicturesHelper().getPicturesCollection()
+        .whereGreaterThan("g","")
+        .whereEqualTo("public",true)
+        .whereEqualTo("verificationDone",true)
+        .get()
+
+    fun getAllPublicAndVerifiedPictures() = PicturesHelper()
+        .getPicturesCollection()
+        .whereEqualTo("public", true)
+        .whereEqualTo("verificationDone", true)
+        .orderBy("dateCreated",Query.Direction.DESCENDING)
+
     fun getPictureById(uid:String) = PicturesHelper().getPicturesCollection().document(uid).get()
 
     // --- UPDATE ---
@@ -47,5 +59,5 @@ open class PicturesHelper {
     // --- DELETE ---
 
     fun deletePictureByID(uid:String) = PicturesHelper().getPicturesCollection().document(uid).delete()
-    
+
 }

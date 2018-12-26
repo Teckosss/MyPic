@@ -15,30 +15,42 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+        <ImageView
+                android:id="@+id/home_user_profile_picture"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginStart="@dimen/margin_small"
+                android:layout_marginTop="@dimen/margin_small"
+                card_view:layout_constraintStart_toStartOf="parent"
+                card_view:layout_constraintBottom_toTopOf="@+id/home_item_image_view"
+                card_view:layout_constraintTop_toTopOf="parent"/>
+
         <TextView
                 android:id="@+id/home_item_author"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                card_view:layout_constraintStart_toStartOf="parent"
+                android:textStyle="bold"
+                card_view:layout_constraintStart_toEndOf="@id/home_user_profile_picture"
                 android:layout_marginStart="@dimen/margin_small"
-                android:layout_marginBottom="@dimen/margin_small"
-                android:layout_marginTop="@dimen/margin_small"
+                card_view:layout_constraintTop_toTopOf="@+id/home_user_profile_picture"
+                card_view:layout_constraintBottom_toBottomOf="@+id/home_user_profile_picture"
         />
 
         <TextView
                 android:id="@+id/home_item_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/margin_small"
                 card_view:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginStart="@dimen/margin_small"
-                android:layout_marginBottom="@dimen/margin_small"
-                android:layout_marginTop="@dimen/margin_small"
-        />
+                card_view:layout_constraintTop_toTopOf="@+id/home_item_author"
+                card_view:layout_constraintBottom_toBottomOf="@+id/home_item_author"/>
 
         <ImageView
                 android:id="@+id/home_item_image_view"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"/>
+                android:layout_height="200dp"
+                card_view:layout_constraintTop_toBottomOf="@id/home_user_profile_picture"
+                android:layout_marginTop="8dp"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

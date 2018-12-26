@@ -41,7 +41,7 @@ class MyPicAdapter(var callback:Listener, @NonNull options: FirestoreRecyclerOpt
        this.callback.onTooMuchItem()
     }
 
-    fun isSelected(position:Int):Boolean = getSelectedItems().contains(position)
+    private fun isSelected(position:Int):Boolean = getSelectedItems().contains(position)
 
     fun toggleSelection(position: Int){
         when {
@@ -70,7 +70,7 @@ class MyPicAdapter(var callback:Listener, @NonNull options: FirestoreRecyclerOpt
 
     fun getSelectedItemCount() = selectedItems.size()
 
-    fun getSelectedItems() : List<Int> {
+    private fun getSelectedItems() : List<Int> {
         val items = ArrayList<Int>(selectedItems.size())
         (0 until selectedItems.size()).forEach {
             items.add(selectedItems.keyAt(it))

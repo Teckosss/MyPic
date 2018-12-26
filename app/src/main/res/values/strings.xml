@@ -15,11 +15,14 @@
     <string name="add_activity_cancel_button_text">Cancel</string>
     <string name="add_activity_description">Description</string>
 
+    <!-- MAP FRAGMENT-->
+    <string name="map_fragment_no_result_message">An error occurred, unable to retrieve pictures. Please try again</string>
+
     <!-- PROFILE FRAGMENT-->
     <string name="profile_fragment_sign_out">SIGN OUT</string>
 
     <!-- DETAIL FRAGMENT-->
-    <string name="detail_fragment_error_retrieving_document_uid">An error occurred, unable to retrieve this image. Please try again</string>
+    <string name="detail_fragment_error_retrieving_document_uid">An error occurred, unable to retrieve this picture. Please try again</string>
 
     <!-- MY PIC FRAGMENT-->
     <string name="my_pic_fragment_no_image_yet">You have not taken any pictures yet</string>

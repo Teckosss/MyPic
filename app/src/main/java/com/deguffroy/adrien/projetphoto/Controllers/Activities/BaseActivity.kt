@@ -3,6 +3,7 @@ package com.deguffroy.adrien.projetphoto.Controllers.Activities
 
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.annotation.Nullable
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -21,6 +22,7 @@ import com.deguffroy.adrien.projetphoto.Utils.FRAGMENT_MY_PIC
 import com.deguffroy.adrien.projetphoto.Utils.FRAGMENT_PROFILE
 import com.deguffroy.adrien.projetphoto.ViewModels.CommunicationViewModel
 import com.google.android.gms.tasks.OnFailureListener
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.firestore.FirebaseFirestore
 import org.imperiumlabs.geofirestore.GeoFirestore
@@ -89,9 +91,24 @@ open class BaseActivity : AppCompatActivity(){
         transaction.commit()
     }
 
-    fun showSnackbarMessage(coordinatorLayout: CoordinatorLayout,messageToShow:String){
-        snackbar = Snackbar.make(coordinatorLayout,messageToShow,Snackbar.LENGTH_SHORT)
+    fun showSnackbarMessage(coordinatorLayout: CoordinatorLayout,messageToShow:String, duration:Int = Snackbar.LENGTH_SHORT, dismissFAB:FloatingActionButton? = null){
+        snackbar = Snackbar.make(coordinatorLayout,messageToShow, duration)
+            Log.e("BaseActivity","FAB value : $dismissFAB")
+            snackbar.addCallback(object : Snackbar.Callback(){
+                override fun onShown(sb: Snackbar?) {
+                    super.onShown(sb)
+                    Log.e("BaseActivity","onShown")
+                    dismissFAB?.hide()
+                }
+                override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                    super.onDismissed(transientBottomBar, event)
+                    Log.e("BaseActivity","onDismissed")
+                    dismissFAB?.show()
+                }
+            })
         snackbar.show()
+            snackbar.removeCallback(Snackbar.Callback())
+
     }
 
     // --------------------
