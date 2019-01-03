@@ -22,8 +22,6 @@ class HomeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .circleCrop())
                 .into(itemView.home_user_profile_picture)
-        }else{
-            itemView.home_user_profile_picture.visibility = View.GONE
         }
 
         glide.load(picture.urlImage).apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).centerCrop()).into(itemView.home_item_image_view)

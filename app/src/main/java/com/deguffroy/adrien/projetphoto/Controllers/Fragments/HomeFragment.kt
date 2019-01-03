@@ -4,6 +4,7 @@ package com.deguffroy.adrien.projetphoto.Controllers.Fragments
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -83,8 +84,14 @@ class HomeFragment : BaseFragment() {
         }
     }
 
+    // -------------------
+    // UI
+    // -------------------
+
     private fun updateUI(listPic:ArrayList<Picture>){
-        fragment_home_swipe_container.isRefreshing = false
+        activity?.runOnUiThread{
+            if (fragment_home_swipe_container != null) fragment_home_swipe_container.isRefreshing = false
+        }
         listPictures.clear()
         listPictures.addAll(listPic)
         adapter.notifyDataSetChanged()

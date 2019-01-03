@@ -16,13 +16,16 @@
     <string name="add_activity_description">Description</string>
 
     <!-- MAP FRAGMENT-->
-    <string name="map_fragment_no_result_message">An error occurred, unable to retrieve pictures. Please try again</string>
+    <string name="map_fragment_no_result_message">An error occurred, unable to retrieve pictures. Please try again
+    </string>
 
     <!-- PROFILE FRAGMENT-->
     <string name="profile_fragment_sign_out">SIGN OUT</string>
 
     <!-- DETAIL FRAGMENT-->
-    <string name="detail_fragment_error_retrieving_document_uid">An error occurred, unable to retrieve this picture. Please try again</string>
+    <string name="detail_fragment_error_retrieving_document_uid">An error occurred, unable to retrieve this picture.
+        Please try again
+    </string>
 
     <!-- MY PIC FRAGMENT-->
     <string name="my_pic_fragment_no_image_yet">You have not taken any pictures yet</string>
@@ -43,5 +46,9 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="title_activity_fullscreen">FullscreenActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 
 </resources>

@@ -35,7 +35,7 @@ class PictureRenderer(private val context: Context, googleMap: GoogleMap, cluste
     private val mClusterIconGenerator = IconGenerator(context)
     private var mImageView: ImageView
     private var mClusterImageView: ImageView
-    private val mDimension: Int = 200
+    private val mDimension: Int = (context.resources.getDimension(R.dimen.map_image_size)).toInt()
     private lateinit var picturesList:ArrayList<Drawable>
 
     init {
@@ -44,12 +44,15 @@ class PictureRenderer(private val context: Context, googleMap: GoogleMap, cluste
         mClusterImageView = (multiProfile.findViewById(R.id.multi_profile_image) as ImageView)
         mImageView = ImageView(context)
         mImageView.layoutParams = ViewGroup.LayoutParams(mDimension,mDimension)
-        mImageView.setPadding(2,2,2,2)
+        //mImageView.setPadding(2,2,2,2)
+        mImageView.scaleType = ImageView.ScaleType.CENTER_CROP
         mIconGenerator.setContentView(mImageView)
     }
 
     override fun onBeforeClusterItemRendered(item: PictureCluster?, markerOptions: MarkerOptions?) {
         super.onBeforeClusterItemRendered(item, markerOptions)
+        mImageView.setImageResource(0)
+        mImageView.setImageDrawable(null)
         val icon = mIconGenerator.makeIcon()
         markerOptions!!.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(item!!.picture.description)
     }
@@ -69,13 +72,11 @@ class PictureRenderer(private val context: Context, googleMap: GoogleMap, cluste
 
     override fun onBeforeClusterRendered(cluster: Cluster<PictureCluster>?, markerOptions: MarkerOptions?) {
         super.onBeforeClusterRendered(cluster, markerOptions)
-
     }
 
     override fun onClusterRendered(cluster: Cluster<PictureCluster>?, marker: Marker?) {
         super.onClusterRendered(cluster, marker)
         picturesList = ArrayList(Math.min(4,cluster!!.size))
-        var dummyBitmap : Bitmap? = null
 
         for (picture in cluster.items) {
             if (picturesList.size == 4) break

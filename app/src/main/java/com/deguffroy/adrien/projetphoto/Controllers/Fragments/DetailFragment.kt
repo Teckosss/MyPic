@@ -2,6 +2,7 @@ package com.deguffroy.adrien.projetphoto.Controllers.Fragments
 
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,7 @@ import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.deguffroy.adrien.projetphoto.Api.PicturesHelper
 import com.deguffroy.adrien.projetphoto.Controllers.Activities.BaseActivity
+import com.deguffroy.adrien.projetphoto.Controllers.Activities.FullscreenActivity
 import com.deguffroy.adrien.projetphoto.Controllers.Activities.MainActivity
 
 import com.deguffroy.adrien.projetphoto.R
@@ -23,6 +25,7 @@ import kotlinx.android.synthetic.main.fragment_detail.*
 class DetailFragment : BaseFragment() {
 
     private var documentId:String? = null
+    private var imageURL:String? = null
 
     companion object {
         fun newInstance(documentId:String?):DetailFragment{
@@ -52,12 +55,31 @@ class DetailFragment : BaseFragment() {
         }else{
             BaseActivity().showSnackbarMessage(detail_fragment_coordinator_layout,resources.getString(R.string.detail_fragment_error_retrieving_document_uid))
         }
+
+        this.setOnClickListener()
     }
+
+    // -------------------
+    // CONFIGURATION
+    // -------------------
+
+    private fun setOnClickListener(){
+        detail_fragment_image.setOnClickListener {
+            if (this.imageURL != null) {
+                startActivity(FullscreenActivity.newInstance(context!! , this.imageURL!!))
+            }
+        }
+    }
+
+    // -------------------
+    // UI
+    // -------------------
 
     private fun updateUIWhenCreating(){
         val glide = Glide.with(activity!!)
         PicturesHelper().getPictureById(documentId!!).addOnSuccessListener {
-            glide.load(it.get("urlImage")).into(detail_fragment_image)
+            this.imageURL = (it.get("urlImage") as String)
+            glide.load(this.imageURL).into(detail_fragment_image)
             detail_fragment_desc.text = it.get("description").toString()
         }
     }

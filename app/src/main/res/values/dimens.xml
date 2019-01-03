@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="margin_small">2dip</dimen>
-    <dimen name="FAB_margin">16dip</dimen>
-    <dimen name="icon_margin">8dip</dimen>
+    <dimen name="margin_small">2dp</dimen>
+    <dimen name="FAB_margin">16dp</dimen>
+    <dimen name="icon_margin">8dp</dimen>
 
     <dimen name="text_small">12sp</dimen>
     <dimen name="text_large">20sp</dimen>
 
     <dimen name="image_height">150dp</dimen>
+
+    <!-- MAP -->
+    <dimen name="map_image_size">50dp</dimen>
 </resources>

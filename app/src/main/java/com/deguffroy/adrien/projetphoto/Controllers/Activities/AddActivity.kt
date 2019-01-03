@@ -2,11 +2,14 @@ package com.deguffroy.adrien.projetphoto.Controllers.Activities
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.ContentResolver
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
+import android.graphics.Bitmap
 import android.location.Location
 import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
@@ -19,7 +22,10 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.UploadTask
 import kotlinx.android.synthetic.main.activity_add.*
+import java.io.ByteArrayOutputStream
+import java.io.IOException
 import java.util.*
 
 class AddActivity : BaseActivity() {
@@ -65,12 +71,27 @@ class AddActivity : BaseActivity() {
     // --------------------
 
     @SuppressLint("MissingPermission")
-    private fun savePicture() {
+    private fun savePicture(needToCompress:Boolean = true) {
         add_activity_upload_layout.visibility = View.VISIBLE
 
         val uuid: String = UUID.randomUUID().toString()
         val mImageRef = FirebaseStorage.getInstance().reference.child("images/${this.modelCurrentUser.uid}/$uuid.jpg")
-        val uploadTask = mImageRef.putFile(this.retrievedURI)
+        lateinit var uploadTask:UploadTask
+
+        if (needToCompress){
+            var bmp:Bitmap? = null
+            try {
+                bmp = MediaStore.Images.Media.getBitmap(contentResolver,this.retrievedURI)
+            }catch (e:IOException){
+                Log.e("AddActivity","Unable to create bitmap from URI : ${e.localizedMessage}")
+            }
+            val baos = ByteArrayOutputStream()
+            bmp?.compress(Bitmap.CompressFormat.JPEG, 25, baos)
+            val fileBytes = baos.toByteArray()
+            uploadTask = mImageRef.putBytes(fileBytes)
+        }else{
+            uploadTask = mImageRef.putFile(this.retrievedURI)
+        }
 
         uploadTask.addOnProgressListener {
             val progress = 100.0 * it.bytesTransferred / it.totalByteCount

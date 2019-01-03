@@ -42,6 +42,12 @@
         </activity>
         <activity android:name=".Controllers.Activities.AddActivity">
         </activity>
+        <activity
+                android:name=".Controllers.Activities.FullscreenActivity"
+                android:configChanges="orientation|keyboardHidden|screenSize"
+                android:label="@string/title_activity_fullscreen"
+                android:theme="@style/FullscreenTheme">
+        </activity>
     </application>
 
 </manifest>

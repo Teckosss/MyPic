@@ -22,12 +22,13 @@ class LoginActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.e("LoginActivity","Create Login Activity")
         setContentView(R.layout.activity_login)
 
         if(!this.isCurrentUserLogged()!!){
             this.startSignInActivity()
         }else{
-            this.launchMainActivity()
+            this.navigateToMainActivity()
         }
     }
 
@@ -88,7 +89,7 @@ class LoginActivity : BaseActivity() {
         if (requestCode == RC_SIGN_IN) {
             if (resultCode == RESULT_OK) { // SUCCESS
                 this.createUserInFirestore()
-                launchMainActivity()
+                navigateToMainActivity()
             } else { // ERRORS
                 when {
                     response == null -> {
@@ -106,8 +107,11 @@ class LoginActivity : BaseActivity() {
     // ACTION
     // --------------------
 
-    private fun launchMainActivity() {
+    private fun navigateToMainActivity(){
         val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        this.startActivity(intent)
+        finishAffinity()
     }
 }

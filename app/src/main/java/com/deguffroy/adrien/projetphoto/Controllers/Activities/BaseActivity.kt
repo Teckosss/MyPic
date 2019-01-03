@@ -8,6 +8,7 @@ import androidx.annotation.Nullable
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import com.deguffroy.adrien.projetphoto.R
 import kotlinx.android.synthetic.main.activity_main.*
 import com.google.firebase.auth.FirebaseAuth
@@ -51,17 +52,36 @@ open class BaseActivity : AppCompatActivity(){
         mViewModel = ViewModelProviders.of(this).get(CommunicationViewModel::class.java)
     }
 
+    override fun onBackPressed() {
+        if(supportFragmentManager.backStackEntryCount != 1){
+            super.onBackPressed()
+            //bottom_navigation_view.menu.getItem(supportFragmentManager.backStackEntryCount).isChecked = true
+            when(supportFragmentManager.findFragmentById(R.id.fragment_view)){
+                is HomeFragment -> bottom_navigation_view.menu.getItem(0).isChecked = true
+                is MapFragment -> bottom_navigation_view.menu.getItem(1).isChecked = true
+                is MyPicFragment -> bottom_navigation_view.menu.getItem(2).isChecked = true
+                is ProfileFragment -> bottom_navigation_view.menu.getItem(3).isChecked = true
+            }
+        }else{
+            finish()
+        }
+    }
+
     // -------------------
     // CONFIGURATION
     // -------------------
 
     fun configureBottomView(){
-        bottom_navigation_view.setOnNavigationItemSelectedListener{
-            when(it.itemId){
-                R.id.bnv_home -> showFragment(HomeFragment.newInstance())
-                R.id.bnv_map -> showFragment(MapFragment.newInstance())
-                R.id.bnv_my_pic -> showFragment(MyPicFragment.newInstance())
-                R.id.bnv_profile -> showFragment(ProfileFragment.newInstance())
+        bottom_navigation_view.setOnNavigationItemSelectedListener {
+            val previousFragment = bottom_navigation_view.selectedItemId
+            val nextFragment = it.itemId
+            if (previousFragment != nextFragment) {
+                when (it.itemId) {
+                    R.id.bnv_home -> showFragment(HomeFragment.newInstance())
+                    R.id.bnv_map -> showFragment(MapFragment.newInstance())
+                    R.id.bnv_my_pic -> showFragment(MyPicFragment.newInstance())
+                    R.id.bnv_profile -> showFragment(ProfileFragment.newInstance())
+                }
             }
             return@setOnNavigationItemSelectedListener true
         }
@@ -83,32 +103,30 @@ open class BaseActivity : AppCompatActivity(){
             is MapFragment -> this.mFragmentTag = FRAGMENT_MAP
             is MyPicFragment -> this.mFragmentTag = FRAGMENT_MY_PIC
             is ProfileFragment -> this.mFragmentTag = FRAGMENT_PROFILE
-
         }
 
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.fragment_view, newFragment)
+        transaction.addToBackStack(null)
         transaction.commit()
     }
 
     fun showSnackbarMessage(coordinatorLayout: CoordinatorLayout,messageToShow:String, duration:Int = Snackbar.LENGTH_SHORT, dismissFAB:FloatingActionButton? = null){
         snackbar = Snackbar.make(coordinatorLayout,messageToShow, duration)
-            Log.e("BaseActivity","FAB value : $dismissFAB")
-            snackbar.addCallback(object : Snackbar.Callback(){
-                override fun onShown(sb: Snackbar?) {
-                    super.onShown(sb)
-                    Log.e("BaseActivity","onShown")
-                    dismissFAB?.hide()
-                }
-                override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
-                    super.onDismissed(transientBottomBar, event)
-                    Log.e("BaseActivity","onDismissed")
-                    dismissFAB?.show()
-                }
-            })
+        snackbar.addCallback(object : Snackbar.Callback(){
+            override fun onShown(sb: Snackbar?) {
+                super.onShown(sb)
+                Log.e("BaseActivity","onShown")
+                dismissFAB?.hide()
+            }
+            override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                super.onDismissed(transientBottomBar, event)
+                Log.e("BaseActivity","onDismissed")
+                dismissFAB?.show()
+            }
+        })
         snackbar.show()
-            snackbar.removeCallback(Snackbar.Callback())
-
+        snackbar.removeCallback(Snackbar.Callback())
     }
 
     // --------------------
