@@ -12,10 +12,7 @@ import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModelProviders
 import com.deguffroy.adrien.projetphoto.Api.PicturesHelper
 import com.deguffroy.adrien.projetphoto.Api.UserHelper
-import com.deguffroy.adrien.projetphoto.Controllers.Fragments.HomeFragment
-import com.deguffroy.adrien.projetphoto.Controllers.Fragments.MapFragment
-import com.deguffroy.adrien.projetphoto.Controllers.Fragments.MyPicFragment
-import com.deguffroy.adrien.projetphoto.Controllers.Fragments.ProfileFragment
+import com.deguffroy.adrien.projetphoto.Controllers.Fragments.*
 import com.deguffroy.adrien.projetphoto.Models.Picture
 import com.deguffroy.adrien.projetphoto.Models.User
 import com.deguffroy.adrien.projetphoto.R
@@ -59,6 +56,7 @@ class MainActivity : BaseActivity() {
         this.picturesList = ArrayList()
 
         this.initDb()
+        this.getCurrentUserFromFirestore()
         this.configureBottomView()
         if (savedInstanceState != null){
             val tag = savedInstanceState.getString(FRAGMENT_TAG_KEY) ?: null
@@ -68,13 +66,12 @@ class MainActivity : BaseActivity() {
                     FRAGMENT_MAP -> showFragment(MapFragment.newInstance())
                     FRAGMENT_MY_PIC -> showFragment(MyPicFragment.newInstance())
                     FRAGMENT_PROFILE -> showFragment(ProfileFragment.newInstance())
+                    FRAGMENT_MODERATION -> showFragment(ModerationFragment.newInstance())
                 }
             }
         }else{
             this.showFragment(HomeFragment.newInstance())
         }
-
-        this.getCurrentUserFromFirestore()
         //this.retrieveData()
         //this.populateDB()
         this.setOnClickListener()

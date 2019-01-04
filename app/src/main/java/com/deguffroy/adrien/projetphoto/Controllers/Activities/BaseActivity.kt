@@ -4,6 +4,8 @@ package com.deguffroy.adrien.projetphoto.Controllers.Activities
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.View
 import androidx.annotation.Nullable
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -14,13 +16,12 @@ import kotlinx.android.synthetic.main.activity_main.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import androidx.lifecycle.ViewModelProviders
+import com.deguffroy.adrien.projetphoto.Api.BottomNavHelper
+import com.deguffroy.adrien.projetphoto.Api.PicturesHelper
 import com.deguffroy.adrien.projetphoto.Api.UserHelper
 import com.deguffroy.adrien.projetphoto.Controllers.Fragments.*
 import com.deguffroy.adrien.projetphoto.Models.User
-import com.deguffroy.adrien.projetphoto.Utils.FRAGMENT_HOME
-import com.deguffroy.adrien.projetphoto.Utils.FRAGMENT_MAP
-import com.deguffroy.adrien.projetphoto.Utils.FRAGMENT_MY_PIC
-import com.deguffroy.adrien.projetphoto.Utils.FRAGMENT_PROFILE
+import com.deguffroy.adrien.projetphoto.Utils.*
 import com.deguffroy.adrien.projetphoto.ViewModels.CommunicationViewModel
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -61,15 +62,27 @@ open class BaseActivity : AppCompatActivity(){
                 is MapFragment -> bottom_navigation_view.menu.getItem(1).isChecked = true
                 is MyPicFragment -> bottom_navigation_view.menu.getItem(2).isChecked = true
                 is ProfileFragment -> bottom_navigation_view.menu.getItem(3).isChecked = true
+                is ModerationFragment -> bottom_navigation_view.menu.getItem(4).isChecked = true
             }
         }else{
             finish()
         }
     }
 
-    // -------------------
-    // CONFIGURATION
-    // -------------------
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menu?.findItem(R.id.bnv_moderation)?.setVisible(true)
+       /* UserHelper().getUser(getCurrentUser()?.uid!!).addOnCompleteListener {
+            Log.e("BaseActivity","ENTER onCreateOptionsMenu : ${it.result}")
+            if (it.isSuccessful){
+                val moderation = menu?.findItem(R.id.bnv_moderation)
+                moderation?.isVisible = (it.result?.get("admin") as Boolean)
+                Log.e("BaseActivity","isAdmin : ${(it.result?.get("admin") as Boolean)}")
+            }else{
+                Log.e("BaseActivity","Error onCreateOptionsMenu")
+            }
+        }*/
+        return super.onCreateOptionsMenu(menu)
+    }
 
     fun configureBottomView(){
         bottom_navigation_view.setOnNavigationItemSelectedListener {
@@ -81,6 +94,7 @@ open class BaseActivity : AppCompatActivity(){
                     R.id.bnv_map -> showFragment(MapFragment.newInstance())
                     R.id.bnv_my_pic -> showFragment(MyPicFragment.newInstance())
                     R.id.bnv_profile -> showFragment(ProfileFragment.newInstance())
+                    R.id.bnv_moderation -> showFragment(ModerationFragment.newInstance())
                 }
             }
             return@setOnNavigationItemSelectedListener true
@@ -103,6 +117,7 @@ open class BaseActivity : AppCompatActivity(){
             is MapFragment -> this.mFragmentTag = FRAGMENT_MAP
             is MyPicFragment -> this.mFragmentTag = FRAGMENT_MY_PIC
             is ProfileFragment -> this.mFragmentTag = FRAGMENT_PROFILE
+            is ModerationFragment -> this.mFragmentTag = FRAGMENT_MODERATION
         }
 
         val transaction = supportFragmentManager.beginTransaction()
@@ -146,6 +161,21 @@ open class BaseActivity : AppCompatActivity(){
         UserHelper().getUser(getCurrentUser()?.uid!!)
             .addOnSuccessListener {
                 this.modelCurrentUser = it.toObject<User>(User::class.java)!!
+                if (this is MainActivity){
+                    bottom_navigation_view.menu.findItem(R.id.bnv_moderation).isVisible = modelCurrentUser.admin || modelCurrentUser.moderator
+                    if (modelCurrentUser.admin || modelCurrentUser.moderator){
+                        PicturesHelper().getAllPublicPictureNeedingVerification().get().addOnCompleteListener { taskResult ->
+                            Log.e("BaseActivity","Picture needing verification : ${taskResult.result?.count()}")
+                            if (taskResult.isSuccessful){
+                                if (taskResult.result?.count()!! > 0) BottomNavHelper().showBadge(this,bottom_navigation_view,R.id.bnv_moderation)
+                            }else{
+                                Log.e("BaseActivity","Picture needing verification : ERROR")
+                            }
+                        }.addOnFailureListener {error ->
+                            Log.e("BaseActivity","Picture needing verification : ${error.localizedMessage}")
+                        }
+                    }
+                }
             }
     }
 

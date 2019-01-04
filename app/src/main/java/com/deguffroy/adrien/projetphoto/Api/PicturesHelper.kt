@@ -48,6 +48,12 @@ open class PicturesHelper {
         .whereEqualTo("verificationDone", true)
         .orderBy("dateCreated",Query.Direction.DESCENDING)
 
+    fun getAllPublicPictureNeedingVerification() = PicturesHelper()
+        .getPicturesCollection()
+        .whereEqualTo("public", true)
+        .whereEqualTo("verificationDone", false)
+        .orderBy("dateCreated",Query.Direction.ASCENDING)
+
     fun getPictureById(uid:String) = PicturesHelper().getPicturesCollection().document(uid).get()
 
     // --- UPDATE ---

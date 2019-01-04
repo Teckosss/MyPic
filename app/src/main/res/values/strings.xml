@@ -38,6 +38,7 @@
     <string name="bottom_navigation_view_map">Map</string>
     <string name="bottom_navigation_view_my_pic">My Pic</string>
     <string name="bottom_navigation_view_profile">Profile</string>
+    <string name="bottom_navigation_view_moderation">Moderation</string>
 
     <!-- AUTH ERROR -->
     <string name="error_authentication_canceled">Authentication canceled</string>

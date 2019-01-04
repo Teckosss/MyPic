@@ -8,7 +8,9 @@ import com.deguffroy.adrien.projetphoto.R
  */
 data class User(var uid:String,
                 var username:String? = null,
-                var userPicture:String? = null) {
+                var userPicture:String? = null,
+                var admin:Boolean = false,
+                var moderator:Boolean = false) {
 
     constructor(): this("")
 }

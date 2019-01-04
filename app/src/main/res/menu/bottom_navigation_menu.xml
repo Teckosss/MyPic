@@ -28,4 +28,12 @@
             android:title="@string/bottom_navigation_view_profile"
             app:showAsAction="ifRoom"
     />
+    <item
+            android:id="@+id/bnv_moderation"
+            android:enabled="true"
+            android:icon="@drawable/baseline_security_black_24"
+            android:title="@string/bottom_navigation_view_moderation"
+            app:showAsAction="ifRoom"
+            android:visible="false"
+    />
 </menu>
