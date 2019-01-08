@@ -70,7 +70,7 @@ class PictureRenderer(private val context: Context, googleMap: GoogleMap, cluste
             })
     }
 
-    override fun onBeforeClusterRendered(cluster: Cluster<PictureCluster>?, markerOptions: MarkerOptions?) {
+    /*override fun onBeforeClusterRendered(cluster: Cluster<PictureCluster>?, markerOptions: MarkerOptions?) {
         super.onBeforeClusterRendered(cluster, markerOptions)
     }
 
@@ -102,7 +102,7 @@ class PictureRenderer(private val context: Context, googleMap: GoogleMap, cluste
         }
         val icon = mClusterIconGenerator.makeIcon()
         marker!!.setIcon(BitmapDescriptorFactory.fromBitmap(icon))
-    }
+    }*/
 
     private fun addDrawableWhenRetrieved(bitmap: Bitmap, cluster: Cluster<PictureCluster>?, markerOptions: MarkerOptions?){
         val drawable = BitmapDrawable(context.resources,bitmap)

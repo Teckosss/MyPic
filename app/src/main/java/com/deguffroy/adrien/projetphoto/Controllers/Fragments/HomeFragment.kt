@@ -12,9 +12,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.deguffroy.adrien.projetphoto.Api.PicturesHelper
+import com.deguffroy.adrien.projetphoto.Controllers.Activities.BaseActivity
+import com.deguffroy.adrien.projetphoto.Controllers.Activities.DetailActivity
 import com.deguffroy.adrien.projetphoto.Models.Picture
 
 import com.deguffroy.adrien.projetphoto.R
+import com.deguffroy.adrien.projetphoto.Utils.ItemClickSupport
 import com.deguffroy.adrien.projetphoto.Views.HomeAdapter
 import kotlinx.android.synthetic.main.fragment_home.*
 
@@ -43,8 +46,9 @@ class HomeFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         fragment_home_swipe_container.isRefreshing = true
-        this.configureListener()
+        this.configureRefreshListener()
         this.configureRecyclerView()
+        this.configureOnClickItemRecyclerView()
         this.retrievePicture()
     }
 
@@ -59,11 +63,18 @@ class HomeFragment : BaseFragment() {
         fragment_home_recycler_view.layoutManager = LinearLayoutManager(activity)
     }
 
-    private fun configureListener(){
+    private fun configureRefreshListener(){
         fragment_home_swipe_container.setOnRefreshListener {
             fragment_home_swipe_container.isRefreshing = true
             this.retrievePicture()
         }
+    }
+
+    private fun configureOnClickItemRecyclerView(){
+        ItemClickSupport.addTo(fragment_home_recycler_view, R.layout.fragment_home_item)
+            .setOnItemClickListener { recyclerView, position, v ->
+                startActivity(DetailActivity.newInstance(activity!!, adapter.getItemAtPosition(position).documentId))
+            }
     }
 
     private fun retrievePicture(){

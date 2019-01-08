@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.deguffroy.adrien.projetphoto.Api.PicturesHelper
 import com.deguffroy.adrien.projetphoto.Controllers.Activities.BaseActivity
+import com.deguffroy.adrien.projetphoto.Controllers.Activities.DetailActivity
 import com.deguffroy.adrien.projetphoto.Models.Picture
 import com.deguffroy.adrien.projetphoto.R
 import com.deguffroy.adrien.projetphoto.Utils.ItemClickSupport
@@ -50,7 +51,6 @@ class MyPicFragment : BaseFragment(), MyPicAdapter.Listener, ActionMode.Callback
         this.clearListAndActionMode()
         this.configureRecyclerView()
         this.configureOnClickItemRecyclerView()
-        this.setOnClickListener()
 
         //this.changeBottomInfo(mViewModel.currentListImagesToDelete.size)
         //this.retrieveUserData()
@@ -111,10 +111,6 @@ class MyPicFragment : BaseFragment(), MyPicAdapter.Listener, ActionMode.Callback
         actionMode?.finish()
     }
 
-    private fun setOnClickListener(){
-        my_pic_fragment_delete_icon.setOnClickListener { this.deleteSelectedImageFromFirebase() }
-    }
-
     private fun configureRecyclerView(){
         this.adapter = MyPicAdapter(this, generateOptionsForAdapter(PicturesHelper().getAllPicturesFromUser(mViewModel.getCurrentUserUID()!!)))
         adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver(){
@@ -135,7 +131,7 @@ class MyPicFragment : BaseFragment(), MyPicAdapter.Listener, ActionMode.Callback
                     this.manageListToDelete(image, position)
 
                 }else{
-                    (activity as BaseActivity).showFragment(DetailFragment.newInstance(adapter.getItem(position).documentId))
+                    startActivity(DetailActivity.newInstance(activity!! , adapter.getItem(position).documentId))
                 }
             }
             .setOnItemLongClickListener { recyclerView, position, v ->

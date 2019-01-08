@@ -4,34 +4,40 @@
     <!-- USER -->
     <string name="user_default_name">Guest</string>
 
-    <!-- MENU STRING-->
+    <!-- MENU STRING -->
     <string name="selected_menu_delete_text">Delete</string>
     <string name="selected_menu_check_all_text">Select all</string>
     <string name="selected_menu_clear_all_text">Clear Selection</string>
 
-    <!-- ADD ACTIVITY-->
+    <!-- ADD ACTIVITY -->
     <string name="add_activity_public_checkbox_text">Set this picture public?</string>
     <string name="add_activity_upload_progress">%1$d%%</string>
     <string name="add_activity_cancel_button_text">Cancel</string>
     <string name="add_activity_description">Description</string>
 
-    <!-- MAP FRAGMENT-->
+    <!-- DETAIL ACTIVITY -->
+    <string name="detail_activity_error_retrieving_document_uid">An error occurred, unable to retrieve this picture.
+        Please try again
+    </string>
+    <string name="detail_activity_comment_hint">Add a comment…</string>
+    <string name="detail_activity_error_sending_comment">Unable to send your comment, please try again</string>
+    <string name="detail_activity_error_retrieving_comments">Unable to retrieve comments, please try again</string>
+
+    <!-- MAP FRAGMENT -->
     <string name="map_fragment_no_result_message">An error occurred, unable to retrieve pictures. Please try again
     </string>
 
-    <!-- PROFILE FRAGMENT-->
+    <!-- PROFILE FRAGMENT -->
     <string name="profile_fragment_sign_out">SIGN OUT</string>
 
-    <!-- DETAIL FRAGMENT-->
-    <string name="detail_fragment_error_retrieving_document_uid">An error occurred, unable to retrieve this picture.
-        Please try again
-    </string>
-
-    <!-- MY PIC FRAGMENT-->
+    <!-- MY PIC FRAGMENT -->
     <string name="my_pic_fragment_no_image_yet">You have not taken any pictures yet</string>
     <string name="my_pic_fragment_action_bar_text">Selected : %1$d / %2$d</string>
 
     <string name="my_pic_fragment_too_much_image_to_delete">You can\'t delete more than %1$d pictures at a time</string>
+
+    <!-- MODERATION FRAGMENT -->
+    <string name="moderation_fragment_nothing_to_do_message">There is nothing to do for now</string>
 
     <!-- BOTTOM NAVIGATION VIEW -->
     <string name="bottom_navigation_view_home">Home</string>

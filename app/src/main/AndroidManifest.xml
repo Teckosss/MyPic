@@ -48,6 +48,14 @@
                 android:label="@string/title_activity_fullscreen"
                 android:theme="@style/FullscreenTheme">
         </activity>
+        <activity android:name=".Controllers.Activities.DetailActivity">
+        </activity>
+
+        <!-- USE FOR ANDROID 9 -->
+        <uses-library
+                android:name="org.apache.http.legacy"
+                android:required="false" />
+
     </application>
 
 </manifest>

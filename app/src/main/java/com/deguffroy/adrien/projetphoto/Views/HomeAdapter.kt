@@ -17,6 +17,8 @@ class HomeAdapter(private val listPictures:ArrayList<Picture>) : RecyclerView.Ad
 
     override fun getItemCount(): Int = listPictures.size
 
+    fun getItemAtPosition(position: Int) = listPictures[position]
+
     override fun onBindViewHolder(holder: HomeViewHolder, position: Int) {
         holder.updateWithData(listPictures[position])
     }

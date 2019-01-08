@@ -12,6 +12,8 @@ import com.firebase.ui.auth.ErrorCodes
 import com.firebase.ui.auth.IdpResponse
 import com.deguffroy.adrien.projetphoto.Api.UserHelper
 import com.deguffroy.adrien.projetphoto.ViewModels.CommunicationViewModel
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUserMetadata
 import kotlinx.android.synthetic.main.activity_login.*
 
 
@@ -63,16 +65,19 @@ class LoginActivity : BaseActivity() {
 
     // Http request that create user in firestore
     private fun createUserInFirestore() {
-
         if (this.getCurrentUser() != null) {
-            Log.e("LOGIN_ACTIVITY", "createUserInFirestore: LOGGED")
-            val urlPicture =
-                if (this.getCurrentUser()!!.photoUrl != null) this.getCurrentUser()!!.photoUrl!!.toString() else null
-            val username =
-                if (this.getCurrentUser()!!.displayName != null) this.getCurrentUser()!!.displayName else resources.getString(R.string.user_default_name)
-            val uid = this.getCurrentUser()!!.uid
-            this.mViewModel.updateCurrentUserUID(uid)
-            UserHelper().createUser(uid, username, urlPicture).addOnFailureListener(this.onFailureListener())
+           if(this.getCurrentUser()?.metadata!!.creationTimestamp == this.getCurrentUser()?.metadata!!.lastSignInTimestamp){ // NEW USER
+               Log.e("LoginActivity","User doesn't exist in Firestore! Need to create a new one!")
+               val urlPicture =
+                   if (this.getCurrentUser()!!.photoUrl != null) this.getCurrentUser()!!.photoUrl!!.toString() else null
+               val username =
+                   if (this.getCurrentUser()!!.displayName != null) this.getCurrentUser()!!.displayName else resources.getString(R.string.user_default_name)
+               val uid = this.getCurrentUser()!!.uid
+               UserHelper().createUser(uid, username, urlPicture).addOnFailureListener(this.onFailureListener())
+           }else{ // EXISTING USER
+               Log.e("LoginActivity","User already exist in Firestore!")
+           }
+            this.mViewModel.updateCurrentUserUID(this.getCurrentUser()?.uid!!)
         } else {
             Log.e("LOGIN_ACTIVITY", "createUserInFirestore: NOT LOGGED")
         }
@@ -101,6 +106,11 @@ class LoginActivity : BaseActivity() {
                 }
             }
         }
+    }
+
+    private fun isNewSignUp(): Boolean {
+        val metadata:FirebaseUserMetadata = this.getCurrentUser()?.metadata!!
+        return metadata.creationTimestamp == metadata.lastSignInTimestamp
     }
 
     // --------------------

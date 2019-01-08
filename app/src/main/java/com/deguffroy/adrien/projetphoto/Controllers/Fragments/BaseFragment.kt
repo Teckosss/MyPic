@@ -50,7 +50,7 @@ open class BaseFragment : Fragment(), GoogleApiClient.OnConnectionFailedListener
 
         mViewModel = ViewModelProviders.of(activity!!).get(CommunicationViewModel::class.java)
 
-        if (this is DetailFragment || this is ProfileFragment){
+        if (this is ModerationFragment || this is ProfileFragment){
             (activity as MainActivity).hideFab()
         }else{
             (activity as MainActivity).showFab()

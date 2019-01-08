@@ -11,6 +11,7 @@ import com.deguffroy.adrien.projetphoto.R
 import kotlinx.android.synthetic.main.activity_fullscreen.*
 
 class FullscreenActivity : BaseActivity() {
+
   companion object {
       private const val EXTRA_IMAGE = "EXTRA_IMAGE"
       fun newInstance(context: Context, image:String)= Intent(context,FullscreenActivity::class.java).apply { putExtra(

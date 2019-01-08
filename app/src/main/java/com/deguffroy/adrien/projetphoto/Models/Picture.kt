@@ -1,9 +1,7 @@
 package com.deguffroy.adrien.projetphoto.Models
 
-import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.ServerTimestamp
-import com.google.maps.android.clustering.ClusterItem
 
 /**
  * Created by Adrien Deguffroy on 23/11/2018.

@@ -157,11 +157,14 @@ open class BaseActivity : AppCompatActivity(){
         return this.getCurrentUser() != null
     }
 
-    fun getCurrentUserFromFirestore() {
+    protected fun isCurrentUserAnonymous():Boolean = this.getCurrentUser()?.isAnonymous!!
+
+    fun getCurrentUserFromFirestore(changeBottomNav:Boolean = false) {
         UserHelper().getUser(getCurrentUser()?.uid!!)
             .addOnSuccessListener {
                 this.modelCurrentUser = it.toObject<User>(User::class.java)!!
-                if (this is MainActivity){
+                if (changeBottomNav){
+                    Log.e("BaseActivity","Need to change BottomNav! Does user need to see moderation : ${modelCurrentUser.admin || modelCurrentUser.moderator}")
                     bottom_navigation_view.menu.findItem(R.id.bnv_moderation).isVisible = modelCurrentUser.admin || modelCurrentUser.moderator
                     if (modelCurrentUser.admin || modelCurrentUser.moderator){
                         PicturesHelper().getAllPublicPictureNeedingVerification().get().addOnCompleteListener { taskResult ->
@@ -176,6 +179,8 @@ open class BaseActivity : AppCompatActivity(){
                         }
                     }
                 }
+            }.addOnFailureListener {
+                Log.e("BaseActivity","getCurrentUserFromFirestore FAILURE LISTENER : ${it.localizedMessage}")
             }
     }
 
