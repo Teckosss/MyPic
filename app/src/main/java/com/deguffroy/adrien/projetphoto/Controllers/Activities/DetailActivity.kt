@@ -4,23 +4,25 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.deguffroy.adrien.projetphoto.Api.CommentsHelper
 import com.deguffroy.adrien.projetphoto.Api.PicturesHelper
 import com.deguffroy.adrien.projetphoto.Api.ViewsHelper
+import com.deguffroy.adrien.projetphoto.Controllers.Fragments.OptionsModalFragment
 import com.deguffroy.adrien.projetphoto.Models.Comment
 import com.deguffroy.adrien.projetphoto.R
+import com.deguffroy.adrien.projetphoto.Utils.DividerItemDecoration
 import com.deguffroy.adrien.projetphoto.Views.DetailActivityAdapter
-import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import com.google.firebase.auth.FirebaseAuth
+import com.firebase.ui.firestore.paging.FirestorePagingOptions
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.android.synthetic.main.activity_detail.*
-import kotlinx.android.synthetic.main.activity_main.*
 
-class DetailActivity : BaseActivity() {
+class DetailActivity : BaseActivity(), DetailActivityAdapter.Listener, OptionsModalFragment.Listener {
 
     private lateinit var adapter:DetailActivityAdapter
 
@@ -56,17 +58,25 @@ class DetailActivity : BaseActivity() {
 
     private fun configureRecyclerView(){
         if (this.documentId != null){
-            this.adapter = DetailActivityAdapter(generateOptionsForAdapter(CommentsHelper().getCommentsForPicture(this.documentId!!)))
+
+            this.adapter = DetailActivityAdapter(generateOptionsForAdapter(CommentsHelper().getCommentsForPicture(this.documentId!!)),this)
             detail_activity_comment_recycler_view.layoutManager = LinearLayoutManager(this)
             detail_activity_comment_recycler_view.adapter = this.adapter
+            detail_activity_comment_recycler_view.addItemDecoration(DividerItemDecoration(this,0,0))
         }else{
             BaseActivity().showSnackbarMessage(detail_activity_coordinator_layout,resources.getString(R.string.detail_activity_error_retrieving_comments))
         }
     }
 
-    private fun generateOptionsForAdapter(query: Query) = FirestoreRecyclerOptions.Builder<Comment>()
-        .setQuery(query, Comment::class.java)
+    private fun generateOptionsForAdapter(query: Query) = FirestorePagingOptions.Builder<Comment>()
+        .setQuery(query, generateConfig() ,Comment::class.java)
         .setLifecycleOwner(this)
+        .build()
+
+    private fun generateConfig() = PagedList.Config.Builder()
+        .setEnablePlaceholders(false)
+        .setPrefetchDistance(10)
+        .setPageSize(20)
         .build()
 
     private fun setOnClickListener(){
@@ -80,6 +90,7 @@ class DetailActivity : BaseActivity() {
                 this.sendComment(activity_detail_comment_field.text.toString())
             }
         }
+        //activity_detail_comment_field.setOnClickListener { window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE) }
     }
 
     private fun incrementView(){
@@ -127,7 +138,10 @@ class DetailActivity : BaseActivity() {
         }else{
             this.showSnackbarMessage(detail_activity_coordinator_layout, resources.getString(R.string.detail_activity_error_sending_comment))
         }
+    }
 
+    override fun onOptionsClickButton(comment: Comment) {
+        OptionsModalFragment.newInstance(comment.documentId!!, modelCurrentUser.uid).show(supportFragmentManager, "MODAL")
     }
 
     // -------------------
@@ -139,8 +153,15 @@ class DetailActivity : BaseActivity() {
         PicturesHelper().getPictureById(documentId!!).addOnSuccessListener {
             this.imageURL = (it.get("urlImage") as String)
             glide.load(this.imageURL).into(detail_activity_image)
-            detail_activity_desc.text = it.get("description").toString()
+            if(!(it.get("description") as String).isEmpty()){
+                detail_activity_description_title.visibility = View.VISIBLE
+                detail_activity_desc.text = it.get("description").toString()
+            }
             social_view_views.text = (it.get("views") as Long).toInt().toString()
         }
+    }
+
+    override fun displayMessage(message: String) {
+        this.showSnackbarMessage(detail_activity_coordinator_layout,message, Snackbar.LENGTH_LONG)
     }
 }

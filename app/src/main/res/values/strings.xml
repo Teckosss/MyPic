@@ -16,6 +16,7 @@
     <string name="add_activity_description">Description</string>
 
     <!-- DETAIL ACTIVITY -->
+    <string name="detail_activity_description">Description :</string>
     <string name="detail_activity_error_retrieving_document_uid">An error occurred, unable to retrieve this picture.
         Please try again
     </string>
@@ -38,6 +39,11 @@
 
     <!-- MODERATION FRAGMENT -->
     <string name="moderation_fragment_nothing_to_do_message">There is nothing to do for now</string>
+
+    <!-- MODAL FRAGMENT -->
+    <string name="modal_fragment_report_text">Report</string>
+    <string name="modal_fragment_user_already_report">You already report this comment, thanks for you help!</string>
+    <string name="modal_fragment_user_report_success">Thanks for reporting this comment!</string>
 
     <!-- BOTTOM NAVIGATION VIEW -->
     <string name="bottom_navigation_view_home">Home</string>

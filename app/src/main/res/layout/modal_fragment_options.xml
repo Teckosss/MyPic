@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/modal_fragment_coordinator"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/modal_fragment_report_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+    >
+
+        <ImageView
+                android:id="@+id/modal_fragment_report_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/baseline_report_black_24"
+        />
+
+        <TextView
+                android:id="@+id/modal_fragment_report_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/modal_fragment_report_text"
+                android:layout_marginStart="8dp"
+                app:layout_constraintTop_toTopOf="@id/modal_fragment_report_image"
+                app:layout_constraintBottom_toBottomOf="@id/modal_fragment_report_image"
+                app:layout_constraintStart_toEndOf="@id/modal_fragment_report_image"
+                app:layout_constraintEnd_toEndOf="parent"
+        />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -11,3 +11,5 @@ fun Date.toLocaleStringDate():String {
     val dateFormat =  java.text.DateFormat.getDateInstance(DateFormat.SHORT)
     return dateFormat.format(this)
 }
+
+fun Date.toLocaleStringDateMedium():String = java.text.DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM,Locale.getDefault()).format(this)
