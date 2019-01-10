@@ -2,13 +2,16 @@ package com.deguffroy.adrien.projetphoto.Controllers.Activities
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.deguffroy.adrien.projetphoto.Api.CommentsHelper
+import com.deguffroy.adrien.projetphoto.Api.LikesHelper
 import com.deguffroy.adrien.projetphoto.Api.PicturesHelper
 import com.deguffroy.adrien.projetphoto.Api.ViewsHelper
 import com.deguffroy.adrien.projetphoto.Controllers.Fragments.OptionsModalFragment
@@ -25,6 +28,8 @@ import kotlinx.android.synthetic.main.activity_detail.*
 class DetailActivity : BaseActivity(), DetailActivityAdapter.Listener, OptionsModalFragment.Listener {
 
     private lateinit var adapter:DetailActivityAdapter
+    private var userLikeThisPicture:Boolean = false
+    private var likeId:String? = null
 
     private var documentId:String? = null
     private var imageURL:String? = null
@@ -90,7 +95,7 @@ class DetailActivity : BaseActivity(), DetailActivityAdapter.Listener, OptionsMo
                 this.sendComment(activity_detail_comment_field.text.toString())
             }
         }
-        //activity_detail_comment_field.setOnClickListener { window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE) }
+        activity_detail_fab.setOnClickListener { this.clickOnLike() }
     }
 
     private fun incrementView(){
@@ -141,7 +146,64 @@ class DetailActivity : BaseActivity(), DetailActivityAdapter.Listener, OptionsMo
     }
 
     override fun onOptionsClickButton(comment: Comment) {
-        OptionsModalFragment.newInstance(comment.documentId!!, modelCurrentUser.uid).show(supportFragmentManager, "MODAL")
+        if (comment.documentId != null){
+            OptionsModalFragment.newInstance(comment.documentId!!, modelCurrentUser.uid).show(supportFragmentManager, "MODAL")
+        }else{
+            Log.e("DetailActivity","Error! Unable to open bottom sheet fragment. CommentId = ${comment.documentId}")
+        }
+    }
+
+    private fun clickOnLike(){
+        if (userLikeThisPicture){
+            if (this.likeId != null){
+                LikesHelper().deleteLikeForUser(this.likeId!!).addOnSuccessListener {
+                    this.runTransactionToUpdateLikeCount(false)
+                }
+            }
+
+        }else{
+            LikesHelper().createLike(this.documentId!!, this.getCurrentUser()?.uid!!).addOnSuccessListener {
+                this.userLikeThisPicture = true
+                this.likeId = it.id
+                this.runTransactionToUpdateLikeCount(true)
+            }
+        }
+    }
+
+    private fun runTransactionToUpdateLikeCount(toIncrement:Boolean){
+        val db = FirebaseFirestore.getInstance()
+        val docRef = PicturesHelper().getPicturesCollection().document(this.documentId!!)
+
+        db.runTransaction { transaction->
+            val currentLikeCount = transaction.get(docRef)
+            val newLikeCount:Long
+            newLikeCount = if(toIncrement){
+                (currentLikeCount.get("likes")!! as Long) + 1
+            }else{
+                (currentLikeCount.get("likes")!! as Long) - 1
+            }
+            Log.e("DetailActivity","Transaction like new cunt : $newLikeCount")
+            transaction.update(docRef,"likes", if (newLikeCount >=0) newLikeCount else 0)
+        }.addOnSuccessListener { success->
+            Log.e("DetailActivity","Transaction success")
+            this.userLikeThisPicture = toIncrement
+            this.toggleLike(this.userLikeThisPicture)
+
+        }.addOnFailureListener { failure->
+            Log.e("DetailActivity","Transaction failed! | ${failure.localizedMessage}")
+        }
+
+    }
+
+    private fun toggleLike(userLike:Boolean){
+        if(userLike){
+            activity_detail_fab.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.ic_favorite_border_white_24dp))
+            activity_detail_fab.backgroundTintList = (ColorStateList.valueOf(ContextCompat.getColor(this, R.color.button_favorite)))
+        }else{
+            activity_detail_fab.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.baseline_favorite_black_24))
+            activity_detail_fab.backgroundTintList= (ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorGrey)))
+        }
+        activity_detail_fab.show()
     }
 
     // -------------------
@@ -158,6 +220,17 @@ class DetailActivity : BaseActivity(), DetailActivityAdapter.Listener, OptionsMo
                 detail_activity_desc.text = it.get("description").toString()
             }
             social_view_views.text = (it.get("views") as Long).toInt().toString()
+            social_view_likes.text = (it.get("likes") as Long).toInt().toString()
+
+            LikesHelper().checkIfUserAlreadyLikedThisPicture(documentId!!, this.getCurrentUser()?.uid!!).get().addOnSuccessListener {likesTask ->
+                this.userLikeThisPicture = !likesTask.isEmpty
+                this.toggleLike(this.userLikeThisPicture)
+                if (this.userLikeThisPicture){
+                    for (like in likesTask){
+                        this.likeId = like.id
+                    }
+                }
+            }
         }
     }
 
