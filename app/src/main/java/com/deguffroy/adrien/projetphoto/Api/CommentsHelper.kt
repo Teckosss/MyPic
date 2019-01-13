@@ -40,7 +40,8 @@ open class CommentsHelper {
 
     // --- UPDATE ---
 
-    fun updateCommentDocumentID(documentId:String){
-        CommentsHelper().getCommentsCollection().document(documentId).update("documentId",documentId)
-    }
+    fun updateCommentDocumentId(documentId:String)= CommentsHelper().getCommentsCollection().document(documentId).update("documentId",documentId)
+
+    fun updateCommentTextById(documentId: String, replacementText:String) =
+        CommentsHelper().getCommentsCollection().document(documentId).update("commentText", replacementText )
 }

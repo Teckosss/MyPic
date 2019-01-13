@@ -39,6 +39,17 @@
 
     <!-- MODERATION FRAGMENT -->
     <string name="moderation_fragment_nothing_to_do_message">There is nothing to do for now</string>
+    <string name="moderation_fragment_button_accept">Accept</string>
+    <string name="moderation_fragment_button_deny">Deny</string>
+    <string name="moderation_fragment_item_count">%1$d / %2$d</string>
+    <string name="moderation_fragment_title_comments">Comment</string>
+    <string name="moderation_fragment_title_pictures">Pictures</string>
+
+    <string name="moderation_text_replace">This comment has been moderated!</string>
+
+    <!-- MODERATION COMMENT FRAGMENT -->
+    <string name="moderation_comment_reminder_text"><u>Please keep in mind :</u>\nPicture is here to help you understand comment\'s context. You <b>don\'t moderate picture</b>, only comment!</string>
+
 
     <!-- MODAL FRAGMENT -->
     <string name="modal_fragment_report_text">Report</string>

@@ -54,8 +54,10 @@
         <!-- USE FOR ANDROID 9 -->
         <uses-library
                 android:name="org.apache.http.legacy"
-                android:required="false" />
+                android:required="false"/>
 
+        <activity android:name=".Controllers.Activities.ModerationActivity">
+        </activity>
     </application>
 
 </manifest>

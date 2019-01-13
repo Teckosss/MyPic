@@ -58,9 +58,7 @@ open class PicturesHelper {
 
     // --- UPDATE ---
 
-    fun updatePictureDocumentID(uid:String){
-        PicturesHelper().getPicturesCollection().document(uid).update("documentId",uid)
-    }
+    fun updatePictureDocumentID(uid:String)= PicturesHelper().getPicturesCollection().document(uid).update("documentId",uid)
 
     // --- DELETE ---
 

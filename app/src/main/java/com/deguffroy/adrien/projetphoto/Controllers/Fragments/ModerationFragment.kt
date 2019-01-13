@@ -10,12 +10,20 @@ import com.deguffroy.adrien.projetphoto.Api.BottomNavHelper
 import com.deguffroy.adrien.projetphoto.Api.CommentsHelper
 import com.deguffroy.adrien.projetphoto.Api.PicturesHelper
 import com.deguffroy.adrien.projetphoto.Controllers.Activities.MainActivity
+import com.deguffroy.adrien.projetphoto.Controllers.Activities.ModerationActivity
+import com.deguffroy.adrien.projetphoto.Models.Comment
+import com.deguffroy.adrien.projetphoto.Models.Picture
 
 import com.deguffroy.adrien.projetphoto.R
+import com.deguffroy.adrien.projetphoto.Utils.MODERATION_COMMENTS
+import com.deguffroy.adrien.projetphoto.Utils.MODERATION_PICTURES
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_moderation.*
 
 class ModerationFragment : BaseFragment() {
+
+    private lateinit var listPicture:ArrayList<String>
+    private lateinit var listComments:ArrayList<String>
 
     companion object {
         fun newInstance():ModerationFragment = ModerationFragment()
@@ -31,6 +39,11 @@ class ModerationFragment : BaseFragment() {
 
         this.checkItemNeedingModeration()
         this.setListener()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        this.checkItemNeedingModeration()
     }
 
     // -------------------
@@ -51,20 +64,35 @@ class ModerationFragment : BaseFragment() {
         PicturesHelper().getAllPublicPictureNeedingVerification().get().addOnCompleteListener {
             if (it.isSuccessful){
                 noResult = it.result?.isEmpty!!
+                if (!(noResult)){
+                    this.listPicture = arrayListOf()
+                    for (document in it.result!!){
+                        val picture = document.toObject(Picture::class.java)
+                        this.listPicture.add(picture.documentId!!)
+                    }
+                }
                 Log.e("ModerationFrag","Picture result = $noResult")
-                this.setViewVisibility(fragment_moderation_picture_card,fragment_moderation_picture_number, it.result?.size()!!, noResult)
+                this.setViewVisibility(fragment_moderation_picture_card,fragment_moderation_picture_number, it.result?.size()!!, noResult, MODERATION_PICTURES)
             }
 
             CommentsHelper().getCommentsReported().get().addOnCompleteListener {commentTask ->
                 if (commentTask.isSuccessful){
+                    activity?.runOnUiThread{
+                        if (fragment_moderation_swipe_refresh != null) fragment_moderation_swipe_refresh.isRefreshing = false
+                    }
                     noResult = commentTask.result?.isEmpty!!
+                    if (!(noResult)){
+                        this.listComments = arrayListOf()
+                        for (document in commentTask.result!!){
+                            val comment = document.toObject(Comment::class.java)
+                            this.listComments.add(comment.documentId!!)
+                        }
+                    }
                     Log.e("ModerationFrag","Comment result = $noResult")
-                    this.setViewVisibility(fragment_moderation_comment_card,fragment_moderation_comment_number, commentTask.result?.size()!!, noResult)
+                    if (fragment_moderation_comment_card != null){
+                        this.setViewVisibility(fragment_moderation_comment_card,fragment_moderation_comment_number, commentTask.result?.size()!!, noResult, MODERATION_COMMENTS)
+                    }
                 }
-            }
-
-            activity?.runOnUiThread{
-                if (fragment_moderation_swipe_refresh != null) fragment_moderation_swipe_refresh.isRefreshing = false
             }
 
             if (noResult) {
@@ -80,15 +108,23 @@ class ModerationFragment : BaseFragment() {
     // UI
     // -------------------
 
-    private fun setViewVisibility(containerVisibilityToChange:View, numberView:TextView, itemCount:Int, noResult:Boolean){
+    private fun setViewVisibility(containerVisibilityToChange:View, numberView:TextView, itemCount:Int, noResult:Boolean, documentType:String){
         if(noResult){
             containerVisibilityToChange.visibility = View.GONE
             numberView.text = "0"
         }else{
             containerVisibilityToChange.visibility = View.VISIBLE
             numberView.text = itemCount.toString()
+            containerVisibilityToChange.setOnClickListener { this.launchActivity(documentType) }
         }
 
+    }
+
+    private fun launchActivity(documentType: String){
+        when(documentType){
+            MODERATION_PICTURES -> startActivity(ModerationActivity.newInstance(activity!!, this.listPicture, documentType))
+            MODERATION_COMMENTS -> startActivity(ModerationActivity.newInstance(activity!!, this.listComments, documentType))
+        }
     }
 
 }

@@ -11,7 +11,8 @@ data class Comment(var commentText:String,
               var userSender:User,
               @ServerTimestamp var dateCreated:Timestamp? = null,
               var documentId:String? = null,
-              var reportCount:Int = 0){
+              var reportCount:Int = 0,
+              var canBeEdited:Boolean = true){
 
     constructor() : this("","",User())
 }

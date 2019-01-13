@@ -28,4 +28,12 @@ class ReportsHelper {
         .whereEqualTo("userId", userId)
         .whereEqualTo("commentId", commentId)
 
+    fun getAllReportForAComment(commentId:String) = ReportsHelper()
+        .getReportsCollection()
+        .whereEqualTo("commentId", commentId)
+
+    // --- DELETE ---
+
+    fun deleteReportById(reportId:String) = ReportsHelper().getReportsCollection().document(reportId).delete()
+
 }

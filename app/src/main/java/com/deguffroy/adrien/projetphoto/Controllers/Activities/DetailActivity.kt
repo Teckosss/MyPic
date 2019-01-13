@@ -134,7 +134,7 @@ class DetailActivity : BaseActivity(), DetailActivityAdapter.Listener, OptionsMo
     private fun sendComment(commentText:String){
         if (this.documentId != null){
             CommentsHelper().createComment(commentText, this.documentId!!, this.modelCurrentUser).addOnSuccessListener {
-                CommentsHelper().updateCommentDocumentID(it.id)
+                CommentsHelper().updateCommentDocumentId(it.id)
                 activity_detail_comment_field.text = null
             }.addOnFailureListener {
                 Log.e("DetailActivity","Error sending comment : ${it.localizedMessage}")
