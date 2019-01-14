@@ -116,6 +116,21 @@
                             app:layout_constraintStart_toStartOf="@id/detail_activity_description_title"
 
                     />
+                    
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/detail_activity_chips_container"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintStart_toStartOf="@id/detail_activity_stats_view"
+                            app:layout_constraintTop_toBottomOf="@id/detail_activity_stats_view"
+                    >
+                        <com.google.android.material.chip.ChipGroup
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                        </com.google.android.material.chip.ChipGroup>
+                        
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 

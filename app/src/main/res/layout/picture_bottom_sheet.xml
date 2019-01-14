@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/picture_bottom_sheet_container"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/picture_bottom_sheet_image_nudity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+    >
+
+        <ImageView
+                android:id="@+id/picture_bottom_sheet_nudity_image_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/baseline_report_black_24"
+        />
+
+        <TextView
+                android:id="@+id/picture_bottom_sheet_nudity_image_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/picture_bottom_sheet_image_nudity_text"
+                android:layout_marginStart="8dp"
+                app:layout_constraintTop_toTopOf="@id/picture_bottom_sheet_nudity_image_view"
+                app:layout_constraintBottom_toBottomOf="@id/picture_bottom_sheet_nudity_image_view"
+                app:layout_constraintStart_toEndOf="@id/picture_bottom_sheet_nudity_image_view"
+                app:layout_constraintEnd_toEndOf="parent"
+        />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/picture_bottom_sheet_image_violence"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            app:layout_constraintTop_toBottomOf="@id/picture_bottom_sheet_image_nudity"
+    >
+
+        <ImageView
+                android:id="@+id/picture_bottom_sheet_violence_image_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/baseline_report_black_24"
+        />
+
+        <TextView
+                android:id="@+id/picture_bottom_sheet_violence_image_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/picture_bottom_sheet_image_violence_text"
+                android:layout_marginStart="8dp"
+                app:layout_constraintTop_toTopOf="@id/picture_bottom_sheet_violence_image_view"
+                app:layout_constraintBottom_toBottomOf="@id/picture_bottom_sheet_violence_image_view"
+                app:layout_constraintStart_toEndOf="@id/picture_bottom_sheet_violence_image_view"
+                app:layout_constraintEnd_toEndOf="parent"
+        />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/picture_bottom_sheet_text_racism"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            app:layout_constraintTop_toBottomOf="@id/picture_bottom_sheet_image_violence"
+    >
+
+        <ImageView
+                android:id="@+id/picture_bottom_sheet_racism_image_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/baseline_report_black_24"
+        />
+
+        <TextView
+                android:id="@+id/picture_bottom_sheet_racism_image_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/picture_bottom_sheet_text_racism_text"
+                android:layout_marginStart="8dp"
+                app:layout_constraintTop_toTopOf="@id/picture_bottom_sheet_racism_image_view"
+                app:layout_constraintBottom_toBottomOf="@id/picture_bottom_sheet_racism_image_view"
+                app:layout_constraintStart_toEndOf="@id/picture_bottom_sheet_racism_image_view"
+                app:layout_constraintEnd_toEndOf="parent"
+        />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/picture_bottom_sheet_text_vulgar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            app:layout_constraintTop_toBottomOf="@id/picture_bottom_sheet_text_racism"
+    >
+
+        <ImageView
+                android:id="@+id/picture_bottom_sheet_vulgar_image_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/baseline_report_black_24"
+        />
+
+        <TextView
+                android:id="@+id/picture_bottom_sheet_vulgar_image_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/picture_bottom_sheet_text_vulgar_text"
+                android:layout_marginStart="8dp"
+                app:layout_constraintTop_toTopOf="@id/picture_bottom_sheet_vulgar_image_view"
+                app:layout_constraintBottom_toBottomOf="@id/picture_bottom_sheet_vulgar_image_view"
+                app:layout_constraintStart_toEndOf="@id/picture_bottom_sheet_vulgar_image_view"
+                app:layout_constraintEnd_toEndOf="parent"
+        />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

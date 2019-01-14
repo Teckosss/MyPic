@@ -34,6 +34,7 @@ class CommentsPageFragment : ModerationBaseFragment() {
     private lateinit var rootView:ConstraintLayout
     private lateinit var pictureId:String
     private lateinit var listCommentIdToDelete:ArrayList<String>
+    private lateinit var previousText:String
 
     companion object {
         private const val POSITION = "POSITION"
@@ -76,20 +77,21 @@ class CommentsPageFragment : ModerationBaseFragment() {
     // -------------------
 
     override fun onClickAcceptButton() {
-        CommentsHelper().updateCommentTextById(this.commentId, rootView.findViewById<EditText>(R.id.comment_page_text_view).text.toString()).addOnSuccessListener {
-            (activity as ModerationActivity).moveToNext(this.position)
-            this.resetReportCountAndDeleteReports(false)
+        if (rootView.findViewById<EditText>(R.id.comment_page_text_view).text.toString() != this.previousText){
+            CommentsHelper().updateCommentTextById(this.commentId, rootView.findViewById<EditText>(R.id.comment_page_text_view).text.toString()).addOnSuccessListener {
+                this.moveToNextAndReset(false)
+            }
         }
+        this.moveToNextAndReset(false)
     }
 
     override fun onClickDenyButton() {
-        CommentsHelper().updateCommentTextById(this.commentId, resources.getString(R.string.moderation_text_replace)).addOnSuccessListener {
-            (activity as ModerationActivity).moveToNext(this.position)
-            this.resetReportCountAndDeleteReports(true)
+        CommentsHelper().deleteCommentById(this.commentId).addOnSuccessListener {
+            this.moveToNextAndReset(true)
         }
     }
 
-    private fun resetReportCountAndDeleteReports(setToUnEditable:Boolean){
+    private fun resetReportCountAndDeleteReports(deleteComment:Boolean){
         val db = FirebaseFirestore.getInstance()
         val batch = db.batch()
 
@@ -99,8 +101,7 @@ class CommentsPageFragment : ModerationBaseFragment() {
                 for (document in it){
                     this.listCommentIdToDelete.add(document.id)
                 }
-                batch.update(CommentsHelper().getCommentsCollection().document(commentId),"reportCount",0)
-                if (setToUnEditable) batch.update(CommentsHelper().getCommentsCollection().document(commentId),"canBeEdited",false)
+                if (!deleteComment) batch.update(CommentsHelper().getCommentsCollection().document(commentId),"reportCount",0)
                 listCommentIdToDelete.forEach{commentIdToDelete ->
                     batch.delete(ReportsHelper().getReportsCollection().document(commentIdToDelete))
                 }
@@ -111,8 +112,11 @@ class CommentsPageFragment : ModerationBaseFragment() {
                 }
             }
         }
+    }
 
-
+    private fun moveToNextAndReset(deleteComment:Boolean){
+        (activity as ModerationActivity).moveToNext(this.position)
+        this.resetReportCountAndDeleteReports(deleteComment)
     }
 
     // -------------------
@@ -128,6 +132,7 @@ class CommentsPageFragment : ModerationBaseFragment() {
         CommentsHelper().getCommentById(commentId).addOnSuccessListener {
             val comment = it.toObject(Comment::class.java)
             rootView.findViewById<TextView>(R.id.comment_page_text_view).text = comment?.commentText
+            this.previousText = comment?.commentText!!
 
             PicturesHelper().getPictureById(comment?.pictureId!!).addOnSuccessListener {pictureTask->
                 val picture = pictureTask.toObject(Picture::class.java)

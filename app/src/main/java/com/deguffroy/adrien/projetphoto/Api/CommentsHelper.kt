@@ -44,4 +44,8 @@ open class CommentsHelper {
 
     fun updateCommentTextById(documentId: String, replacementText:String) =
         CommentsHelper().getCommentsCollection().document(documentId).update("commentText", replacementText )
+
+    // --- DELETE ---
+
+    fun deleteCommentById(commentId: String) = CommentsHelper().getCommentsCollection().document(commentId).delete()
 }

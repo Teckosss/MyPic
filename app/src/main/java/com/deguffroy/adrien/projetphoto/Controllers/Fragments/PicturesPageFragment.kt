@@ -7,21 +7,30 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.fragment.app.FragmentTransaction
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.deguffroy.adrien.projetphoto.Api.PicturesHelper
+import com.deguffroy.adrien.projetphoto.Controllers.Activities.ModerationActivity
 import com.deguffroy.adrien.projetphoto.Models.Picture
 
 import com.deguffroy.adrien.projetphoto.R
+import com.deguffroy.adrien.projetphoto.Utils.BottomSheetInterface
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 
-class PicturesPageFragment : ModerationBaseFragment() {
+class PicturesPageFragment : ModerationBaseFragment() , BottomSheetInterface {
 
     private var position: Int = 0
     private var documentId = ""
     private var itemCount:Int? = null
+
+    private lateinit var callback:BottomSheetInterface
+
     private lateinit var rootView:ConstraintLayout
+    private lateinit var previousText:String
 
     companion object {
         private const val POSITION = "POSITION"
@@ -47,6 +56,8 @@ class PicturesPageFragment : ModerationBaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        callback = this
+
         Log.e("PicturePageFrag","View Created!")
 
         this.position = arguments?.getInt(POSITION)!!
@@ -58,16 +69,37 @@ class PicturesPageFragment : ModerationBaseFragment() {
         this.updateUI()
     }
 
+
+
     // -------------------
     // ACTION
     // -------------------
 
     override fun onClickAcceptButton() {
+        val db = FirebaseFirestore.getInstance()
+        val batch = db.batch()
 
+        if(previousText != rootView.findViewById<TextView>(R.id.picture_page_text_view).text.toString()){
+            batch.update(PicturesHelper().getPicturesCollection().document(this.documentId),
+                "description",
+                rootView.findViewById<TextView>(R.id.picture_page_text_view).text.toString())
+        }
+        batch.update(PicturesHelper().getPicturesCollection().document(this.documentId), "verificationDone", true)
+        batch.commit().addOnSuccessListener {
+            Log.e("PicturePage","Batch success")
+            (activity as ModerationActivity).moveToNext(this.position)
+        }.addOnFailureListener {failureTask->
+            Log.e("PicturePage","Batch failure! ${failureTask.localizedMessage}")
+        }
     }
 
     override fun onClickDenyButton() {
+        val transaction = (activity!!).supportFragmentManager.beginTransaction()
+        PictureBottomSheet.newInstance(this.documentId, this).show(transaction, "PICTURE_SHEET")
+    }
 
+    override fun returnToPicturePageFragment() {
+        (activity as ModerationActivity).moveToNext(this.position)
     }
 
     // -------------------
@@ -86,7 +118,8 @@ class PicturesPageFragment : ModerationBaseFragment() {
             val picture = it.toObject(Picture::class.java)
             glide.load(picture?.urlImage).apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)).into(rootView.findViewById(R.id.picture_page_image_view))
 
-            rootView.findViewById<TextView>(R.id.picture_page_text_view).text = "Numéro de page $position"
+            rootView.findViewById<TextView>(R.id.picture_page_text_view).text = picture?.description
+            this.previousText = picture?.description!!
         }
 
         rootView.findViewById<TextView>(R.id.moderation_top_text_view).text = resources.getString(R.string.moderation_fragment_item_count, position + 1, itemCount)

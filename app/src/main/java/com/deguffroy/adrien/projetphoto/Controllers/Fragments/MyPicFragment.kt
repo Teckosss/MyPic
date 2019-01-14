@@ -1,7 +1,5 @@
 package com.deguffroy.adrien.projetphoto.Controllers.Fragments
 
-
-import android.app.Activity
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -20,24 +18,16 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_my_pic.*
 import java.lang.IllegalStateException
 
-
-/**
- * A simple [Fragment] subclass.
- *
- */
 class MyPicFragment : BaseFragment(), MyPicAdapter.Listener, ActionMode.Callback{
 
     private lateinit var adapter:MyPicAdapter
     private var actionMode: ActionMode? = null
 
     companion object {
-        fun newInstance():MyPicFragment{
-            return MyPicFragment()
-        }
+        fun newInstance():MyPicFragment = MyPicFragment()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -51,9 +41,6 @@ class MyPicFragment : BaseFragment(), MyPicAdapter.Listener, ActionMode.Callback
         this.clearListAndActionMode()
         this.configureRecyclerView()
         this.configureOnClickItemRecyclerView()
-
-        //this.changeBottomInfo(mViewModel.currentListImagesToDelete.size)
-        //this.retrieveUserData()
     }
 
     override fun onDestroy() {

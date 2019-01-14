@@ -9,6 +9,7 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.deguffroy.adrien.projetphoto.Api.CommentsHelper
 import com.deguffroy.adrien.projetphoto.Api.LikesHelper
@@ -66,6 +67,11 @@ class DetailActivity : BaseActivity(), DetailActivityAdapter.Listener, OptionsMo
 
             this.adapter = DetailActivityAdapter(generateOptionsForAdapter(CommentsHelper().getCommentsForPicture(this.documentId!!)),this)
             detail_activity_comment_recycler_view.layoutManager = LinearLayoutManager(this)
+            /*adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver(){
+                override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+
+                }
+            })*/
             detail_activity_comment_recycler_view.adapter = this.adapter
             detail_activity_comment_recycler_view.addItemDecoration(DividerItemDecoration(this,0,0))
         }else{
@@ -136,6 +142,7 @@ class DetailActivity : BaseActivity(), DetailActivityAdapter.Listener, OptionsMo
             CommentsHelper().createComment(commentText, this.documentId!!, this.modelCurrentUser).addOnSuccessListener {
                 CommentsHelper().updateCommentDocumentId(it.id)
                 activity_detail_comment_field.text = null
+                adapter.notifyDataSetChanged()
             }.addOnFailureListener {
                 Log.e("DetailActivity","Error sending comment : ${it.localizedMessage}")
                 this.showSnackbarMessage(detail_activity_coordinator_layout, resources.getString(R.string.detail_activity_error_sending_comment))

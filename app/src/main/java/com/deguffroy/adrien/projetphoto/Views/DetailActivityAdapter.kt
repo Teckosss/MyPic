@@ -5,12 +5,9 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.deguffroy.adrien.projetphoto.Models.Comment
 import com.deguffroy.adrien.projetphoto.R
-import com.firebase.ui.firestore.FirestoreRecyclerAdapter
-import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.firebase.ui.firestore.paging.FirestorePagingAdapter
 import com.firebase.ui.firestore.paging.FirestorePagingOptions
 import com.firebase.ui.firestore.paging.LoadingState
-import java.util.zip.Inflater
 
 /**
  * Created by Adrien Deguffroy on 08/01/2019.

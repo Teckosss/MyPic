@@ -50,6 +50,11 @@
     <!-- MODERATION COMMENT FRAGMENT -->
     <string name="moderation_comment_reminder_text"><u>Please keep in mind :</u>\nPicture is here to help you understand comment\'s context. You <b>don\'t moderate picture</b>, only comment!</string>
 
+    <!-- PICTURE BOTTOM SHEET -->
+    <string name="picture_bottom_sheet_image_nudity_text">IMAGE NUDITY</string>
+    <string name="picture_bottom_sheet_image_violence_text">IMAGE VIOLENCE</string>
+    <string name="picture_bottom_sheet_text_racism_text">TEXT RACISM</string>
+    <string name="picture_bottom_sheet_text_vulgar_text">TEXT VULGAR</string>
 
     <!-- MODAL FRAGMENT -->
     <string name="modal_fragment_report_text">Report</string>

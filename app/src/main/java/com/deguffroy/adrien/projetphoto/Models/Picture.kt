@@ -17,7 +17,8 @@ data class Picture(var userSender:User,
                    var comments:Int? = 0,
                    var documentId:String? = null,
                    var g:String? = "",
-                   var l:List<Double> = listOf()){
+                   var l:List<Double> = listOf(),
+                   var denyReason:String = ""){
 
     constructor() : this(User(),false,false,"")
 }

@@ -60,6 +60,10 @@ open class PicturesHelper {
 
     fun updatePictureDocumentID(uid:String)= PicturesHelper().getPicturesCollection().document(uid).update("documentId",uid)
 
+    fun updatePictureDescription(uid:String, description: String) = PicturesHelper().getPicturesCollection().document(uid).update("description", description)
+
+    fun updateDenyReason(uid: String, reason:String) = PicturesHelper().getPicturesCollection().document(uid).update("denyReason", reason)
+
     // --- DELETE ---
 
     fun deletePictureByID(uid:String) = PicturesHelper().getPicturesCollection().document(uid).delete()
