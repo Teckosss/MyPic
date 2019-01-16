@@ -9,15 +9,18 @@ import androidx.recyclerview.widget.RecyclerView
 import com.deguffroy.adrien.projetphoto.Api.PicturesHelper
 import com.deguffroy.adrien.projetphoto.Controllers.Activities.BaseActivity
 import com.deguffroy.adrien.projetphoto.Controllers.Activities.DetailActivity
+import com.deguffroy.adrien.projetphoto.Controllers.Activities.MainActivity
 import com.deguffroy.adrien.projetphoto.Models.Picture
 import com.deguffroy.adrien.projetphoto.R
 import com.deguffroy.adrien.projetphoto.Utils.ItemClickSupport
 import com.deguffroy.adrien.projetphoto.Utils.MAX_NUMBER_IMAGE_DELETE
 import com.deguffroy.adrien.projetphoto.Views.MyPicAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_my_pic.*
 import java.lang.IllegalStateException
 
@@ -63,7 +66,6 @@ class MyPicFragment : BaseFragment(), MyPicAdapter.Listener, ActionMode.Callback
                 this.deleteSelectedImageFromFirebase()
                 p0?.finish() }
             R.id.selected_menu_check_all -> {
-                adapter.setAllItemsSelected()
                 this.manageListFromMenu(p1.itemId)
             }
             R.id.selected_menu_clear_all -> {
@@ -207,11 +209,20 @@ class MyPicFragment : BaseFragment(), MyPicAdapter.Listener, ActionMode.Callback
     private fun manageListFromMenu(action:Int){
         if (action == R.id.selected_menu_check_all){
             mViewModel.currentListImagesToDelete.clear()
+            adapter.clearSelection()
+
             val listToAdd = arrayListOf<Picture>()
-            (0 until adapter.getSelectedItemCount()).forEach {
-                val image = adapter.getItem(it)
-                listToAdd.add(image)
+            Log.e("MyPicFragment","Item number in adapter : ${adapter.getSelectedItemCount()}")
+
+            (0 until adapter.itemCount).forEach {
+                if (it < adapter.itemCount && it < MAX_NUMBER_IMAGE_DELETE){
+                    adapter.toggleSelection(it)
+                    Log.e("MyPicFragment","listToAdd size : ${listToAdd.size} \n $listToAdd")
+                    val image = adapter.getItem(it)
+                    listToAdd.add(image)
+                }
             }
+
             mViewModel.currentListImagesToDelete.addAll(listToAdd)
             Log.e("MyPicFragment","List to delete size : ${mViewModel.currentListImagesToDelete.size}")
         }else{
@@ -253,6 +264,6 @@ class MyPicFragment : BaseFragment(), MyPicAdapter.Listener, ActionMode.Callback
     }
 
     private fun displayMessage(message:String){
-        BaseActivity().showSnackbarMessage(my_pic_fragment_coordinator,message)
+        BaseActivity().showSnackbarMessage(my_pic_fragment_coordinator,message,Snackbar.LENGTH_LONG, (activity as MainActivity).main_activity_fab)
     }
 }

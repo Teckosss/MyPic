@@ -13,7 +13,12 @@
 >
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="8dp"
+    >
 
         <ImageView
                 android:id="@+id/home_user_profile_picture"
@@ -21,8 +26,6 @@
                 android:layout_height="30dp"
                 android:minWidth="30dp"
                 android:minHeight="30dp"
-                android:layout_marginStart="@dimen/margin_small"
-                android:layout_marginTop="@dimen/margin_small"
                 card_view:layout_constraintStart_toStartOf="parent"
                 card_view:layout_constraintBottom_toTopOf="@+id/home_item_image_view"
                 card_view:layout_constraintTop_toTopOf="parent"/>
@@ -33,7 +36,7 @@
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
                 card_view:layout_constraintStart_toEndOf="@id/home_user_profile_picture"
-                android:layout_marginStart="@dimen/margin_small"
+                android:layout_marginStart="24dp"
                 card_view:layout_constraintTop_toTopOf="@+id/home_user_profile_picture"
                 card_view:layout_constraintBottom_toBottomOf="@+id/home_user_profile_picture"
         />
@@ -50,9 +53,9 @@
         <ImageView
                 android:id="@+id/home_item_image_view"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="194dp"
                 card_view:layout_constraintTop_toBottomOf="@id/home_user_profile_picture"
-                android:layout_marginTop="2dp"
+                android:layout_marginTop="8dp"
         />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -27,7 +27,7 @@ class PicturesPageFragment : ModerationBaseFragment() , BottomSheetInterface {
     private var documentId = ""
     private var itemCount:Int? = null
 
-    private lateinit var callback:BottomSheetInterface
+    private var callback:BottomSheetInterface? = null
 
     private lateinit var rootView:ConstraintLayout
     private lateinit var previousText:String
@@ -67,6 +67,11 @@ class PicturesPageFragment : ModerationBaseFragment() , BottomSheetInterface {
 
         this.setOnClickListener()
         this.updateUI()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        this.callback = null
     }
 
 

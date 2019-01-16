@@ -3,14 +3,20 @@ package com.deguffroy.adrien.projetphoto.Controllers.Activities
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.graphics.ColorFilter
 import android.os.Bundle
+import android.text.Editable
 import android.util.Log
 import android.view.View
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.deguffroy.adrien.projetphoto.Api.CommentsHelper
 import com.deguffroy.adrien.projetphoto.Api.LikesHelper
 import com.deguffroy.adrien.projetphoto.Api.PicturesHelper
@@ -29,9 +35,12 @@ import kotlinx.android.synthetic.main.activity_detail.*
 class DetailActivity : BaseActivity(), DetailActivityAdapter.Listener, OptionsModalFragment.Listener {
 
     private lateinit var adapter:DetailActivityAdapter
+    private var userIsOwner:Boolean? = null
+    private var isPublicPicture:Boolean? = null
+    private var isPictureDenyByModeration:Boolean? = null
+
     private var userLikeThisPicture:Boolean = false
     private var likeId:String? = null
-
     private var documentId:String? = null
     private var imageURL:String? = null
 
@@ -85,7 +94,6 @@ class DetailActivity : BaseActivity(), DetailActivityAdapter.Listener, OptionsMo
         .build()
 
     private fun generateConfig() = PagedList.Config.Builder()
-        .setEnablePlaceholders(false)
         .setPrefetchDistance(10)
         .setPageSize(20)
         .build()
@@ -102,6 +110,9 @@ class DetailActivity : BaseActivity(), DetailActivityAdapter.Listener, OptionsMo
             }
         }
         activity_detail_fab.setOnClickListener { this.clickOnLike() }
+
+        detail_activity_chip_public.setOnClickListener { this.toggleVisibilityScope((!this.isPublicPicture!!),false, this.isPictureDenyByModeration!!) }
+        detail_activity_chip_private.setOnClickListener { this.toggleVisibilityScope((!this.isPublicPicture!!),false, this.isPictureDenyByModeration!!) }
     }
 
     private fun incrementView(){
@@ -160,6 +171,16 @@ class DetailActivity : BaseActivity(), DetailActivityAdapter.Listener, OptionsMo
         }
     }
 
+    override fun startLoading() {
+        detail_activity_comment_recycler_view.visibility = View.GONE
+        detail_activity_recycler_loading.visibility = View.VISIBLE
+    }
+
+    override fun loaded() {
+        detail_activity_comment_recycler_view.visibility = View.VISIBLE
+        detail_activity_recycler_loading.visibility = View.GONE
+    }
+
     private fun clickOnLike(){
         if (userLikeThisPicture){
             if (this.likeId != null){
@@ -213,18 +234,77 @@ class DetailActivity : BaseActivity(), DetailActivityAdapter.Listener, OptionsMo
         activity_detail_fab.show()
     }
 
+    private fun displayChipsContainer(mustDisplayContainer:Boolean, isPublicPicture:Boolean){
+        Log.e("DetailActivity","isPublicPicture = $isPublicPicture")
+        this.userIsOwner = mustDisplayContainer
+        this.isPublicPicture = isPublicPicture
+        if(mustDisplayContainer){
+            detail_activity_chips_container.visibility = View.VISIBLE
+            this.toggleVisibilityScope(isPublicPicture, true, false)
+        }else{
+            detail_activity_chips_container.visibility = View.GONE
+        }
+    }
+
+    private fun toggleVisibilityScope(setToPublic:Boolean, whenUpdatingUI:Boolean = false, isDenyByModeration:Boolean){
+        if (!whenUpdatingUI){
+            if (isDenyByModeration){
+                this.displayMessage(resources.getString(R.string.detail_activity_error_already_deny_by_moderation))
+                this.toggleVisibilityOnUI(false)
+                return
+            }else{
+                PicturesHelper().toggleVisibilityScope(this.documentId!!, setToPublic).addOnSuccessListener {
+                    this.displayMessage(resources.getString(R.string.detail_activity_success_toggle_visibility))
+                    this.toggleVisibilityOnUI(setToPublic)
+                    return@addOnSuccessListener
+                }.addOnFailureListener { failureTask->
+                    Log.e("DetailActivity","Fail to toggle visibility scope! ${failureTask.localizedMessage}")
+                    this.displayMessage(resources.getString(R.string.detail_activity_error_toggle_visibility))
+                    return@addOnFailureListener
+                }
+            }
+        }
+        this.toggleVisibilityOnUI(setToPublic)
+    }
+
     // -------------------
     // UI
     // -------------------
 
+    private fun toggleVisibilityOnUI(setToPublic: Boolean){
+        Log.e("DetailActivity","toggleVisibilityOnUI = $setToPublic")
+        if (setToPublic){
+            detail_activity_chip_public.isChecked = true
+            detail_activity_chip_private.isChecked = false
+        }else{
+            detail_activity_chip_public.isChecked = false
+            detail_activity_chip_private.isChecked = true
+        }
+        this.isPublicPicture = setToPublic
+    }
+
     private fun updateUIWhenCreating(){
         val glide = Glide.with(this)
         PicturesHelper().getPictureById(documentId!!).addOnSuccessListener {
+            val denyReason = (it.get("denyReason") as String?)
+            if (denyReason != null) {
+                Log.e("DetailActivity", "isPictureDenyByModeration = ${!denyReason.isBlank()}")
+                this.isPictureDenyByModeration = !denyReason.isBlank()
+            }else{
+                this.isPictureDenyByModeration = false
+            }
+
+            this.displayChipsContainer(
+                (it.get("userSender.uid") as String) == getCurrentUser()?.uid!!,
+                (it.get("public") as Boolean))
+
             this.imageURL = (it.get("urlImage") as String)
-            glide.load(this.imageURL).into(detail_activity_image)
+            glide.load(this.imageURL)
+                .apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(this.getCircularPlaceHolder(5F,30F)))
+                .into(detail_activity_image)
             if(!(it.get("description") as String).isEmpty()){
                 detail_activity_description_title.visibility = View.VISIBLE
-                detail_activity_desc.text = it.get("description").toString()
+                detail_activity_desc.setText(it.get("description").toString(), TextView.BufferType.EDITABLE)
             }
             social_view_views.text = (it.get("views") as Long).toInt().toString()
             social_view_likes.text = (it.get("likes") as Long).toInt().toString()
@@ -243,5 +323,13 @@ class DetailActivity : BaseActivity(), DetailActivityAdapter.Listener, OptionsMo
 
     override fun displayMessage(message: String) {
         this.showSnackbarMessage(detail_activity_coordinator_layout,message, Snackbar.LENGTH_LONG)
+    }
+
+    private fun getCircularPlaceHolder(strokeWidth:Float, centerRadius:Float):CircularProgressDrawable{
+        val circularPlaceHolder = CircularProgressDrawable(this)
+        circularPlaceHolder.strokeWidth = strokeWidth
+        circularPlaceHolder.centerRadius = centerRadius
+        circularPlaceHolder.start()
+        return circularPlaceHolder
     }
 }

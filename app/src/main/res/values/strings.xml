@@ -17,12 +17,16 @@
 
     <!-- DETAIL ACTIVITY -->
     <string name="detail_activity_description">Description :</string>
-    <string name="detail_activity_error_retrieving_document_uid">An error occurred, unable to retrieve this picture.
-        Please try again
-    </string>
     <string name="detail_activity_comment_hint">Add a comment…</string>
+    <string name="detail_activity_chip_public_text">Public</string>
+    <string name="detail_activity_chip_private_text">Private</string>
+    <string name="detail_activity_success_toggle_visibility">Successfully change your picture visibility!</string>
+
+    <string name="detail_activity_error_retrieving_document_uid">An error occurred, unable to retrieve this picture. Please try again</string>
     <string name="detail_activity_error_sending_comment">Unable to send your comment, please try again</string>
     <string name="detail_activity_error_retrieving_comments">Unable to retrieve comments, please try again</string>
+    <string name="detail_activity_error_toggle_visibility">Unable to change visibility, please try again later</string>
+    <string name="detail_activity_error_already_deny_by_moderation">Unable to change visibility. This picture already been deny by moderation!</string>
 
     <!-- MAP FRAGMENT -->
     <string name="map_fragment_no_result_message">An error occurred, unable to retrieve pictures. Please try again

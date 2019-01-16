@@ -31,7 +31,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toTopOf="@id/bottom_navigation_view"
                 android:clickable="true"
-                android:backgroundTint="@color/colorPrimary"
                 android:src="@drawable/baseline_photo_camera_white_24"
                 android:layout_marginEnd="@dimen/FAB_margin"
                 android:layout_marginBottom="@dimen/FAB_margin"

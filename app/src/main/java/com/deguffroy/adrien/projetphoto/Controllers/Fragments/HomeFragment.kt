@@ -52,6 +52,11 @@ class HomeFragment : BaseFragment() {
         this.retrievePicture()
     }
 
+    override fun onResume() {
+        super.onResume()
+        this.retrievePicture()
+    }
+
     // -------------------
     // CONFIGURATION
     // -------------------
