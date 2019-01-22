@@ -53,8 +53,6 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        Log.e("MainActivity","USER INFO || USER IS ANONYMOUS : ${this.isCurrentUserAnonymous()}")
-
         this.picturesList = ArrayList()
 
         this.initDb()

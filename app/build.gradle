@@ -44,6 +44,9 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.7.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.6.1'
 
+    // GSON
+    implementation 'com.google.code.gson:gson:2.8.5'
+
     // QUICK PERMISSIONS
     implementation 'com.github.quickpermissions:quickpermissions-kotlin:0.3.0'
 

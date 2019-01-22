@@ -1,8 +1,6 @@
 package com.deguffroy.adrien.projetphoto.Api
 
-import com.deguffroy.adrien.projetphoto.Models.Comment
 import com.deguffroy.adrien.projetphoto.Models.Report
-import com.deguffroy.adrien.projetphoto.Models.User
 import com.google.firebase.firestore.FirebaseFirestore
 
 /**

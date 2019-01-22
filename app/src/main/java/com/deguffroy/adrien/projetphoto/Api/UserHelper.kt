@@ -24,5 +24,7 @@ open class UserHelper {
 
     // --- UPDATE ---
 
+    fun updateUsername(uid: String, username: String) = UserHelper().getUsersCollection().document(uid).update("username", username)
+
     // --- DELETE ---
 }

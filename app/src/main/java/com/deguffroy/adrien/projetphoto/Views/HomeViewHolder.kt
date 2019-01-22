@@ -1,5 +1,6 @@
 package com.deguffroy.adrien.projetphoto.Views
 
+import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -15,6 +16,7 @@ import kotlinx.android.synthetic.main.fragment_home_item.view.*
 class HomeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     fun updateWithData(picture:Picture){
+        Log.e("HomeViewHolder","Enter HomeViewHolder : $picture")
         val glide = Glide.with(itemView.context)
         if (!(picture.userSender.userPicture.isNullOrBlank())){
             glide.load(picture.userSender.userPicture)

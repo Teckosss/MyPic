@@ -6,17 +6,21 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.deguffroy.adrien.projetphoto.Api.CommentsHelper
 import com.deguffroy.adrien.projetphoto.Api.PicturesHelper
 import com.deguffroy.adrien.projetphoto.Controllers.Activities.BaseActivity
 import com.deguffroy.adrien.projetphoto.Controllers.Activities.DetailActivity
 import com.deguffroy.adrien.projetphoto.Controllers.Activities.MainActivity
+import com.deguffroy.adrien.projetphoto.Models.Comment
 import com.deguffroy.adrien.projetphoto.Models.Picture
 import com.deguffroy.adrien.projetphoto.R
 import com.deguffroy.adrien.projetphoto.Utils.ItemClickSupport
 import com.deguffroy.adrien.projetphoto.Utils.MAX_NUMBER_IMAGE_DELETE
+import com.deguffroy.adrien.projetphoto.Utils.MAX_NUMBER_LIST_SIZE_DELETE
 import com.deguffroy.adrien.projetphoto.Views.MyPicAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.android.material.snackbar.Snackbar
+import com.google.common.collect.Lists
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
@@ -234,29 +238,75 @@ class MyPicFragment : BaseFragment(), MyPicAdapter.Listener, ActionMode.Callback
     private fun deleteSelectedImageFromFirebase(){
         if(mViewModel.currentListImagesToDelete.size <= MAX_NUMBER_IMAGE_DELETE){
             val db = FirebaseFirestore.getInstance()
-            val batch = db.batch()
 
             mViewModel.currentListImagesToDelete.forEach {
                 val currentImage = it
-                batch.delete(PicturesHelper().getPicturesCollection().document(currentImage.documentId!!))
-            }
-            batch.commit().addOnCompleteListener {
-                if (it.isSuccessful){
-                    val storageRef = FirebaseStorage.getInstance().reference.storage
-                    val listToDelete = mViewModel.currentListImagesToDelete.toList()
-                    listToDelete.forEach { pic ->
-                        val urlReference = storageRef.getReferenceFromUrl(pic.urlImage)
-                        urlReference.delete().addOnSuccessListener {
-                            Log.e("MyPicFragment","Delete from Storage : OK")
-                            mViewModel.currentListImagesToDelete.remove(pic)
-                        }.addOnFailureListener {e ->
-                            Log.e("MyPicFragment","Delete from Storage error : ${e.localizedMessage}")
+                val batchImage = db.batch()
+                batchImage.delete(PicturesHelper().getPicturesCollection().document(currentImage.documentId!!))
+                CommentsHelper().getCommentsForPicture(currentImage.documentId!!).get().addOnCompleteListener {commentTask ->
+                    if(commentTask.isSuccessful){
+                        Log.e("MyPicFragment","Comment's number : ${commentTask.result!!.size()}")
+                        if (commentTask.result!!.isEmpty){
+                            Log.e("MyPicFragment","This picture doesn't have any comment")
+                        }else{
+                            for (document in commentTask.result!!){
+                                val comment = document.toObject(Comment::class.java)
+                                Log.e("MyPicFragment","comment : $comment")
+                                mViewModel.currentListCommentToDelete.add(comment)
+                            }
+                            Log.e("MyPicFragment","currentListCommentToDelete size : ${mViewModel.currentListCommentToDelete.size}")
                         }
                     }
                 }
-            }.addOnFailureListener {
-                Log.e("MyPicFragment","Batch delete error : ${it.localizedMessage}")
+
+                batchImage.commit().addOnCompleteListener {batch ->
+                    if (batch.isSuccessful){
+                        val storageRef = FirebaseStorage.getInstance().reference.storage
+                        val listToDelete = mViewModel.currentListImagesToDelete.toList()
+                        listToDelete.forEach { pic ->
+                            val urlReference = storageRef.getReferenceFromUrl(pic.urlImage)
+                            urlReference.delete().addOnSuccessListener {
+                                Log.e("MyPicFragment","Delete from Storage : OK")
+                                mViewModel.currentListImagesToDelete.remove(pic)
+                            }.addOnFailureListener {e ->
+                                Log.e("MyPicFragment","Delete from Storage error : ${e.localizedMessage}")
+                            }
+                        }
+
+
+
+                        if (mViewModel.currentListCommentToDelete.size < MAX_NUMBER_IMAGE_DELETE){
+                            val batchCommentSimple = db.batch()
+                            mViewModel.currentListCommentToDelete.forEach { commentIndex ->
+                                batchCommentSimple.delete(CommentsHelper().getCommentsCollection().document(commentIndex.documentId!!))
+                            }
+                            batchCommentSimple.commit().addOnSuccessListener {
+                                Log.e("MyPicFragment","Batch comment success!")
+                            }.addOnFailureListener {commentFailure->
+                                Log.e("MyPicFragment","Batch comment failure! ${commentFailure.localizedMessage}")
+                            }
+                        }else{
+                            val listPartitions =  Lists.partition(mViewModel.currentListCommentToDelete, MAX_NUMBER_LIST_SIZE_DELETE)
+                            listPartitions.forEach{partitionList->
+                                val batchCommentMultiple = db.batch()
+                                partitionList.forEach{partitionComment ->
+                                    batchCommentMultiple.delete(CommentsHelper().getCommentsCollection().document(partitionComment.documentId!!))
+                                }
+                                batchCommentMultiple.commit().addOnSuccessListener {
+                                    Log.e("MyPicFragment","Batch partitionComment success!")
+                                }.addOnFailureListener { partitionFail ->
+                                    Log.e("MyPicFragment","Batch comment failure! ${partitionFail.localizedMessage}")
+                                }
+                            }
+                        }
+
+                    }
+                }.addOnFailureListener {
+                    Log.e("MyPicFragment","Batch delete error : ${it.localizedMessage}")
+                }
+
             }
+
 
         }else{ // SHOW ERROR
            this.displayMessage(getString(R.string.my_pic_fragment_too_much_image_to_delete, MAX_NUMBER_IMAGE_DELETE))

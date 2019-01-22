@@ -3,6 +3,7 @@ package com.deguffroy.adrien.projetphoto.Views
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import com.deguffroy.adrien.projetphoto.Models.Comment
 import com.deguffroy.adrien.projetphoto.R
 import com.firebase.ui.firestore.paging.FirestorePagingAdapter

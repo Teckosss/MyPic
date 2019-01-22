@@ -29,7 +29,7 @@ open class CommentsHelper {
     fun getCommentsForPicture(pictureId: String) = CommentsHelper()
         .getCommentsCollection()
         .whereEqualTo("pictureId", pictureId)
-        .orderBy("dateCreated", Query.Direction.ASCENDING)
+        .orderBy("dateCreated", Query.Direction.DESCENDING)
 
     fun getCommentById(commentId:String) = CommentsHelper().getCommentsCollection().document(commentId).get()
 

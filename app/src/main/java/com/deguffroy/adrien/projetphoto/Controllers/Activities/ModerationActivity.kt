@@ -29,10 +29,18 @@ class ModerationActivity : BaseActivity() {
         this.configureViewPager()
     }
 
+    // -------------------
+    // CONFIGURATION
+    // -------------------
+
     private fun configureViewPager(){
         this.adapter = ModerationSlideAdapter(supportFragmentManager, intent.getStringArrayListExtra(DOCUMENT_ID), intent.getStringExtra(DOCUMENT_TYPE) )
         activity_moderation_pager.adapter = adapter
     }
+
+    // -------------------
+    // ACTION
+    // -------------------
 
     fun moveToNext(position:Int){
         adapter.deletePage(position)

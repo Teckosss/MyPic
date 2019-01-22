@@ -1,23 +1,26 @@
 package com.deguffroy.adrien.projetphoto.ViewModels
 
-import android.net.Uri
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.deguffroy.adrien.projetphoto.Api.PicturesHelper
+import com.deguffroy.adrien.projetphoto.Models.Comment
 import com.deguffroy.adrien.projetphoto.Models.Picture
-import com.deguffroy.adrien.projetphoto.Models.User
 import com.google.android.gms.maps.model.LatLng
-import java.net.URI
 
 /**
  * Created by Adrien Deguffroy on 25/11/2018.
  */
 class CommunicationViewModel : ViewModel() {
 
+    var currentPicture:MutableLiveData<Picture> = MutableLiveData()
+
     var currentUserPosition:MutableLiveData<LatLng> = MutableLiveData()
     var currentUserUID:MutableLiveData<String> = MutableLiveData()
 
     var currentListImagesToDelete = arrayListOf<Picture>()
+    var currentListCommentToDelete = arrayListOf<Comment>()
     var myPicSelectingMode = false
 
     var ListImageToCluster = arrayListOf<Picture>()
@@ -33,4 +36,18 @@ class CommunicationViewModel : ViewModel() {
     }
 
     fun getCurrentUserUID() = currentUserUID.value
+
+    fun getPicture(pictureId:String):LiveData<Picture>{
+        if (currentPicture.value == null){
+            PicturesHelper().getPicturesCollection().document(pictureId).addSnapshotListener { p0, p1 ->
+                if (p0?.exists()!!){
+                    val picture = p0.toObject(Picture::class.java)
+                    currentPicture.postValue(picture)
+                }else{
+                    Log.e("ViewModel","SnapshotListener failed! ${p1?.localizedMessage}")
+                }
+            }
+        }
+        return currentPicture
+    }
 }

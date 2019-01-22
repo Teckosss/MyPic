@@ -30,7 +30,7 @@ import java.lang.NullPointerException
 /**
  * Created by Adrien Deguffroy on 23/11/2018.
  */
-open class BaseFragment : Fragment(), GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, LocationListener, GeoQueryDataEventListener {
+open class BaseFragment : Fragment(), GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, LocationListener {
 
     lateinit var mViewModel: CommunicationViewModel
 
@@ -38,10 +38,8 @@ open class BaseFragment : Fragment(), GoogleApiClient.OnConnectionFailedListener
     private lateinit var mLocationRequest : LocationRequest
     private lateinit var mLocationCallback : LocationCallback
 
-    private val picturesList = arrayListOf<String>()
-
-    private lateinit var geoFirestore: GeoFirestore
-    private lateinit var geoQuery: GeoQuery
+    lateinit var geoFirestore: GeoFirestore
+    lateinit var geoQuery: GeoQuery
 
     var mGoogleApiClient: GoogleApiClient? = null
 
@@ -228,49 +226,5 @@ open class BaseFragment : Fragment(), GoogleApiClient.OnConnectionFailedListener
         val db = FirebaseFirestore.getInstance()
         val picturesCollection = db.collection(collection)
         this.geoFirestore = GeoFirestore(picturesCollection)
-    }
-
-    fun getGeoFirestoreData(center:GeoPoint, radius:Double){
-        this.geoQuery = geoFirestore.queryAtLocation(center,radius)
-        this.geoQuery.removeAllListeners()
-        this.geoQuery.addGeoQueryDataEventListener(this)
-    }
-
-    override fun onGeoQueryReady() {
-        Log.e("onGeoQueryReady","Enter, list size : ${picturesList.size}")
-        this.geoQuery.removeGeoQueryEventListener(this)
-
-        (0 until picturesList.size).forEach{
-            Log.e("onGeoQueryReady","Data : ${picturesList[it]}")
-        }
-    }
-
-    override fun onDocumentExited(p0: DocumentSnapshot?) {
-        Log.e("onDocumentExited","Enter")
-    }
-
-    override fun onDocumentChanged(p0: DocumentSnapshot?, p1: GeoPoint?) {
-        Log.e("onDocumentChanged","Enter")
-    }
-
-    override fun onDocumentEntered(p0: DocumentSnapshot?, p1: GeoPoint?) {
-        Log.e("onDocumentEntered","Enter, data : ${p0?.data}")
-        try {
-            val data:Map<String,Any>? = p0?.data
-            val description:String = data?.get("desc") as String
-            if (description != null) picturesList.add(description)
-        }catch (e: NullPointerException){
-            Log.e("DocumentEntered", " Error : ${e.localizedMessage}")
-        }catch (e: ClassCastException){
-            Log.e("DocumentEntered", " Error : ${e.localizedMessage}")
-        }
-    }
-
-    override fun onDocumentMoved(p0: DocumentSnapshot?, p1: GeoPoint?) {
-        Log.e("onDocumentMoved","Enter")
-    }
-
-    override fun onGeoQueryError(p0: Exception?) {
-        Log.e("GEO_QUERY","Error : ${p0?.localizedMessage}")
     }
 }

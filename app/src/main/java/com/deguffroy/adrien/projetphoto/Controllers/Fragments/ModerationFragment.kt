@@ -37,7 +37,6 @@ class ModerationFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        this.checkItemNeedingModeration()
         this.setListener()
     }
 
@@ -60,18 +59,20 @@ class ModerationFragment : BaseFragment() {
 
     private fun checkItemNeedingModeration(){
         fragment_moderation_swipe_refresh.isRefreshing = true
-        var noResult = true
+        var noResult: Boolean
+        var needToShowBadge = false
         PicturesHelper().getAllPublicPictureNeedingVerification().get().addOnCompleteListener {
             if (it.isSuccessful){
                 noResult = it.result?.isEmpty!!
                 if (!(noResult)){
+                    needToShowBadge = true
                     this.listPicture = arrayListOf()
                     for (document in it.result!!){
                         val picture = document.toObject(Picture::class.java)
                         this.listPicture.add(picture.documentId!!)
                     }
                 }
-                Log.e("ModerationFrag","Picture result = $noResult")
+                Log.e("ModerationFrag","Picture no result = $noResult")
                 this.setViewVisibility(fragment_moderation_picture_card,fragment_moderation_picture_number, it.result?.size()!!, noResult, MODERATION_PICTURES)
             }
 
@@ -82,24 +83,25 @@ class ModerationFragment : BaseFragment() {
                     }
                     noResult = commentTask.result?.isEmpty!!
                     if (!(noResult)){
+                        needToShowBadge = true
                         this.listComments = arrayListOf()
                         for (document in commentTask.result!!){
                             val comment = document.toObject(Comment::class.java)
                             this.listComments.add(comment.documentId!!)
                         }
                     }
-                    Log.e("ModerationFrag","Comment result = $noResult")
+                    Log.e("ModerationFrag","Comment no result = $noResult")
                     if (fragment_moderation_comment_card != null){
                         this.setViewVisibility(fragment_moderation_comment_card,fragment_moderation_comment_number, commentTask.result?.size()!!, noResult, MODERATION_COMMENTS)
                     }
                 }
-            }
+                if (!needToShowBadge) {
+                    (activity as MainActivity).showSnackbarMessage(fragment_moderation_coordinator_layout, resources.getString(R.string.moderation_fragment_nothing_to_do_message))
+                    BottomNavHelper().removeBadge((activity as MainActivity).bottom_navigation_view, R.id.bnv_moderation)
+                }else{
+                    BottomNavHelper().showBadge((activity as MainActivity), (activity as MainActivity).bottom_navigation_view, R.id.bnv_moderation)
+                }
 
-            if (noResult) {
-                (activity as MainActivity).showSnackbarMessage(fragment_moderation_coordinator_layout, resources.getString(R.string.moderation_fragment_nothing_to_do_message))
-                BottomNavHelper().removeBadge((activity as MainActivity).bottom_navigation_view, R.id.bnv_moderation)
-            }else{
-                BottomNavHelper().showBadge((activity as MainActivity), (activity as MainActivity).bottom_navigation_view, R.id.bnv_moderation)
             }
         }
     }

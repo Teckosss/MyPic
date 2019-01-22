@@ -70,63 +70,7 @@ class PictureRenderer(private val context: Context, googleMap: GoogleMap, cluste
             })
     }
 
-    /*override fun onBeforeClusterRendered(cluster: Cluster<PictureCluster>?, markerOptions: MarkerOptions?) {
-        super.onBeforeClusterRendered(cluster, markerOptions)
-    }
 
-    override fun onClusterRendered(cluster: Cluster<PictureCluster>?, marker: Marker?) {
-        super.onClusterRendered(cluster, marker)
-        picturesList = ArrayList(Math.min(4,cluster!!.size))
-
-        for (picture in cluster.items) {
-            if (picturesList.size == 4) break
-            try {
-                Glide.with(context).load(picture.picture.urlImage).apply(RequestOptions().diskCacheStrategy(
-                    DiskCacheStrategy.ALL).centerCrop())
-                    .into(object : SimpleTarget<Drawable>() {
-                        override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
-                            resource.setBounds(0,0,mDimension,mDimension)
-                            picturesList.add(resource)
-                            val multiDrawable = MultiDrawable(picturesList)
-                            multiDrawable.setBounds(0, 0, mDimension, mDimension)
-
-                            mClusterImageView.setImageDrawable(multiDrawable)
-                            val icon = mClusterIconGenerator.makeIcon(cluster.size.toString())
-                            marker!!.setIcon(BitmapDescriptorFactory.fromBitmap(icon))
-                        }
-
-                    })
-            } catch (e: Exception) {
-                Log.e("PictureRenderer", " Error : ${e.localizedMessage}")
-            }
-        }
-        val icon = mClusterIconGenerator.makeIcon()
-        marker!!.setIcon(BitmapDescriptorFactory.fromBitmap(icon))
-    }*/
-
-    private fun addDrawableWhenRetrieved(bitmap: Bitmap, cluster: Cluster<PictureCluster>?, markerOptions: MarkerOptions?){
-        val drawable = BitmapDrawable(context.resources,bitmap)
-        drawable.setBounds(0,0,mDimension,mDimension)
-        picturesList.add(drawable)
-        if (picturesList.size == 4 || picturesList.size == cluster!!.size){
-            drawMultiDrawable(cluster,markerOptions)
-        }
-    }
-
-    private fun drawMultiDrawable(cluster: Cluster<PictureCluster>?, markerOptions: MarkerOptions?){
-        Log.e("PictureRenderer","PicturesList : $picturesList")
-        val multiDrawable = MultiDrawable(picturesList)
-        multiDrawable.setBounds(0,0,mDimension,mDimension)
-
-        mClusterImageView.setImageDrawable(multiDrawable)
-
-        val icon = mClusterIconGenerator.makeIcon(cluster!!.size.toString())
-        markerOptions!!.icon(BitmapDescriptorFactory.fromBitmap(icon))
-    }
-
-    override fun setOnClusterItemClickListener(listener: ClusterManager.OnClusterItemClickListener<PictureCluster>?) {
-        super.setOnClusterItemClickListener(listener)
-    }
 
     override fun shouldRenderAsCluster(cluster: Cluster<PictureCluster>?): Boolean {
         return cluster!!.size > 1

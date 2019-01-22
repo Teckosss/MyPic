@@ -74,8 +74,6 @@ class PicturesPageFragment : ModerationBaseFragment() , BottomSheetInterface {
         this.callback = null
     }
 
-
-
     // -------------------
     // ACTION
     // -------------------

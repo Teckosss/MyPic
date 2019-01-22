@@ -86,8 +86,21 @@ class CommentsPageFragment : ModerationBaseFragment() {
     }
 
     override fun onClickDenyButton() {
-        CommentsHelper().deleteCommentById(this.commentId).addOnSuccessListener {
+        val db = FirebaseFirestore.getInstance()
+        val docRef = PicturesHelper().getPicturesCollection().document(this.pictureId)
+        val docToDelete = CommentsHelper().getCommentsCollection().document(this.commentId)
+
+        db.runTransaction { transaction ->
+            val currentCommentCount = transaction.get(docRef)
+            var newCommentCount = (currentCommentCount.get("comments") as Long) - 1
+            if (newCommentCount < 0) newCommentCount = 0
+            transaction.update(docRef, "comments", newCommentCount)
+            transaction.delete(docToDelete)
+        }.addOnSuccessListener {
+            Log.e("PageFragment","Success update comment count")
             this.moveToNextAndReset(true)
+        }.addOnFailureListener {failure->
+            Log.e("PageFragment","Fail update comment count! ${failure.localizedMessage}")
         }
     }
 

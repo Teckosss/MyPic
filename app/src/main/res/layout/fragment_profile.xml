@@ -5,21 +5,152 @@
         android:id="@+id/coordinator_layout_profile_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:padding="@dimen/margin_8_material_design"
+        android:background="@color/colorBackgroundGrey"
         tools:context=".Controllers.Fragments.ProfileFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-        <Button
-                android:id="@+id/profile_sign_out_button"
+        <androidx.cardview.widget.CardView
+                android:id="@+id/profile_card_image"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:text="@string/profile_fragment_sign_out"
-        />
+        >
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                <ImageView
+                        android:id="@+id/profile_image_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="220dp"
+                />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+                android:id="@+id/profile_card_username"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_16_material_design"
+                app:layout_constraintTop_toBottomOf="@id/profile_card_image"
+
+        >
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/margin_16_material_design"
+                    android:paddingBottom="@dimen/margin_16_material_design"
+                    android:paddingStart="@dimen/margin_8_material_design"
+                    android:paddingEnd="@dimen/margin_8_material_design"
+            >
+
+                <ImageView
+                        android:id="@+id/profile_username_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/baseline_person_black_24"
+                />
+
+                <TextView
+                        android:id="@+id/profile_username"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/margin_16_material_design"
+                        app:layout_constraintStart_toEndOf="@id/profile_username_icon"
+                        app:layout_constraintTop_toTopOf="@+id/profile_username_icon"
+                        app:layout_constraintBottom_toBottomOf="@+id/profile_username_icon"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+                android:id="@+id/profile_card_upgrade"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_16_material_design"
+                app:layout_constraintTop_toBottomOf="@id/profile_card_username"
+                android:visibility="gone"
+
+        >
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/margin_16_material_design"
+                    android:paddingBottom="@dimen/margin_16_material_design"
+                    android:paddingStart="@dimen/margin_8_material_design"
+                    android:paddingEnd="@dimen/margin_8_material_design"
+            >
+
+                <ImageView
+                        android:id="@+id/profile_upgrade_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/baseline_person_black_24"
+                />
+
+                <TextView
+                        android:id="@+id/profile_upgrade"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="UPGRADE"
+                        android:layout_marginStart="@dimen/margin_16_material_design"
+                        app:layout_constraintStart_toEndOf="@id/profile_upgrade_icon"
+                        app:layout_constraintTop_toTopOf="@+id/profile_upgrade_icon"
+                        app:layout_constraintBottom_toBottomOf="@+id/profile_upgrade_icon"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+                android:id="@+id/profile_card_sign_out"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_16_material_design"
+                app:layout_constraintTop_toBottomOf="@id/profile_card_upgrade"
+        >
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/margin_16_material_design"
+                    android:paddingBottom="@dimen/margin_16_material_design"
+                    android:paddingStart="@dimen/margin_8_material_design"
+                    android:paddingEnd="@dimen/margin_8_material_design"
+            >
+
+                <ImageView
+                        android:id="@+id/profile_sign_out_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/baseline_cancel_black_24"
+                />
+
+                <TextView
+                        android:id="@+id/profile_sign_out_button"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/margin_16_material_design"
+                        android:text="@string/profile_fragment_sign_out"
+                        app:layout_constraintStart_toEndOf="@id/profile_sign_out_icon"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/profile_sign_out_icon"
+                        app:layout_constraintBottom_toBottomOf="@+id/profile_sign_out_icon"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -17,6 +17,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import androidx.lifecycle.ViewModelProviders
 import com.deguffroy.adrien.projetphoto.Api.BottomNavHelper
+import com.deguffroy.adrien.projetphoto.Api.CommentsHelper
 import com.deguffroy.adrien.projetphoto.Api.PicturesHelper
 import com.deguffroy.adrien.projetphoto.Api.UserHelper
 import com.deguffroy.adrien.projetphoto.Controllers.Fragments.*
@@ -157,8 +158,6 @@ open class BaseActivity : AppCompatActivity(){
         return this.getCurrentUser() != null
     }
 
-    protected fun isCurrentUserAnonymous():Boolean = this.getCurrentUser()?.isAnonymous!!
-
     fun getCurrentUserFromFirestore(changeBottomNav:Boolean = false) {
         UserHelper().getUser(getCurrentUser()?.uid!!)
             .addOnSuccessListener {
@@ -168,12 +167,25 @@ open class BaseActivity : AppCompatActivity(){
                     bottom_navigation_view.menu.findItem(R.id.bnv_moderation).isVisible = modelCurrentUser.admin || modelCurrentUser.moderator
                     if (modelCurrentUser.admin || modelCurrentUser.moderator){
                         PicturesHelper().getAllPublicPictureNeedingVerification().get().addOnCompleteListener { taskResult ->
+                            var needToShowBadge = false
                             Log.e("BaseActivity","Picture needing verification : ${taskResult.result?.count()}")
                             if (taskResult.isSuccessful){
-                                if (taskResult.result?.count()!! > 0) BottomNavHelper().showBadge(this,bottom_navigation_view,R.id.bnv_moderation)
+                                if (taskResult.result?.count()!! > 0) needToShowBadge = true
                             }else{
                                 Log.e("BaseActivity","Picture needing verification : ERROR")
                             }
+
+                            CommentsHelper().getCommentsReported().get().addOnCompleteListener {commentTask->
+                                Log.e("BaseActivity","Comment needing verification : ${commentTask.result?.count()}")
+                                if(commentTask.isSuccessful){
+                                    if (commentTask.result?.count()!! > 0) needToShowBadge = true
+                                }
+
+                                if (needToShowBadge) BottomNavHelper().showBadge(this,bottom_navigation_view,R.id.bnv_moderation)
+                            }.addOnFailureListener {errorComment ->
+                                Log.e("BaseActivity","Comment needing verification : ${errorComment.localizedMessage}")
+                            }
+
                         }.addOnFailureListener {error ->
                             Log.e("BaseActivity","Picture needing verification : ${error.localizedMessage}")
                         }

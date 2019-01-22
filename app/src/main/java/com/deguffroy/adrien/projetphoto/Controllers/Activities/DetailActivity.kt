@@ -8,8 +8,10 @@ import android.os.Bundle
 import android.text.Editable
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -23,6 +25,7 @@ import com.deguffroy.adrien.projetphoto.Api.PicturesHelper
 import com.deguffroy.adrien.projetphoto.Api.ViewsHelper
 import com.deguffroy.adrien.projetphoto.Controllers.Fragments.OptionsModalFragment
 import com.deguffroy.adrien.projetphoto.Models.Comment
+import com.deguffroy.adrien.projetphoto.Models.Picture
 import com.deguffroy.adrien.projetphoto.R
 import com.deguffroy.adrien.projetphoto.Utils.DividerItemDecoration
 import com.deguffroy.adrien.projetphoto.Views.DetailActivityAdapter
@@ -38,6 +41,7 @@ class DetailActivity : BaseActivity(), DetailActivityAdapter.Listener, OptionsMo
     private var userIsOwner:Boolean? = null
     private var isPublicPicture:Boolean? = null
     private var isPictureDenyByModeration:Boolean? = null
+    private var previousCommentCount:Long = 0
 
     private var userLikeThisPicture:Boolean = false
     private var likeId:String? = null
@@ -61,6 +65,11 @@ class DetailActivity : BaseActivity(), DetailActivityAdapter.Listener, OptionsMo
             BaseActivity().showSnackbarMessage(detail_activity_coordinator_layout,resources.getString(R.string.detail_activity_error_retrieving_document_uid))
         }
 
+        mViewModel.getPicture(this.documentId!!).observe(this, Observer {
+            Log.e("DetailActivity","Observe change!")
+            this.updateOnObserve(it)
+        })
+
         this.getCurrentUserFromFirestore()
         this.configureRecyclerView()
         this.setOnClickListener()
@@ -76,13 +85,9 @@ class DetailActivity : BaseActivity(), DetailActivityAdapter.Listener, OptionsMo
 
             this.adapter = DetailActivityAdapter(generateOptionsForAdapter(CommentsHelper().getCommentsForPicture(this.documentId!!)),this)
             detail_activity_comment_recycler_view.layoutManager = LinearLayoutManager(this)
-            /*adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver(){
-                override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
-
-                }
-            })*/
             detail_activity_comment_recycler_view.adapter = this.adapter
             detail_activity_comment_recycler_view.addItemDecoration(DividerItemDecoration(this,0,0))
+
         }else{
             BaseActivity().showSnackbarMessage(detail_activity_coordinator_layout,resources.getString(R.string.detail_activity_error_retrieving_comments))
         }
@@ -120,7 +125,7 @@ class DetailActivity : BaseActivity(), DetailActivityAdapter.Listener, OptionsMo
         ViewsHelper().checkIfUserAlreadyViewThisPicture(this.documentId!!,userUID).addOnCompleteListener {
             if(it.isSuccessful){
                 if (it.result?.isEmpty!!){ // USER DIDN'T SEEN THIS PICTURE YET
-                    Log.e("DetailFragment","User didn't seen this picture, incrementing counter!")
+                    Log.e("DetailActivity","User didn't seen this picture, incrementing counter!")
                     ViewsHelper().createNewView(this.documentId!!, userUID).addOnCompleteListener { createTask ->
                         if (createTask.isSuccessful){
                             val db = FirebaseFirestore.getInstance()
@@ -130,15 +135,15 @@ class DetailActivity : BaseActivity(), DetailActivityAdapter.Listener, OptionsMo
                                 val newCount = (snapshot.get("views")!! as Long) + 1
                                 transaction.update(docRef, "views", newCount)
                             }.addOnSuccessListener {
-                                Log.e("DetailFragment","Success incrementing views! ")
+                                Log.e("DetailActivity","Success incrementing views! ")
                             }.addOnFailureListener {errorTask->
-                                Log.e("DetailFragment","Error incrementing views : ${errorTask.localizedMessage}")
+                                Log.e("DetailActivity","Error incrementing views : ${errorTask.localizedMessage}")
                             }
                         }
                     }
 
                 }else{ // USER ALREADY SEEN THIS PICTURE
-                    Log.e("DetailFragment","User already seen this picture")
+                    Log.e("DetailActivity","User already seen this picture")
                 }
             }
         }
@@ -153,7 +158,23 @@ class DetailActivity : BaseActivity(), DetailActivityAdapter.Listener, OptionsMo
             CommentsHelper().createComment(commentText, this.documentId!!, this.modelCurrentUser).addOnSuccessListener {
                 CommentsHelper().updateCommentDocumentId(it.id)
                 activity_detail_comment_field.text = null
-                adapter.notifyDataSetChanged()
+
+                val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+
+                val db = FirebaseFirestore.getInstance()
+                val docRef = PicturesHelper().getPicturesCollection().document(this.documentId!!)
+
+                db.runTransaction {transaction ->
+                    val currentCommentCount = transaction.get(docRef)
+                    val newCommentCount = (currentCommentCount.get("comments") as Long) + 1
+                    transaction.update(docRef, "comments", newCommentCount)
+                }.addOnSuccessListener {
+                    Log.e("DetailActivity","Success incrementing comments count! ")
+                }.addOnFailureListener { failure ->
+                    Log.e("DetailActivity","Error incrementing comments count : ${failure.localizedMessage}")
+                }
+
             }.addOnFailureListener {
                 Log.e("DetailActivity","Error sending comment : ${it.localizedMessage}")
                 this.showSnackbarMessage(detail_activity_coordinator_layout, resources.getString(R.string.detail_activity_error_sending_comment))
@@ -294,6 +315,8 @@ class DetailActivity : BaseActivity(), DetailActivityAdapter.Listener, OptionsMo
                 this.isPictureDenyByModeration = false
             }
 
+            this.previousCommentCount = (it.get("comments") as Long)
+
             this.displayChipsContainer(
                 (it.get("userSender.uid") as String) == getCurrentUser()?.uid!!,
                 (it.get("public") as Boolean))
@@ -319,6 +342,19 @@ class DetailActivity : BaseActivity(), DetailActivityAdapter.Listener, OptionsMo
                 }
             }
         }
+    }
+
+    private fun updateOnObserve(picture: Picture){
+        social_view_views.text = picture.views.toString()
+        social_view_likes.text = picture.likes.toString()
+
+        if (!picture.description.isNullOrEmpty()){
+            detail_activity_description_title.visibility = View.VISIBLE
+            detail_activity_desc.setText(picture.description.toString(), TextView.BufferType.EDITABLE)
+        }
+
+        if (picture.comments?.toLong() != previousCommentCount) this.configureRecyclerView()
+
     }
 
     override fun displayMessage(message: String) {

@@ -1,6 +1,7 @@
 package com.deguffroy.adrien.projetphoto.Controllers.Fragments
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
@@ -11,6 +12,8 @@ import android.view.ViewGroup
 import com.deguffroy.adrien.projetphoto.Api.PicturesHelper
 import com.deguffroy.adrien.projetphoto.ClusterRenderer.PictureRenderer
 import com.deguffroy.adrien.projetphoto.Controllers.Activities.BaseActivity
+import com.deguffroy.adrien.projetphoto.Controllers.Activities.ClusterItemsActivity
+import com.deguffroy.adrien.projetphoto.Controllers.Activities.DetailActivity
 import com.deguffroy.adrien.projetphoto.Controllers.Activities.MainActivity
 import com.deguffroy.adrien.projetphoto.Models.Picture
 import com.deguffroy.adrien.projetphoto.Models.PictureCluster
@@ -20,6 +23,8 @@ import com.deguffroy.adrien.projetphoto.Utils.MAP_FRAGMENT_DEFAULT_ZOOM
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.snackbar.Snackbar
+import com.google.gson.Gson
+import com.google.maps.android.clustering.Cluster
 import com.google.maps.android.clustering.ClusterManager
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_map.*
@@ -28,7 +33,7 @@ import kotlinx.android.synthetic.main.fragment_map.*
  * A simple [Fragment] subclass.
  *
  */
-class MapFragment : BaseFragment() {
+class MapFragment : BaseFragment() , ClusterManager.OnClusterItemClickListener<PictureCluster>, ClusterManager.OnClusterClickListener<PictureCluster>{
 
     private var mMap: GoogleMap? = null
 
@@ -92,6 +97,8 @@ class MapFragment : BaseFragment() {
         mClusterManager.renderer = PictureRenderer(activity!!, mMap!!, mClusterManager)
         mMap!!.setOnCameraIdleListener(mClusterManager)
         mMap!!.setOnMarkerClickListener(mClusterManager)
+        mClusterManager.setOnClusterClickListener(this)
+        mClusterManager.setOnClusterItemClickListener(this)
         this.addItemsToCluster()
 
     }
@@ -134,5 +141,28 @@ class MapFragment : BaseFragment() {
     private fun moveCameraOnMap(latLng: LatLng){
         mMap?.moveCamera(CameraUpdateFactory.newLatLng(latLng))
         mMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, MAP_FRAGMENT_DEFAULT_ZOOM))
+    }
+
+    // -----------------
+    // ACTION
+    // -----------------
+
+    override fun onClusterItemClick(p0: PictureCluster?): Boolean {
+        Log.e("MapFragment","Click on item : ${p0?.picture}")
+        startActivity(DetailActivity.newInstance(activity!!, p0?.picture?.documentId))
+        return true
+    }
+
+    override fun onClusterClick(p0: Cluster<PictureCluster>?): Boolean {
+        Log.e("MapFragment","Click on cluster : ${p0?.items}")
+        val listPicture = ArrayList<Picture>()
+        for (item in p0?.items!!){
+            val picture = item.picture
+            listPicture.add(picture)
+        }
+        val gson = Gson()
+        val listClusterAsString = gson.toJson(listPicture)
+        startActivity(ClusterItemsActivity.newInstance(activity!!, listClusterAsString))
+        return true
     }
 }

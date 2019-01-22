@@ -58,6 +58,8 @@
 
         <activity android:name=".Controllers.Activities.ModerationActivity">
         </activity>
+        <activity android:name=".Controllers.Activities.ClusterItemsActivity">
+        </activity>
     </application>
 
 </manifest>

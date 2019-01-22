@@ -28,12 +28,15 @@
     <string name="detail_activity_error_toggle_visibility">Unable to change visibility, please try again later</string>
     <string name="detail_activity_error_already_deny_by_moderation">Unable to change visibility. This picture already been deny by moderation!</string>
 
+    <!-- HOME FRAGMENT -->
+    <string name="home_fragment_error_retrieving_data">An error occurred, unable to retrieve pictures. Please try again</string>
+
     <!-- MAP FRAGMENT -->
     <string name="map_fragment_no_result_message">An error occurred, unable to retrieve pictures. Please try again
     </string>
 
     <!-- PROFILE FRAGMENT -->
-    <string name="profile_fragment_sign_out">SIGN OUT</string>
+    <string name="profile_fragment_sign_out">Sign Out</string>
 
     <!-- MY PIC FRAGMENT -->
     <string name="my_pic_fragment_no_image_yet">You have not taken any pictures yet</string>
@@ -64,6 +67,17 @@
     <string name="modal_fragment_report_text">Report</string>
     <string name="modal_fragment_user_already_report">You already report this comment, thanks for you help!</string>
     <string name="modal_fragment_user_report_success">Thanks for reporting this comment!</string>
+
+    <!-- PROFILE FRAGMENT -->
+    <string name="profile_fragment_sign_out_title">Confirmation</string>
+    <string name="profile_fragment_sign_out_message">Do you really want to sign out?</string>
+    <string name="profile_fragment_sign_out_positive_button">Yes</string>
+    <string name="profile_fragment_sign_out_negative_button">No</string>
+
+    <string name="profile_fragment_username_title">Modification</string>
+    <string name="profile_fragment_username_message">What is your new username?</string>
+    <string name="profile_fragment_username_positive_button">Validate</string>
+    <string name="profile_fragment_username_negative_button">Cancel</string>
 
     <!-- BOTTOM NAVIGATION VIEW -->
     <string name="bottom_navigation_view_home">Home</string>
