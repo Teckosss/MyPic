@@ -57,6 +57,7 @@ class HomeFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
+        this.configureRecyclerView()
         this.retrievePicture()
     }
 

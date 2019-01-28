@@ -97,15 +97,14 @@
                             android:id="@+id/detail_activity_description_title"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/detail_activity_description"
                             android:textStyle="bold"
                             android:layout_marginStart="8dp"
                             app:layout_constraintTop_toTopOf="parent"
                             app:layout_constraintStart_toEndOf="@id/detail_activity_stats_view"
-                            android:visibility="gone"
+
                     />
 
-                    <EditText
+                    <TextView
                             android:id="@+id/detail_activity_desc"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"

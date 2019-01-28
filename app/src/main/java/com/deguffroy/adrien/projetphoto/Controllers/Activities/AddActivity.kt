@@ -2,7 +2,6 @@ package com.deguffroy.adrien.projetphoto.Controllers.Activities
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.ContentResolver
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.graphics.Bitmap

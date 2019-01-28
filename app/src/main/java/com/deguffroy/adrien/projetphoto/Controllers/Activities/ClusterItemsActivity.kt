@@ -3,7 +3,6 @@ package com.deguffroy.adrien.projetphoto.Controllers.Activities
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.recyclerview.widget.GridLayoutManager
 import com.deguffroy.adrien.projetphoto.Models.Picture
 import com.deguffroy.adrien.projetphoto.R
@@ -12,7 +11,6 @@ import com.deguffroy.adrien.projetphoto.Views.ClusterItemsAdapter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_cluster.*
-import java.util.*
 import kotlin.collections.ArrayList
 
 /**
@@ -44,9 +42,6 @@ class ClusterItemsActivity : BaseActivity() {
         val arrayAsString = intent.getStringExtra(PICTURES_OBJECT)
         val listType = object : TypeToken<List<Picture>>() {}.type
         this.listPictures = gson.fromJson(arrayAsString, listType)
-        listPictures.forEach {
-            Log.e("ClusterItemsAct","Picture : $it")
-        }
     }
 
     private fun configureRecyclerView(){

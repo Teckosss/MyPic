@@ -8,9 +8,11 @@
         <item name="colorAccent">@color/colorAccent</item>
 
         <item name="actionModeBackground">@color/colorPrimaryDark</item>
+        <item name="android:alertDialogTheme">@style/Theme.MaterialComponents.Light.Dialog.Alert</item>
+        <item name="alertDialogTheme">@style/Theme.MaterialComponents.Light.Dialog.Alert</item>
     </style>
 
-    <style name="FullscreenTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="FullscreenTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="android:actionBarStyle">@style/FullscreenActionBarStyle</item>
         <item name="android:windowActionBarOverlay">true</item>
         <item name="android:windowBackground">@null</item>

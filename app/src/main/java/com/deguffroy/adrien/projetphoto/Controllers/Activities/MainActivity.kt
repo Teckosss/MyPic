@@ -100,12 +100,18 @@ class MainActivity : BaseActivity() {
                 val photoFile: File? = try {
                     createImageFile()
                 }catch (ex: IOException){
+                    Log.e("MainActivity","Error creatingFile! ${ex.localizedMessage}")
                     null
                 }
-                photoFile?.also {
-                    this.photoURI = FileProvider.getUriForFile(this,"com.deguffroy.adrien.projetphoto.fileprovider",it)
-                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, this.photoURI )
-                    startActivityForResult(takePictureIntent, RC_TAKE_PHOTO)
+                if (photoFile != null ){
+                    Log.e("MainActivity","PhotoFile not null!")
+                    mViewModel.updateCurrentPhotoFile(photoFile)
+                    mViewModel.getCurrentPhotoFile().also {
+                        this.photoURI = FileProvider.getUriForFile(this,"com.deguffroy.adrien.projetphoto.fileprovider", it!!)
+                        mViewModel.updateCurrentPhotoURI(this.photoURI)
+                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mViewModel.getCurrentPhotoURI() )
+                        startActivityForResult(takePictureIntent, RC_TAKE_PHOTO)
+                    }
                 }
             }
         }
@@ -131,7 +137,7 @@ class MainActivity : BaseActivity() {
         if(requestCode == RC_TAKE_PHOTO) {
             if (resultCode == Activity.RESULT_OK) {
                 val intent = Intent(this,AddActivity::class.java)
-                intent.putExtra(URI_EXTRA_NAME, this.photoURI.toString())
+                intent.putExtra(URI_EXTRA_NAME, mViewModel.getCurrentPhotoURI().toString())
                 startActivity(intent)
             }
 

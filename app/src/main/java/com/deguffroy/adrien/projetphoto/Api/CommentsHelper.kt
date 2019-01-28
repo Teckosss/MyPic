@@ -31,6 +31,9 @@ open class CommentsHelper {
         .whereEqualTo("pictureId", pictureId)
         .orderBy("dateCreated", Query.Direction.DESCENDING)
 
+    fun getAllCommentsForUser(userId:String) =
+            CommentsHelper().getCommentsCollection().whereEqualTo("userSender.uid", userId)
+
     fun getCommentById(commentId:String) = CommentsHelper().getCommentsCollection().document(commentId).get()
 
     fun getCommentsReported() = CommentsHelper()
@@ -40,7 +43,11 @@ open class CommentsHelper {
 
     // --- UPDATE ---
 
-    fun updateCommentDocumentId(documentId:String)= CommentsHelper().getCommentsCollection().document(documentId).update("documentId",documentId)
+    fun updateCommentDocumentId(documentId:String)=
+        CommentsHelper().getCommentsCollection().document(documentId).update("documentId",documentId)
+
+    fun updateCommentDocumentUsername(commentId: String, username:String) =
+            CommentsHelper().getCommentsCollection().document(commentId).update("userSender.username", username)
 
     fun updateCommentTextById(documentId: String, replacementText:String) =
         CommentsHelper().getCommentsCollection().document(documentId).update("commentText", replacementText )

@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.deguffroy.adrien.projetphoto.Controllers.Activities.MainActivity
+import com.deguffroy.adrien.projetphoto.Utils.GEO_FIRESTORE_COLLECTION_NAME
 import com.deguffroy.adrien.projetphoto.Utils.RC_PERM_LOCATION
 import com.deguffroy.adrien.projetphoto.ViewModels.CommunicationViewModel
 import com.google.android.gms.common.ConnectionResult
@@ -54,7 +55,7 @@ open class BaseFragment : Fragment(), GoogleApiClient.OnConnectionFailedListener
             (activity as MainActivity).showFab()
         }
 
-        this.initDb("pictures")
+        this.initDb(GEO_FIRESTORE_COLLECTION_NAME)
 
         if (locationPermissionsGranted()){
             // Permission is granted

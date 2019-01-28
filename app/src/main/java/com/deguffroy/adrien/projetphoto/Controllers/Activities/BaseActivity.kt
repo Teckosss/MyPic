@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import androidx.annotation.Nullable
 import androidx.appcompat.app.AppCompatActivity
@@ -52,12 +53,16 @@ open class BaseActivity : AppCompatActivity(){
         super.onCreate(savedInstanceState)
 
         mViewModel = ViewModelProviders.of(this).get(CommunicationViewModel::class.java)
+
+        if (this is MainActivity || this is LoginActivity) {
+        }else{
+            this.configureToolbar()
+        }
     }
 
     override fun onBackPressed() {
         if(supportFragmentManager.backStackEntryCount != 1){
             super.onBackPressed()
-            //bottom_navigation_view.menu.getItem(supportFragmentManager.backStackEntryCount).isChecked = true
             when(supportFragmentManager.findFragmentById(R.id.fragment_view)){
                 is HomeFragment -> bottom_navigation_view.menu.getItem(0).isChecked = true
                 is MapFragment -> bottom_navigation_view.menu.getItem(1).isChecked = true
@@ -70,18 +75,17 @@ open class BaseActivity : AppCompatActivity(){
         }
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            android.R.id.home -> {
+                onBackPressed()
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menu?.findItem(R.id.bnv_moderation)?.setVisible(true)
-       /* UserHelper().getUser(getCurrentUser()?.uid!!).addOnCompleteListener {
-            Log.e("BaseActivity","ENTER onCreateOptionsMenu : ${it.result}")
-            if (it.isSuccessful){
-                val moderation = menu?.findItem(R.id.bnv_moderation)
-                moderation?.isVisible = (it.result?.get("admin") as Boolean)
-                Log.e("BaseActivity","isAdmin : ${(it.result?.get("admin") as Boolean)}")
-            }else{
-                Log.e("BaseActivity","Error onCreateOptionsMenu")
-            }
-        }*/
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -104,13 +108,20 @@ open class BaseActivity : AppCompatActivity(){
 
     fun initDb(){
         val db = FirebaseFirestore.getInstance()
-        val picturesCollection = db.collection("pictures")
+        val picturesCollection = db.collection(GEO_FIRESTORE_COLLECTION_NAME)
         this.geoFirestore = GeoFirestore(picturesCollection)
     }
 
     // -------------------
     // UI
     // -------------------
+
+    private fun configureToolbar() {
+        //setSupportActionBar(mToolbar)
+        val ab = supportActionBar
+        ab!!.setDisplayHomeAsUpEnabled(true)
+    }
+
 
     fun showFragment(newFragment:Fragment){
         when(newFragment){

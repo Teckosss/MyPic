@@ -325,10 +325,12 @@ class DetailActivity : BaseActivity(), DetailActivityAdapter.Listener, OptionsMo
             glide.load(this.imageURL)
                 .apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(this.getCircularPlaceHolder(5F,30F)))
                 .into(detail_activity_image)
+
             if(!(it.get("description") as String).isEmpty()){
-                detail_activity_description_title.visibility = View.VISIBLE
-                detail_activity_desc.setText(it.get("description").toString(), TextView.BufferType.EDITABLE)
+                detail_activity_description_title.text = resources.getString(R.string.detail_activity_description)
+                detail_activity_desc.text = it.get("description").toString()
             }
+
             social_view_views.text = (it.get("views") as Long).toInt().toString()
             social_view_likes.text = (it.get("likes") as Long).toInt().toString()
 

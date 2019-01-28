@@ -20,7 +20,6 @@ class HomePagingAdapter(var options: FirestorePagingOptions<Picture>) : Firestor
     fun getItemAtPosition(position: Int) = (options.data.value)?.get(position)?.toObject(Picture::class.java)
 
     override fun onBindViewHolder(p0: HomeViewHolder, p1: Int, p2: Picture) {
-        Log.e("HomePaging","Picture : $p2")
         p0.updateWithData(p2)
     }
 }

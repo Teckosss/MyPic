@@ -6,6 +6,8 @@ import android.app.Dialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.Resources
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -28,6 +30,8 @@ import android.widget.FrameLayout
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
+import com.deguffroy.adrien.projetphoto.Api.CommentsHelper
+import com.deguffroy.adrien.projetphoto.Api.PicturesHelper
 
 
 /**
@@ -59,7 +63,6 @@ class ProfileFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-
         this.updateUI()
     }
 
@@ -71,12 +74,14 @@ class ProfileFragment : BaseFragment() {
         profile_sign_out_button.setOnClickListener {this.createSignOutAlertDialog() }
 
         profile_username.setOnClickListener { this.createChangeUsernameAlertDialog() }
-
-        profile_upgrade.setOnClickListener { this.showLoginActivity() }
     }
 
     private fun createSignOutAlertDialog(){
-        val builder = AlertDialog.Builder(activity!!)
+        val builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            AlertDialog.Builder(activity!!, android.R.style.Theme_Material_Light_Dialog_Alert)
+        }else{
+            AlertDialog.Builder(activity!!)
+        }
         builder.setTitle(resources.getString(R.string.profile_fragment_sign_out_title))
         builder.setMessage(resources.getString(R.string.profile_fragment_sign_out_message))
 
@@ -96,6 +101,9 @@ class ProfileFragment : BaseFragment() {
 
         dialog.setOnShowListener{
             val posButton = (it as AlertDialog).getButton(DialogInterface.BUTTON_POSITIVE)
+            val negButton = (it as AlertDialog).getButton(DialogInterface.BUTTON_NEGATIVE)
+            posButton.setTextColor(Color.WHITE)
+            negButton.setTextColor(Color.WHITE)
 
             val params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT)
             params.setMargins(20,0,0,0)
@@ -107,7 +115,11 @@ class ProfileFragment : BaseFragment() {
     }
 
     private fun createChangeUsernameAlertDialog(){
-        val builder = AlertDialog.Builder(activity!!)
+        val builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            AlertDialog.Builder(activity!!, android.R.style.Theme_Material_Light_Dialog_Alert)
+        }else{
+            AlertDialog.Builder(activity!!)
+        }
 
         val editText = EditText(activity!!)
         editText.setSingleLine()
@@ -142,6 +154,9 @@ class ProfileFragment : BaseFragment() {
 
         dialog.setOnShowListener{
             val posButton = (it as AlertDialog).getButton(DialogInterface.BUTTON_POSITIVE)
+            val negButton = (it as AlertDialog).getButton(DialogInterface.BUTTON_NEGATIVE)
+            posButton.setTextColor(Color.WHITE)
+            negButton.setTextColor(Color.WHITE)
 
             val params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
             params.setMargins(20,0,0,0)
@@ -165,7 +180,7 @@ class ProfileFragment : BaseFragment() {
                 profile_username.text = it.result?.get("username").toString()
             }
         }
-        if (isUserAnonymous()) profile_card_upgrade.visibility = View.VISIBLE
+        //if (isUserAnonymous()) profile_card_upgrade.visibility = View.VISIBLE
     }
 
     // -------------------
@@ -173,18 +188,39 @@ class ProfileFragment : BaseFragment() {
     // -------------------
 
     private fun updateUsername(username:String){
+        val userUID = FirebaseAuth.getInstance().currentUser?.uid!!
         if (username.isNotBlank()){
-            UserHelper().updateUsername(FirebaseAuth.getInstance().currentUser?.uid!!, username).addOnSuccessListener {
+            UserHelper().updateUsername(userUID, username).addOnSuccessListener {
                 Log.e("ProfileFragment","Successfully update username!")
                 profile_username.text = username
+
+                PicturesHelper().getAllPicturesFromUser(userUID).get().addOnCompleteListener {pictureTask ->
+                    if (pictureTask.isSuccessful){
+                        for (document in pictureTask.result!!){
+                            PicturesHelper().updatePictureDocumentUsername(document.id, username).addOnSuccessListener { updatePicture->
+                                Log.e("ProfileFragment","Successfully update picture's username")
+                                CommentsHelper().getAllCommentsForUser(userUID).get().addOnCompleteListener { commentTask->
+                                    if (commentTask.isSuccessful){
+                                        for (comment in commentTask.result!!){
+                                            CommentsHelper().updateCommentDocumentUsername(comment.id, username).addOnSuccessListener {
+                                                Log.e("ProfileFragment","Successfully update comment's username")
+                                            }.addOnFailureListener { commentFail->
+                                                Log.e("ProfileFragment","Error updating comment's username! ${commentFail.localizedMessage}")
+                                            }
+                                        }
+                                    }
+                                }
+                            }.addOnFailureListener { pictureFail->
+                                Log.e("ProfileFragment","Error updating picture's username! ${pictureFail.localizedMessage}")
+                            }
+                        }
+                    }
+                }
+
             }.addOnFailureListener { failure ->
                 Log.e("ProfileFragment","Fail to update username ${failure.localizedMessage}")
             }
         }
-    }
-
-    private fun showLoginActivity(){
-        startActivity(Intent(activity!!, LoginActivity::class.java))
     }
 
     // -------------------

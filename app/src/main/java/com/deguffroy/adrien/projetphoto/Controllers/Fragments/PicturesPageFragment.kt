@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.fragment.app.FragmentTransaction
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
@@ -17,7 +16,6 @@ import com.deguffroy.adrien.projetphoto.Models.Picture
 
 import com.deguffroy.adrien.projetphoto.R
 import com.deguffroy.adrien.projetphoto.Utils.BottomSheetInterface
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 

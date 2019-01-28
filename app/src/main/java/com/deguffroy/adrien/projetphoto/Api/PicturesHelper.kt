@@ -58,13 +58,20 @@ open class PicturesHelper {
 
     // --- UPDATE ---
 
-    fun updatePictureDocumentID(uid:String)= PicturesHelper().getPicturesCollection().document(uid).update("documentId",uid)
+    fun updatePictureDocumentID(uid:String)=
+        PicturesHelper().getPicturesCollection().document(uid).update("documentId",uid)
 
-    fun updatePictureDescription(uid:String, description: String) = PicturesHelper().getPicturesCollection().document(uid).update("description", description)
+    fun updatePictureDocumentUsername(pictureId: String, username:String) =
+        PicturesHelper().getPicturesCollection().document(pictureId).update("userSender.username", username)
 
-    fun toggleVisibilityScope(uid: String, setToPublic:Boolean) = PicturesHelper().getPicturesCollection().document(uid).update("public", setToPublic)
+    fun updatePictureDescription(uid:String, description: String) =
+        PicturesHelper().getPicturesCollection().document(uid).update("description", description)
 
-    fun updateDenyReason(uid: String, reason:String) = PicturesHelper().getPicturesCollection().document(uid).update("denyReason", reason)
+    fun toggleVisibilityScope(uid: String, setToPublic:Boolean) =
+        PicturesHelper().getPicturesCollection().document(uid).update("public", setToPublic)
+
+    fun updateDenyReason(uid: String, reason:String) =
+        PicturesHelper().getPicturesCollection().document(uid).update("denyReason", reason)
 
     // --- DELETE ---
 

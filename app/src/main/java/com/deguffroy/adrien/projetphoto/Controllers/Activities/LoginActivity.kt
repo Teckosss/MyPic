@@ -53,6 +53,7 @@ class LoginActivity : BaseActivity() {
                         AuthUI.IdpConfig.AnonymousBuilder().build()
                     )
                 )
+                .setIsSmartLockEnabled(false,false)
                 .enableAnonymousUsersAutoUpgrade()
                 .build(),
             RC_SIGN_IN
