@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ProjetPhoto</string>
+    <string name="app_name">MyPic</string>
 
     <!-- USER -->
     <string name="user_default_name">Guest</string>
@@ -27,9 +27,11 @@
     <string name="detail_activity_error_retrieving_comments">Unable to retrieve comments, please try again</string>
     <string name="detail_activity_error_toggle_visibility">Unable to change visibility, please try again later</string>
     <string name="detail_activity_error_already_deny_by_moderation">Unable to change visibility. This picture already been deny by moderation!</string>
+    <string name="detail_activity_error_reporting_comment">Unable to retrieve comment\'s detail, please try again later</string>
 
     <!-- HOME FRAGMENT -->
     <string name="home_fragment_error_retrieving_data">An error occurred, unable to retrieve pictures. Please try again</string>
+    <string name="home_fragment_error_getting_picture_detail">An error occurred, unable to retrieve picture\'s details. Please try again later</string>
 
     <!-- MAP FRAGMENT -->
     <string name="map_fragment_no_result_message">An error occurred, unable to retrieve pictures. Please try again

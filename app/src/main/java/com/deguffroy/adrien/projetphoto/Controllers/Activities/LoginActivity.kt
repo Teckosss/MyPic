@@ -55,6 +55,7 @@ class LoginActivity : BaseActivity() {
                 )
                 .setIsSmartLockEnabled(false,false)
                 .enableAnonymousUsersAutoUpgrade()
+                .setLogo(R.drawable.ic_openclassrooms)
                 .build(),
             RC_SIGN_IN
         )

@@ -19,18 +19,17 @@ import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
-import com.deguffroy.adrien.projetphoto.Api.CommentsHelper
-import com.deguffroy.adrien.projetphoto.Api.LikesHelper
-import com.deguffroy.adrien.projetphoto.Api.PicturesHelper
-import com.deguffroy.adrien.projetphoto.Api.ViewsHelper
+import com.deguffroy.adrien.projetphoto.Api.*
 import com.deguffroy.adrien.projetphoto.Controllers.Fragments.OptionsModalFragment
 import com.deguffroy.adrien.projetphoto.Models.Comment
 import com.deguffroy.adrien.projetphoto.Models.Picture
+import com.deguffroy.adrien.projetphoto.Models.User
 import com.deguffroy.adrien.projetphoto.R
 import com.deguffroy.adrien.projetphoto.Utils.DividerItemDecoration
 import com.deguffroy.adrien.projetphoto.Views.DetailActivityAdapter
 import com.firebase.ui.firestore.paging.FirestorePagingOptions
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.android.synthetic.main.activity_detail.*
@@ -74,6 +73,22 @@ class DetailActivity : BaseActivity(), DetailActivityAdapter.Listener, OptionsMo
         this.configureRecyclerView()
         this.setOnClickListener()
         this.incrementView()
+        //this.createImage()
+    }
+
+    //ONLY FOR TESTING
+    private fun createImage(){
+        UserHelper().getUser(FirebaseAuth.getInstance().currentUser?.uid!!).addOnCompleteListener {
+            if (it.isSuccessful){
+                val user = it.result?.toObject(User::class.java)!!
+                (0 until 2).forEach {
+                    PicturesHelper().createPicture(user,"",true,"").addOnSuccessListener {pictureAdd->
+                        Log.e("DetailActivity","Image successfully created!")
+                        PicturesHelper().updatePictureDocumentID(pictureAdd.id)
+                    }
+                }
+            }
+        }
     }
 
     // -------------------
@@ -189,6 +204,7 @@ class DetailActivity : BaseActivity(), DetailActivityAdapter.Listener, OptionsMo
             OptionsModalFragment.newInstance(comment.documentId!!, modelCurrentUser.uid).show(supportFragmentManager, "MODAL")
         }else{
             Log.e("DetailActivity","Error! Unable to open bottom sheet fragment. CommentId = ${comment.documentId}")
+            displayMessage(resources.getString(R.string.detail_activity_error_reporting_comment))
         }
     }
 

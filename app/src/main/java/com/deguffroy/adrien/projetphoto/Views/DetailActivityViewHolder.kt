@@ -6,7 +6,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
-import com.deguffroy.adrien.projetphoto.Controllers.Activities.DetailActivity
 import com.deguffroy.adrien.projetphoto.Models.Comment
 import com.deguffroy.adrien.projetphoto.Utils.toLocaleStringDateMedium
 import kotlinx.android.synthetic.main.activity_detail_comment_item.view.*

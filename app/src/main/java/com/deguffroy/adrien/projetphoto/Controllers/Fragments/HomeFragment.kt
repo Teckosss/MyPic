@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.deguffroy.adrien.projetphoto.Api.PicturesHelper
+import com.deguffroy.adrien.projetphoto.Controllers.Activities.BaseActivity
 import com.deguffroy.adrien.projetphoto.Controllers.Activities.DetailActivity
 import com.deguffroy.adrien.projetphoto.Controllers.Activities.MainActivity
 import com.deguffroy.adrien.projetphoto.Models.Picture
@@ -92,7 +93,11 @@ class HomeFragment : BaseFragment() {
     private fun configureOnClickItemRecyclerView(){
         ItemClickSupport.addTo(fragment_home_recycler_view, R.layout.fragment_home_item)
             .setOnItemClickListener { recyclerView, position, v ->
-                startActivity(DetailActivity.newInstance(activity!!, adapter.getItemAtPosition(position)?.documentId))
+                if(adapter.getItemAtPosition(position)?.documentId.isNullOrEmpty()){
+                    (activity as MainActivity).showSnackbarMessage(home_fragment_coordinator,resources.getString(R.string.home_fragment_error_getting_picture_detail), Snackbar.LENGTH_LONG, (activity as MainActivity).main_activity_fab )
+                }else{
+                    startActivity(DetailActivity.newInstance(activity!!, adapter.getItemAtPosition(position)?.documentId))
+                }
             }
     }
 
@@ -112,7 +117,7 @@ class HomeFragment : BaseFragment() {
             }
         }.addOnFailureListener {
             Log.e("HomeFragment", it.localizedMessage)
-            (activity as MainActivity).showSnackbarMessage(home_fragment_coordinator,resources.getString(R.string.home_fragment_error_retrieving_data), Snackbar.LENGTH_LONG, main_activity_fab)
+            (activity as MainActivity).showSnackbarMessage(home_fragment_coordinator,resources.getString(R.string.home_fragment_error_retrieving_data), Snackbar.LENGTH_LONG, (activity as MainActivity).main_activity_fab)
         }
     }
 

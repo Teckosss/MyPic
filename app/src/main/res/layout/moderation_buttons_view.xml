@@ -11,22 +11,25 @@
         android:padding="8dp"
 >
 
-    <Button
+    <com.google.android.material.button.MaterialButton
             android:id="@+id/moderation_buttons_deny"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:drawableStart="@drawable/baseline_cancel_black_24"
+            app:icon="@drawable/baseline_cancel_black_24"
+            app:backgroundTint="@color/colorDeny"
             android:text="@string/moderation_fragment_button_deny"
             android:textStyle="bold"
+            android:layout_marginEnd="@dimen/margin_8_material_design"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@id/moderation_buttons_accept"
     />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
             android:id="@+id/moderation_buttons_accept"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:drawableStart="@drawable/baseline_check_circle_black_24"
+            app:icon="@drawable/baseline_check_circle_black_24"
+            app:backgroundTint="@color/colorAccept"
             android:text="@string/moderation_fragment_button_accept"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"

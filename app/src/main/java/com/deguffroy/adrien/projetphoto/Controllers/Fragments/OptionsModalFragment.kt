@@ -87,6 +87,7 @@ class OptionsModalFragment : BottomSheetDialogFragment() {
         }else{
             // SHOW ERROR
             Log.e("ModalOptions","Error ! userId = $userId | documentId = $documentId")
+            this.dismissAndShowMessage(resources.getString(R.string.detail_activity_error_reporting_comment))
         }
     }
 

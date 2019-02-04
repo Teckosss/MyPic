@@ -176,11 +176,15 @@ class ProfileFragment : BaseFragment() {
         UserHelper().getUser(FirebaseAuth.getInstance().currentUser?.uid!!).addOnCompleteListener {
             if (it.isSuccessful){
                 this.username = it.result?.get("username").toString()
-                glide.load(it.result?.get("userPicture")).apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)).into(profile_image_view)
+                if (it.result?.get("userPicture") == null){
+                    glide.load(R.drawable.ic_no_image_available).apply(RequestOptions().diskCacheStrategy(
+                        DiskCacheStrategy.ALL)).into(profile_image_view)
+                }else{
+                    glide.load(it.result?.get("userPicture")).apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)).into(profile_image_view)
+                }
                 profile_username.text = it.result?.get("username").toString()
             }
         }
-        //if (isUserAnonymous()) profile_card_upgrade.visibility = View.VISIBLE
     }
 
     // -------------------
@@ -232,7 +236,7 @@ class ProfileFragment : BaseFragment() {
     }
 
     private fun signOutUserFromFirebase(){
-        AuthUI.getInstance().signOut(context!!).addOnCompleteListener {
+        AuthUI.getInstance().signOut(activity!!).addOnCompleteListener {
             val intent = Intent(context,LoginActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
