@@ -83,12 +83,12 @@ class ProfileFragment : BaseFragment() {
         val positiveText = resources.getString(R.string.profile_fragment_sign_out_positive_button)
         val negativeText = resources.getString(R.string.profile_fragment_sign_out_negative_button)
 
-        builder.setPositiveButton(positiveText) { p0, p1 ->
+        builder.setPositiveButton(positiveText) { p0, _ ->
             p0.dismiss()
             this.signOutUserFromFirebase()
         }
 
-        builder.setNegativeButton(negativeText) { p0, p1 ->
+        builder.setNegativeButton(negativeText) { p0, _ ->
             p0.dismiss()
         }
 
@@ -96,7 +96,7 @@ class ProfileFragment : BaseFragment() {
 
         dialog.setOnShowListener{
             val posButton = (it as AlertDialog).getButton(DialogInterface.BUTTON_POSITIVE)
-            val negButton = (it as AlertDialog).getButton(DialogInterface.BUTTON_NEGATIVE)
+            val negButton = it.getButton(DialogInterface.BUTTON_NEGATIVE)
             posButton.setTextColor(Color.WHITE)
             negButton.setTextColor(Color.WHITE)
 
@@ -137,12 +137,12 @@ class ProfileFragment : BaseFragment() {
         val positiveText = resources.getString(R.string.profile_fragment_username_positive_button)
         val negativeText = resources.getString(R.string.profile_fragment_username_negative_button)
 
-        builder.setPositiveButton(positiveText) { p0, p1 ->
+        builder.setPositiveButton(positiveText) { p0, _ ->
             p0.dismiss()
             this.updateUsername(editText.text.toString())
         }
 
-        builder.setNegativeButton(negativeText) { p0, p1 ->
+        builder.setNegativeButton(negativeText) { p0, _ ->
             p0.dismiss()
         }
 
@@ -150,7 +150,7 @@ class ProfileFragment : BaseFragment() {
 
         dialog.setOnShowListener{
             val posButton = (it as AlertDialog).getButton(DialogInterface.BUTTON_POSITIVE)
-            val negButton = (it as AlertDialog).getButton(DialogInterface.BUTTON_NEGATIVE)
+            val negButton = it.getButton(DialogInterface.BUTTON_NEGATIVE)
             posButton.setTextColor(Color.WHITE)
             negButton.setTextColor(Color.WHITE)
 
@@ -202,7 +202,7 @@ class ProfileFragment : BaseFragment() {
                     // Update all user's picture with his new username
                     if (pictureTask.isSuccessful){
                         for (document in pictureTask.result!!){
-                            PicturesHelper().updatePictureDocumentUsername(document.id, username).addOnSuccessListener { updatePicture->
+                            PicturesHelper().updatePictureDocumentUsername(document.id, username).addOnSuccessListener {
                                 Log.i("ProfileFragment","Successfully update picture's username")
                                 CommentsHelper().getAllCommentsForUser(userUID).get().addOnCompleteListener { commentTask->
                                     // Update all user's comment with his new username
@@ -241,7 +241,6 @@ class ProfileFragment : BaseFragment() {
     // Disconnect user from firestore and display LoginActivity
     private fun signOutUserFromFirebase(){
         mViewModel.currentPicture.removeObserver {  }
-        mViewModel.getPicture("1").removeObservers(activity!!)
 
         AuthUI.getInstance().signOut(activity!!).addOnCompleteListener {
             val intent = Intent(context,LoginActivity::class.java)
