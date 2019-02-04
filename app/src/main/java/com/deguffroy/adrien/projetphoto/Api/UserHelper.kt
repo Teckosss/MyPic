@@ -1,7 +1,6 @@
 package com.deguffroy.adrien.projetphoto.Api
 
 import com.deguffroy.adrien.projetphoto.Models.User
-import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.FirebaseFirestore
 
 /**
@@ -26,5 +25,4 @@ open class UserHelper {
 
     fun updateUsername(uid: String, username: String) = UserHelper().getUsersCollection().document(uid).update("username", username)
 
-    // --- DELETE ---
 }

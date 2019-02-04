@@ -2,9 +2,7 @@ package com.deguffroy.adrien.projetphoto.Controllers.Activities
 
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.deguffroy.adrien.projetphoto.Controllers.Fragments.ModerationFragment
 import com.deguffroy.adrien.projetphoto.R
 import com.deguffroy.adrien.projetphoto.Views.ModerationSlideAdapter
 import kotlinx.android.synthetic.main.activity_moderation.*

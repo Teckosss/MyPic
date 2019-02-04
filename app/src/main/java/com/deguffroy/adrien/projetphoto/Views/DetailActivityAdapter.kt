@@ -3,7 +3,6 @@ package com.deguffroy.adrien.projetphoto.Views
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
 import com.deguffroy.adrien.projetphoto.Models.Comment
 import com.deguffroy.adrien.projetphoto.R
 import com.firebase.ui.firestore.paging.FirestorePagingAdapter
@@ -33,19 +32,19 @@ class DetailActivityAdapter(options: FirestorePagingOptions<Comment>, private va
         super.onLoadingStateChanged(state)
         when (state) {
             LoadingState.LOADING_INITIAL -> {
-                Log.e("DetailAdapter","LOADING_INITIAL")
+                Log.i("DetailAdapter","LOADING_INITIAL")
                 callback.startLoading()
             }
             LoadingState.LOADING_MORE -> {
-                Log.e("DetailAdapter","LOADING_MORE")
+                Log.i("DetailAdapter","LOADING_MORE")
             }
             LoadingState.LOADED -> {
-                Log.e("DetailAdapter","LOADED")
+                Log.i("DetailAdapter","LOADED")
                 callback.loaded()}
             LoadingState.ERROR -> {
-                Log.e("DetailAdapter","ERROR")}
+                Log.i("DetailAdapter","ERROR")}
             LoadingState.FINISHED -> {
-                Log.e("DetailAdapter","FINISHED")
+                Log.i("DetailAdapter","FINISHED")
                 callback.loaded()}
         }
     }

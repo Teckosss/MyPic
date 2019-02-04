@@ -114,8 +114,8 @@ open class BaseActivity : AppCompatActivity(){
     // UI
     // -------------------
 
+    // Provide a NavigateUp in activity's action bar
     private fun configureToolbar() {
-        //setSupportActionBar(mToolbar)
         val ab = supportActionBar
         ab!!.setDisplayHomeAsUpEnabled(true)
     }
@@ -141,12 +141,12 @@ open class BaseActivity : AppCompatActivity(){
         snackbar.addCallback(object : Snackbar.Callback(){
             override fun onShown(sb: Snackbar?) {
                 super.onShown(sb)
-                Log.e("BaseActivity","onShown")
+                Log.i("BaseActivity","onShown")
                 dismissFAB?.hide()
             }
             override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
                 super.onDismissed(transientBottomBar, event)
-                Log.e("BaseActivity","onDismissed")
+                Log.i("BaseActivity","onDismissed")
                 dismissFAB?.show()
             }
         })
@@ -167,17 +167,18 @@ open class BaseActivity : AppCompatActivity(){
         return this.getCurrentUser() != null
     }
 
+    // Retrieve current user and check if user is Admin or Moderator. Display Moderation in BottomNav is Admin or Mod
     fun getCurrentUserFromFirestore(changeBottomNav:Boolean = false) {
         UserHelper().getUser(getCurrentUser()?.uid!!)
             .addOnSuccessListener {
                 this.modelCurrentUser = it.toObject<User>(User::class.java)!!
                 if (changeBottomNav){
-                    Log.e("BaseActivity","Need to change BottomNav! Does user need to see moderation : ${modelCurrentUser.admin || modelCurrentUser.moderator}")
+                    Log.i("BaseActivity","Need to change BottomNav! Does user need to see moderation : ${modelCurrentUser.admin || modelCurrentUser.moderator}")
                     bottom_navigation_view.menu.findItem(R.id.bnv_moderation).isVisible = modelCurrentUser.admin || modelCurrentUser.moderator
                     if (modelCurrentUser.admin || modelCurrentUser.moderator){
                         PicturesHelper().getAllPublicPictureNeedingVerification().get().addOnCompleteListener { taskResult ->
                             var needToShowBadge = false
-                            Log.e("BaseActivity","Picture needing verification : ${taskResult.result?.count()}")
+                            Log.i("BaseActivity","Picture needing verification : ${taskResult.result?.count()}")
                             if (taskResult.isSuccessful){
                                 if (taskResult.result?.count()!! > 0) needToShowBadge = true
                             }else{
@@ -185,7 +186,7 @@ open class BaseActivity : AppCompatActivity(){
                             }
 
                             CommentsHelper().getCommentsReported().get().addOnCompleteListener {commentTask->
-                                Log.e("BaseActivity","Comment needing verification : ${commentTask.result?.count()}")
+                                Log.i("BaseActivity","Comment needing verification : ${commentTask.result?.count()}")
                                 if(commentTask.isSuccessful){
                                     if (commentTask.result?.count()!! > 0) needToShowBadge = true
                                 }

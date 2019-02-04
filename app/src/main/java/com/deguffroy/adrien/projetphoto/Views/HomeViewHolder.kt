@@ -1,6 +1,5 @@
 package com.deguffroy.adrien.projetphoto.Views
 
-import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide

@@ -15,7 +15,7 @@ import com.deguffroy.adrien.projetphoto.Utils.MODERATION_PICTURES
 class ModerationSlideAdapter(fm:FragmentManager, var documentId:ArrayList<String>, private var documentType:String) : FragmentStatePagerAdapter(fm) {
 
     override fun getItem(position: Int): Fragment {
-        Log.e("ModerationAdapter","Document type = $documentType")
+        Log.i("ModerationAdapter","Document type = $documentType")
         return when(documentType){
             MODERATION_PICTURES -> PicturesPageFragment.newInstance(position, this.count, this.documentId[position])
             else -> CommentsPageFragment.newInstance(position, this.count, this.documentId[position])

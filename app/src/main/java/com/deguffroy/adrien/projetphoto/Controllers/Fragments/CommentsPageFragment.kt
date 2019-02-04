@@ -14,11 +14,9 @@ import com.bumptech.glide.request.RequestOptions
 import com.deguffroy.adrien.projetphoto.Api.CommentsHelper
 import com.deguffroy.adrien.projetphoto.Api.PicturesHelper
 import com.deguffroy.adrien.projetphoto.Api.ReportsHelper
-import com.deguffroy.adrien.projetphoto.Controllers.Activities.MainActivity
 import com.deguffroy.adrien.projetphoto.Controllers.Activities.ModerationActivity
 import com.deguffroy.adrien.projetphoto.Models.Comment
 import com.deguffroy.adrien.projetphoto.Models.Picture
-import com.deguffroy.adrien.projetphoto.Models.Report
 import com.deguffroy.adrien.projetphoto.R
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -60,7 +58,7 @@ class CommentsPageFragment : ModerationBaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        Log.e("CommentPageFrag","View Created!")
+        Log.i("CommentPageFrag","View Created!")
 
         this.position = arguments?.getInt(CommentsPageFragment.POSITION)!!
         this.commentId = arguments?.getString(CommentsPageFragment.DOCUMENT_ID)!!
@@ -76,6 +74,7 @@ class CommentsPageFragment : ModerationBaseFragment() {
     // ACTION
     // -------------------
 
+    // When click "Accept" nothing change for comment
     override fun onClickAcceptButton() {
         if (rootView.findViewById<EditText>(R.id.comment_page_text_view).text.toString() != this.previousText){
             CommentsHelper().updateCommentTextById(this.commentId, rootView.findViewById<EditText>(R.id.comment_page_text_view).text.toString()).addOnSuccessListener {
@@ -85,6 +84,7 @@ class CommentsPageFragment : ModerationBaseFragment() {
         this.moveToNextAndReset(false)
     }
 
+    // When click on "Deny", Picture's comment decrement
     override fun onClickDenyButton() {
         val db = FirebaseFirestore.getInstance()
         val docRef = PicturesHelper().getPicturesCollection().document(this.pictureId)
@@ -97,13 +97,14 @@ class CommentsPageFragment : ModerationBaseFragment() {
             transaction.update(docRef, "comments", newCommentCount)
             transaction.delete(docToDelete)
         }.addOnSuccessListener {
-            Log.e("PageFragment","Success update comment count")
+            Log.i("PageFragment","Success update comment count")
             this.moveToNextAndReset(true)
         }.addOnFailureListener {failure->
             Log.e("PageFragment","Fail update comment count! ${failure.localizedMessage}")
         }
     }
 
+    // Depending on boolean comment is delete or not. Reset report count for this comment
     private fun resetReportCountAndDeleteReports(deleteComment:Boolean){
         val db = FirebaseFirestore.getInstance()
         val batch = db.batch()
@@ -112,14 +113,14 @@ class CommentsPageFragment : ModerationBaseFragment() {
             if (!(it.isEmpty)){
                 this.listCommentIdToDelete = arrayListOf()
                 for (document in it){
-                    this.listCommentIdToDelete.add(document.id)
+                    this.listCommentIdToDelete.add(document.id) // Adding each document to list for the batch
                 }
                 if (!deleteComment) batch.update(CommentsHelper().getCommentsCollection().document(commentId),"reportCount",0)
                 listCommentIdToDelete.forEach{commentIdToDelete ->
-                    batch.delete(ReportsHelper().getReportsCollection().document(commentIdToDelete))
+                    batch.delete(ReportsHelper().getReportsCollection().document(commentIdToDelete)) // Creating a batch to delete each element in list
                 }
                 batch.commit().addOnCompleteListener {
-                    Log.e("CommentPage","Batch success")
+                    Log.i("CommentPage","Batch success")
                 }.addOnFailureListener {batchFailure ->
                     Log.e("CommentPage","Batch Failure | ${batchFailure.localizedMessage}")
                 }
@@ -147,10 +148,10 @@ class CommentsPageFragment : ModerationBaseFragment() {
             rootView.findViewById<TextView>(R.id.comment_page_text_view).text = comment?.commentText
             this.previousText = comment?.commentText!!
 
-            PicturesHelper().getPictureById(comment?.pictureId!!).addOnSuccessListener {pictureTask->
+            PicturesHelper().getPictureById(comment.pictureId).addOnSuccessListener { pictureTask->
                 val picture = pictureTask.toObject(Picture::class.java)
                 this.pictureId = picture?.documentId!!
-                glide.load(picture?.urlImage).apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)).into(rootView.findViewById(R.id.comment_page_image_view))
+                glide.load(picture.urlImage).apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)).into(rootView.findViewById(R.id.comment_page_image_view))
             }
         }
 

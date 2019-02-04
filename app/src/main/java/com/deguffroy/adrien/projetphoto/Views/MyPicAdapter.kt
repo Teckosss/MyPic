@@ -1,18 +1,14 @@
 package com.deguffroy.adrien.projetphoto.Views
 
-import android.util.Log
 import android.util.SparseBooleanArray
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.NonNull
-import androidx.recyclerview.widget.RecyclerView
 import com.deguffroy.adrien.projetphoto.Models.Picture
 import com.deguffroy.adrien.projetphoto.R
 import com.deguffroy.adrien.projetphoto.Utils.MAX_NUMBER_IMAGE_DELETE
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import kotlinx.android.synthetic.main.fragment_my_pic_item.view.*
 
 /**
  * Created by Adrien Deguffroy on 26/11/2018.
@@ -58,14 +54,6 @@ class MyPicAdapter(var callback:Listener, @NonNull options: FirestoreRecyclerOpt
         for (i:Int in selection){
             notifyItemChanged(i)
         }
-    }
-
-    fun setAllItemsSelected(){
-        this.clearSelection()
-        for (i in 0 until MAX_NUMBER_IMAGE_DELETE){
-            if (!selectedItems.get(i,false)){selectedItems.put(i, true)}
-        }
-        notifyDataSetChanged()
     }
 
     fun getSelectedItemCount() = selectedItems.size()

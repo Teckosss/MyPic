@@ -3,7 +3,6 @@ package com.deguffroy.adrien.projetphoto.Controllers.Fragments
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.deguffroy.adrien.projetphoto.Api.CommentsHelper
@@ -64,6 +63,7 @@ class MyPicFragment : BaseFragment(), MyPicAdapter.Listener, ActionMode.Callback
     // ACTION MODE
     // -------------------
 
+    // Handle click on items in action bar
     override fun onActionItemClicked(p0: ActionMode?, p1: MenuItem?): Boolean {
         when(p1?.itemId){
             R.id.selected_menu_delete -> {
@@ -89,6 +89,7 @@ class MyPicFragment : BaseFragment(), MyPicAdapter.Listener, ActionMode.Callback
         return false
     }
 
+    // If user is not in deleting mode, clear the selection
     override fun onDestroyActionMode(p0: ActionMode?) {
         adapter.clearSelection()
         actionMode = null
@@ -98,6 +99,7 @@ class MyPicFragment : BaseFragment(), MyPicAdapter.Listener, ActionMode.Callback
     // CONFIGURATION
     // -------------------
 
+    // Reset selecting mode, clear selection and hide action bar
     private fun clearListAndActionMode(){
         mViewModel.currentListImagesToDelete.clear()
         mViewModel.myPicSelectingMode = false
@@ -116,17 +118,19 @@ class MyPicFragment : BaseFragment(), MyPicAdapter.Listener, ActionMode.Callback
         this.my_pic_recycler_view.layoutManager = GridLayoutManager(activity!!,3)
     }
 
+
     private fun configureOnClickItemRecyclerView(){
         ItemClickSupport.addTo(my_pic_recycler_view,R.layout.fragment_my_pic_item)
             .setOnItemClickListener{recyclerView, position, v ->
-                if (mViewModel.myPicSelectingMode && actionMode != null){
+                if (mViewModel.myPicSelectingMode && actionMode != null){ // If user is selecting picture, we add it into the list
                     val image = adapter.getItem(position)
                     this.manageListToDelete(image, position)
 
-                }else{
+                }else{ // User only want to go to detail
                     startActivity(DetailActivity.newInstance(activity!! , adapter.getItem(position).documentId))
                 }
             }
+                // On long click, start selecting mode or just add picture to list
             .setOnItemLongClickListener { recyclerView, position, v ->
                 Log.e("MyPicFragment","LongClick on item : $position")
                 val image = adapter.getItem(position)
@@ -148,12 +152,13 @@ class MyPicFragment : BaseFragment(), MyPicAdapter.Listener, ActionMode.Callback
     // UI
     // -------------------
 
+    // Manage if there is picture to display
     override fun onDataChanged() {
         try{
-            if (adapter.itemCount == 0){
+            if (adapter.itemCount == 0){ // Hiding recyclerView and show textView
                 my_pic_recycler_view.visibility = View.GONE
                 my_pic_no_image_yet_layout.visibility = View.VISIBLE
-            } else {
+            } else { // Hiding TextView and show recyclerView
                 my_pic_recycler_view.visibility = View.VISIBLE
                 my_pic_no_image_yet_layout.visibility = View.GONE
             }
@@ -162,6 +167,7 @@ class MyPicFragment : BaseFragment(), MyPicAdapter.Listener, ActionMode.Callback
         }
     }
 
+    // Callback from adapter, list is full, display message to user
     override fun onTooMuchItem() {
         this.displayMessage(getString(R.string.my_pic_fragment_too_much_image_to_delete, MAX_NUMBER_IMAGE_DELETE))
     }
@@ -176,7 +182,7 @@ class MyPicFragment : BaseFragment(), MyPicAdapter.Listener, ActionMode.Callback
         if (adapter.getSelectedItemCount() == 0 && mViewModel.myPicSelectingMode){
             actionMode?.finish()
             mViewModel.myPicSelectingMode = false
-            Log.e("MyPicFragment","List to delete size AFTER CLEAR : ${mViewModel.currentListImagesToDelete.size}")
+            Log.i("MyPicFragment","List to delete size AFTER CLEAR : ${mViewModel.currentListImagesToDelete.size}")
 
         }else{
             mViewModel.myPicSelectingMode = true
@@ -185,58 +191,65 @@ class MyPicFragment : BaseFragment(), MyPicAdapter.Listener, ActionMode.Callback
         }
 
         when {
+            // List is empty we add this item
             mViewModel.currentListImagesToDelete.isEmpty() -> {
                 mViewModel.myPicSelectingMode = true
                 mViewModel.currentListImagesToDelete.add(image)
-                Log.e("MyPicFragment","List is empty, ADDING ITEM, size : ${mViewModel.currentListImagesToDelete.size}")
+                Log.i("MyPicFragment","List is empty, ADDING ITEM, size : ${mViewModel.currentListImagesToDelete.size}")
             }
             else -> {
                 mViewModel.currentListImagesToDelete.forEach {
+                    // Checking if this item is already in list
                     if (image == it){
+                        // Remove this item
                         mViewModel.currentListImagesToDelete.remove(image)
-                        Log.e("MyPicFragment","List not empty, Image already in list, REMOVING ITEM, size : ${mViewModel.currentListImagesToDelete.size}")
+                        Log.i("MyPicFragment","List not empty, Image already in list, REMOVING ITEM, size : ${mViewModel.currentListImagesToDelete.size}")
                         return
                     }
                 }
                 if (mViewModel.currentListImagesToDelete.size == adapter.getSelectedItemCount()){
-                    Log.e("MyPicFragment","List FULL, DOING NOTHING, size : ${mViewModel.currentListImagesToDelete.size}")
+                    // List is full, we can't add this new item
+                    Log.i("MyPicFragment","List FULL, DOING NOTHING, size : ${mViewModel.currentListImagesToDelete.size}")
                 }else{
+                    // We add this item to list
                     mViewModel.currentListImagesToDelete.add(image)
-                    Log.e("MyPicFragment","List not empty, Image not in list, ADDING ITEM, size : ${mViewModel.currentListImagesToDelete.size}")
+                    Log.i("MyPicFragment","List not empty, Image not in list, ADDING ITEM, size : ${mViewModel.currentListImagesToDelete.size}")
                 }
 
             }
         }
-        Log.e("MyPicFragment","FINAL List to delete size : ${mViewModel.currentListImagesToDelete.size}")
+        Log.i("MyPicFragment","FINAL List to delete size : ${mViewModel.currentListImagesToDelete.size}")
     }
 
+    // Handle click on icon from action bar
     private fun manageListFromMenu(action:Int){
-        if (action == R.id.selected_menu_check_all){
+        if (action == R.id.selected_menu_check_all){ // Check all picture to fill the list size
             mViewModel.currentListImagesToDelete.clear()
             adapter.clearSelection()
 
             val listToAdd = arrayListOf<Picture>()
-            Log.e("MyPicFragment","Item number in adapter : ${adapter.getSelectedItemCount()}")
+            Log.i("MyPicFragment","Item number in adapter : ${adapter.getSelectedItemCount()}")
 
-            (0 until adapter.itemCount).forEach {
+            (0 until adapter.itemCount).forEach {// Adding each picture to list
                 if (it < adapter.itemCount && it < MAX_NUMBER_IMAGE_DELETE){
                     adapter.toggleSelection(it)
-                    Log.e("MyPicFragment","listToAdd size : ${listToAdd.size} \n $listToAdd")
+                    Log.i("MyPicFragment","listToAdd size : ${listToAdd.size} \n $listToAdd")
                     val image = adapter.getItem(it)
                     listToAdd.add(image)
                 }
             }
 
             mViewModel.currentListImagesToDelete.addAll(listToAdd)
-            Log.e("MyPicFragment","List to delete size : ${mViewModel.currentListImagesToDelete.size}")
+            Log.i("MyPicFragment","List to delete size : ${mViewModel.currentListImagesToDelete.size}")
         }else{
             mViewModel.currentListImagesToDelete.clear()
         }
         actionMode?.title = resources.getString(R.string.my_pic_fragment_action_bar_text, adapter.getSelectedItemCount(), MAX_NUMBER_IMAGE_DELETE)
     }
 
+    // Deleting selected pictures from firebase
     private fun deleteSelectedImageFromFirebase(){
-        if(mViewModel.currentListImagesToDelete.size <= MAX_NUMBER_IMAGE_DELETE){
+        if(mViewModel.currentListImagesToDelete.size <= MAX_NUMBER_IMAGE_DELETE){ // Check if list size is not higher than maximum item for a single batch
             val db = FirebaseFirestore.getInstance()
 
             mViewModel.currentListImagesToDelete.forEach {
@@ -244,17 +257,18 @@ class MyPicFragment : BaseFragment(), MyPicAdapter.Listener, ActionMode.Callback
                 val batchImage = db.batch()
                 batchImage.delete(PicturesHelper().getPicturesCollection().document(currentImage.documentId!!))
                 CommentsHelper().getCommentsForPicture(currentImage.documentId!!).get().addOnCompleteListener {commentTask ->
+                    // Retrieve comments for picture we are trying to delete
                     if(commentTask.isSuccessful){
-                        Log.e("MyPicFragment","Comment's number : ${commentTask.result!!.size()}")
+                        Log.i("MyPicFragment","Comment's number : ${commentTask.result!!.size()}")
                         if (commentTask.result!!.isEmpty){
-                            Log.e("MyPicFragment","This picture doesn't have any comment")
-                        }else{
+                            Log.i("MyPicFragment","This picture doesn't have any comment")
+                        }else{ // If picture has comment we add each of them into a list to delete with a batch
                             for (document in commentTask.result!!){
                                 val comment = document.toObject(Comment::class.java)
-                                Log.e("MyPicFragment","comment : $comment")
+                                Log.i("MyPicFragment","comment : $comment")
                                 mViewModel.currentListCommentToDelete.add(comment)
                             }
-                            Log.e("MyPicFragment","currentListCommentToDelete size : ${mViewModel.currentListCommentToDelete.size}")
+                            Log.i("MyPicFragment","currentListCommentToDelete size : ${mViewModel.currentListCommentToDelete.size}")
                         }
                     }
                 }
@@ -266,7 +280,8 @@ class MyPicFragment : BaseFragment(), MyPicAdapter.Listener, ActionMode.Callback
                         listToDelete.forEach { pic ->
                             val urlReference = storageRef.getReferenceFromUrl(pic.urlImage)
                             urlReference.delete().addOnSuccessListener {
-                                Log.e("MyPicFragment","Delete from Storage : OK")
+                                // Deleting each picture from Firebase Storage
+                                Log.i("MyPicFragment","Delete from Storage : OK")
                                 mViewModel.currentListImagesToDelete.remove(pic)
                             }.addOnFailureListener {e ->
                                 Log.e("MyPicFragment","Delete from Storage error : ${e.localizedMessage}")
@@ -276,24 +291,27 @@ class MyPicFragment : BaseFragment(), MyPicAdapter.Listener, ActionMode.Callback
 
 
                         if (mViewModel.currentListCommentToDelete.size < MAX_NUMBER_IMAGE_DELETE){
+                            // If comment's number is lower than batch's size, we add each comment to a list
                             val batchCommentSimple = db.batch()
                             mViewModel.currentListCommentToDelete.forEach { commentIndex ->
                                 batchCommentSimple.delete(CommentsHelper().getCommentsCollection().document(commentIndex.documentId!!))
                             }
                             batchCommentSimple.commit().addOnSuccessListener {
-                                Log.e("MyPicFragment","Batch comment success!")
+                                Log.i("MyPicFragment","Batch comment success!")
                             }.addOnFailureListener {commentFailure->
                                 Log.e("MyPicFragment","Batch comment failure! ${commentFailure.localizedMessage}")
                             }
                         }else{
+                            // If comment's number is higher batch's size we need to create several batch
                             val listPartitions =  Lists.partition(mViewModel.currentListCommentToDelete, MAX_NUMBER_LIST_SIZE_DELETE)
                             listPartitions.forEach{partitionList->
+                                // Creating a batch for each sub-list
                                 val batchCommentMultiple = db.batch()
                                 partitionList.forEach{partitionComment ->
                                     batchCommentMultiple.delete(CommentsHelper().getCommentsCollection().document(partitionComment.documentId!!))
                                 }
                                 batchCommentMultiple.commit().addOnSuccessListener {
-                                    Log.e("MyPicFragment","Batch partitionComment success!")
+                                    Log.i("MyPicFragment","Batch partitionComment success!")
                                 }.addOnFailureListener { partitionFail ->
                                     Log.e("MyPicFragment","Batch comment failure! ${partitionFail.localizedMessage}")
                                 }

@@ -6,8 +6,6 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.QuerySnapshot
-import com.google.firebase.storage.FirebaseStorage
 
 /**
  * Created by Adrien Deguffroy on 23/11/2018.
@@ -33,8 +31,6 @@ open class PicturesHelper {
         .getPicturesCollection()
         .whereEqualTo("userSender.uid", uid)
         .orderBy("dateCreated",Query.Direction.DESCENDING)
-
-    fun getAllPictures() = PicturesHelper().getPicturesCollection().whereGreaterThan("g","").get()
 
     fun getAllPicturesWithGeoLocAndPublicVerified() = PicturesHelper().getPicturesCollection()
         .whereGreaterThan("g","")
@@ -64,17 +60,7 @@ open class PicturesHelper {
     fun updatePictureDocumentUsername(pictureId: String, username:String) =
         PicturesHelper().getPicturesCollection().document(pictureId).update("userSender.username", username)
 
-    fun updatePictureDescription(uid:String, description: String) =
-        PicturesHelper().getPicturesCollection().document(uid).update("description", description)
-
     fun toggleVisibilityScope(uid: String, setToPublic:Boolean) =
         PicturesHelper().getPicturesCollection().document(uid).update("public", setToPublic)
-
-    fun updateDenyReason(uid: String, reason:String) =
-        PicturesHelper().getPicturesCollection().document(uid).update("denyReason", reason)
-
-    // --- DELETE ---
-
-    fun deletePictureByID(uid:String) = PicturesHelper().getPicturesCollection().document(uid).delete()
 
 }

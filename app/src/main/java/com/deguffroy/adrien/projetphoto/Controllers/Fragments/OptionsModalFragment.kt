@@ -7,10 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import com.deguffroy.adrien.projetphoto.Api.CommentsHelper
 import com.deguffroy.adrien.projetphoto.Api.ReportsHelper
-import com.deguffroy.adrien.projetphoto.Controllers.Activities.MainActivity
 import com.deguffroy.adrien.projetphoto.R
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.modal_fragment_options.*
@@ -59,21 +57,23 @@ class OptionsModalFragment : BottomSheetDialogFragment() {
     // ACTION
     // -------------------
 
+    // Create report
     private fun sendReport(){
         val userId = FirebaseAuth.getInstance().currentUser?.uid
         val documentId = arguments?.getString(DOCUMENT_ID)
-        Log.e("ModalOptions","Comment id : $documentId")
+        Log.i("ModalOptions","Comment id : $documentId")
         if (userId != null && documentId != null){
-            ReportsHelper().checkIfUserAlreadyReportThisComment(userId, documentId).get().addOnCompleteListener {
-                if (it.result?.isEmpty!!) {
+            ReportsHelper().checkIfUserAlreadyReportThisComment(userId, documentId).get().addOnCompleteListener { // Check if user has already report this comment
+                if (it.result?.isEmpty!!) { // User try to report for the first time
                     ReportsHelper().createReport(documentId, userId).addOnCompleteListener { createTask ->
                         if (createTask.isSuccessful){
+                            // Increment report count
                             val db = FirebaseFirestore.getInstance()
                             val docRef = CommentsHelper().getCommentsCollection().document(documentId)
                             db.runTransaction { transaction ->
                                 val currentReportCount = transaction.get(docRef)
                                 val newReportCount = (currentReportCount.get("reportCount") as Long) + 1
-                                Log.e("ModalOptions","New value : $newReportCount")
+                                Log.i("ModalOptions","New value : $newReportCount")
                                 transaction.update(docRef,"reportCount", newReportCount)
                             }.addOnSuccessListener {
                                 this.dismissAndShowMessage(resources.getString(R.string.modal_fragment_user_report_success))

@@ -57,6 +57,7 @@ class ModerationFragment : BaseFragment() {
     // ACTION
     // -------------------
 
+    // Check if any picture or comment need moderation, if yes we display a badge to moderation icon
     private fun checkItemNeedingModeration(){
         fragment_moderation_swipe_refresh.isRefreshing = true
         var noResult: Boolean
@@ -72,8 +73,11 @@ class ModerationFragment : BaseFragment() {
                         this.listPicture.add(picture.documentId!!)
                     }
                 }
-                Log.e("ModerationFrag","Picture no result = $noResult")
-                this.setViewVisibility(fragment_moderation_picture_card,fragment_moderation_picture_number, it.result?.size()!!, noResult, MODERATION_PICTURES)
+                Log.i("ModerationFrag","Picture no result = $noResult")
+                if (fragment_moderation_picture_card != null){
+                    this.setViewVisibility(fragment_moderation_picture_card,fragment_moderation_picture_number, it.result?.size()!!, noResult, MODERATION_PICTURES)
+                }
+
             }
 
             CommentsHelper().getCommentsReported().get().addOnCompleteListener {commentTask ->
@@ -90,13 +94,15 @@ class ModerationFragment : BaseFragment() {
                             this.listComments.add(comment.documentId!!)
                         }
                     }
-                    Log.e("ModerationFrag","Comment no result = $noResult")
+                    Log.i("ModerationFrag","Comment no result = $noResult")
                     if (fragment_moderation_comment_card != null){
                         this.setViewVisibility(fragment_moderation_comment_card,fragment_moderation_comment_number, commentTask.result?.size()!!, noResult, MODERATION_COMMENTS)
                     }
                 }
                 if (!needToShowBadge) {
-                    (activity as MainActivity).showSnackbarMessage(fragment_moderation_coordinator_layout, resources.getString(R.string.moderation_fragment_nothing_to_do_message))
+                    if (fragment_moderation_coordinator_layout != null){
+                        (activity as MainActivity).showSnackbarMessage(fragment_moderation_coordinator_layout, resources.getString(R.string.moderation_fragment_nothing_to_do_message))
+                    }
                     BottomNavHelper().removeBadge((activity as MainActivity).bottom_navigation_view, R.id.bnv_moderation)
                 }else{
                     BottomNavHelper().showBadge((activity as MainActivity), (activity as MainActivity).bottom_navigation_view, R.id.bnv_moderation)
@@ -110,6 +116,7 @@ class ModerationFragment : BaseFragment() {
     // UI
     // -------------------
 
+    // Display or not picture or comment CardView if there is something to moderate
     private fun setViewVisibility(containerVisibilityToChange:View, numberView:TextView, itemCount:Int, noResult:Boolean, documentType:String){
         if(noResult){
             containerVisibilityToChange.visibility = View.GONE

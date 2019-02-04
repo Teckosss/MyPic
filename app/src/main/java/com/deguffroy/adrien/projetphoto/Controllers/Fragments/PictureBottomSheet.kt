@@ -55,15 +55,16 @@ class PictureBottomSheet @SuppressLint("ValidFragment") constructor(private var 
     // ACTION
     // -------------------
 
+    // Update picture with deny reason
     private fun updatePictureAndDismiss(reason:String){
         val pictureId = arguments?.getString(DOCUMENT_ID)
         if (pictureId != null){
             val db = FirebaseFirestore.getInstance()
             val batch = db.batch()
-            batch.update(PicturesHelper().getPicturesCollection().document(pictureId), "public" , false)
-            batch.update(PicturesHelper().getPicturesCollection().document(pictureId), "denyReason" , reason)
+            batch.update(PicturesHelper().getPicturesCollection().document(pictureId), "public" , false) // Set picture public field to false
+            batch.update(PicturesHelper().getPicturesCollection().document(pictureId), "denyReason" , reason) // Adding deny reason
             batch.commit().addOnSuccessListener {
-                Log.e("PictureSheet","Batch success!")
+                Log.i("PictureSheet","Batch success!")
                 dismiss()
                 callback.returnToPicturePageFragment()
             }.addOnFailureListener {failureTask->

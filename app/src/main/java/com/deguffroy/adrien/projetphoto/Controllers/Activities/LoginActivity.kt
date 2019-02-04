@@ -24,7 +24,7 @@ class LoginActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.e("LoginActivity","Create Login Activity")
+        Log.i("LoginActivity","Create Login Activity")
         setContentView(R.layout.activity_login)
 
         if(!this.isCurrentUserLogged()!!){
@@ -69,7 +69,7 @@ class LoginActivity : BaseActivity() {
     private fun createUserInFirestore() {
         if (this.getCurrentUser() != null) {
            if(this.getCurrentUser()?.metadata!!.creationTimestamp == this.getCurrentUser()?.metadata!!.lastSignInTimestamp){ // NEW USER
-               Log.e("LoginActivity","User doesn't exist in Firestore! Need to create a new one!")
+               Log.i("LoginActivity","User doesn't exist in Firestore! Need to create a new one!")
                val urlPicture =
                    if (this.getCurrentUser()!!.photoUrl != null) this.getCurrentUser()!!.photoUrl!!.toString() else null
                val username =
@@ -77,11 +77,11 @@ class LoginActivity : BaseActivity() {
                val uid = this.getCurrentUser()!!.uid
                UserHelper().createUser(uid, username, urlPicture).addOnFailureListener(this.onFailureListener())
            }else{ // EXISTING USER
-               Log.e("LoginActivity","User already exist in Firestore!")
+               Log.i("LoginActivity","User already exist in Firestore!")
            }
             this.mViewModel.updateCurrentUserUID(this.getCurrentUser()?.uid!!)
         } else {
-            Log.e("LOGIN_ACTIVITY", "createUserInFirestore: NOT LOGGED")
+            Log.i("LOGIN_ACTIVITY", "createUserInFirestore: NOT LOGGED")
         }
     }
 
@@ -110,15 +110,11 @@ class LoginActivity : BaseActivity() {
         }
     }
 
-    private fun isNewSignUp(): Boolean {
-        val metadata:FirebaseUserMetadata = this.getCurrentUser()?.metadata!!
-        return metadata.creationTimestamp == metadata.lastSignInTimestamp
-    }
-
     // --------------------
     // ACTION
     // --------------------
 
+    // Navigate to Main activity and clear backstack to prevent user comeback in this activity
     private fun navigateToMainActivity(){
         val intent = Intent(this, MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)

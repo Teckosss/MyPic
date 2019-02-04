@@ -1,7 +1,6 @@
 package com.deguffroy.adrien.projetphoto.Controllers.Fragments
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
@@ -71,7 +70,7 @@ class MapFragment : BaseFragment() , ClusterManager.OnClusterItemClickListener<P
     @SuppressLint("MissingPermission")
     private fun loadMap(googleMap: GoogleMap?, hasPermissions: Boolean){
         if (googleMap != null){
-            Log.e("MapFragment","loadMap!")
+            Log.i("MapFragment","loadMap!")
             mMap = googleMap
             mMap!!.isIndoorEnabled = false
             mMap!!.uiSettings.isCompassEnabled = true
@@ -90,8 +89,9 @@ class MapFragment : BaseFragment() , ClusterManager.OnClusterItemClickListener<P
         }
     }
 
+    // Creating cluster to improve visibility on map when there is a lot of markers
     private fun setUpCluster(){
-        Log.e("MapFragment","SetUp Cluster!")
+        Log.i("MapFragment","SetUp Cluster!")
         mClusterManager = ClusterManager(activity!!, mMap)
         mClusterManager.clearItems()
         mClusterManager.renderer = PictureRenderer(activity!!, mMap!!, mClusterManager)
@@ -103,9 +103,10 @@ class MapFragment : BaseFragment() , ClusterManager.OnClusterItemClickListener<P
 
     }
 
+    // Retrieve every picture needed and add them into a list to be clustered
     private fun addItemsToCluster(){
         PicturesHelper().getAllPicturesWithGeoLocAndPublicVerified().addOnCompleteListener {
-            Log.e("MapFragment","Result's number : ${it.result?.size()}")
+            Log.i("MapFragment","Result's number : ${it.result?.size()}")
             if (it.isSuccessful){
                 val listPicture = arrayListOf<PictureCluster>()
                 for (document in it.result!!){ // ADDING EVERY PIC FROM FIRESTORE TO LIST
@@ -114,7 +115,7 @@ class MapFragment : BaseFragment() , ClusterManager.OnClusterItemClickListener<P
                     listPicture.add(pictureCluster)
                 }
                 this.updateUI(listPicture)
-            }else{
+            }else{ // If there is a failure, we notice user with a message in snackbar
                BaseActivity().showSnackbarMessage(coordinator_layout_map_fragment,
                    resources.getString(R.string.map_fragment_no_result_message),
                    Snackbar.LENGTH_LONG,
@@ -123,6 +124,7 @@ class MapFragment : BaseFragment() , ClusterManager.OnClusterItemClickListener<P
         }
     }
 
+    // Device location change, we update camera on map and stop requesting location
     override fun handleNewLocation(location: Location){
         Log.e("Handle_New_Location","New location : ${LatLng(location.latitude,location.longitude)}")
         this.moveCameraOnMap(LatLng(location.latitude,location.longitude))
@@ -147,21 +149,23 @@ class MapFragment : BaseFragment() , ClusterManager.OnClusterItemClickListener<P
     // ACTION
     // -----------------
 
+    // Handle click on single item
     override fun onClusterItemClick(p0: PictureCluster?): Boolean {
-        Log.e("MapFragment","Click on item : ${p0?.picture}")
+        Log.i("MapFragment","Click on item : ${p0?.picture}")
         startActivity(DetailActivity.newInstance(activity!!, p0?.picture?.documentId))
         return true
     }
 
+    // Handle click on a whole cluster
     override fun onClusterClick(p0: Cluster<PictureCluster>?): Boolean {
-        Log.e("MapFragment","Click on cluster : ${p0?.items}")
+        Log.i("MapFragment","Click on cluster : ${p0?.items}")
         val listPicture = ArrayList<Picture>()
         for (item in p0?.items!!){
             val picture = item.picture
-            listPicture.add(picture)
+            listPicture.add(picture) // Adding each picture to list
         }
         val gson = Gson()
-        val listClusterAsString = gson.toJson(listPicture)
+        val listClusterAsString = gson.toJson(listPicture) // Transform list into a json to pass it to an activity
         startActivity(ClusterItemsActivity.newInstance(activity!!, listClusterAsString))
         return true
     }

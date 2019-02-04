@@ -94,14 +94,14 @@ class AddActivity : BaseActivity() {
 
         uploadTask.addOnProgressListener {
             val progress = 100.0 * it.bytesTransferred / it.totalByteCount
-            Log.e("AddActivity","Upload progress : $progress")
+            Log.i("AddActivity","Upload progress : $progress")
             add_activity_progressBar.progress = progress.toInt()
             add_activity_upload_text.text = resources.getString(R.string.add_activity_upload_progress,progress.toInt())
             this.disableUI()
         }.addOnCanceledListener {
-            Log.e("AddActivity","Canceled!")
+            Log.i("AddActivity","Canceled!")
         }.addOnPausedListener {
-            Log.e("AddActivity","Paused : $it")
+            Log.i("AddActivity","Paused : $it")
         }.addOnFailureListener {
             Log.e("AddActivity","Failure : ${it.localizedMessage}")
         }

@@ -13,6 +13,8 @@ import com.deguffroy.adrien.projetphoto.R
 /**
  * Created by Adrien Deguffroy on 09/01/2019.
  */
+
+// Add a horizontal bar to separate each items of a RecyclerView
 class DividerItemDecoration(var context: Context, var paddingLeft:Int, var paddingRight:Int) : RecyclerView.ItemDecoration() {
 
     private var mDivider: Drawable? = null

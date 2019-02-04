@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.deguffroy.adrien.projetphoto.Api.PicturesHelper
-import com.deguffroy.adrien.projetphoto.Controllers.Activities.BaseActivity
 import com.deguffroy.adrien.projetphoto.Controllers.Activities.DetailActivity
 import com.deguffroy.adrien.projetphoto.Controllers.Activities.MainActivity
 import com.deguffroy.adrien.projetphoto.Models.Picture
@@ -66,6 +65,7 @@ class HomeFragment : BaseFragment() {
     // CONFIGURATION
     // -------------------
 
+    // Create adapter and attach it on the recyclerView
     private fun configureRecyclerView(){
         this.listPictures = ArrayList()
         this.adapter = HomePagingAdapter(generateOptionsForAdapter(PicturesHelper().getAllPublicAndVerifiedPictures()))
@@ -73,11 +73,13 @@ class HomeFragment : BaseFragment() {
         fragment_home_recycler_view.layoutManager = LinearLayoutManager(activity)
     }
 
+    // Defining a query, and how many picture will be loaded first for the PagingAdapter
     private fun generateOptionsForAdapter(query: Query) = FirestorePagingOptions.Builder<Picture>()
         .setQuery(query, generateConfig() ,Picture::class.java)
         .setLifecycleOwner(this)
         .build()
 
+    // Define how many pictures will be loaded first, some will remain in cache so when user scroll display them in cache and reloaded others in cache for next scroll
     private fun generateConfig() = PagedList.Config.Builder()
         .setPrefetchDistance(10)
         .setPageSize(20)
@@ -90,6 +92,7 @@ class HomeFragment : BaseFragment() {
         }
     }
 
+    // If no error when clicking on recyclerView item, launch DetailActivity with item's documentId
     private fun configureOnClickItemRecyclerView(){
         ItemClickSupport.addTo(fragment_home_recycler_view, R.layout.fragment_home_item)
             .setOnItemClickListener { recyclerView, position, v ->
@@ -101,9 +104,9 @@ class HomeFragment : BaseFragment() {
             }
     }
 
-
+    // Retrieve list of all public and verified picture to populate RecyclerView
     private fun retrievePicture(){
-        Log.e("HomeFragment","Enter RetrievePicture!")
+        Log.i("HomeFragment","Enter RetrievePicture!")
         PicturesHelper().getAllPublicAndVerifiedPictures().get().addOnCompleteListener {
             if (it.isSuccessful){
                 val listToAdd = arrayListOf<Picture>()

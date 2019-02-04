@@ -30,8 +30,4 @@ class ReportsHelper {
         .getReportsCollection()
         .whereEqualTo("commentId", commentId)
 
-    // --- DELETE ---
-
-    fun deleteReportById(reportId:String) = ReportsHelper().getReportsCollection().document(reportId).delete()
-
 }

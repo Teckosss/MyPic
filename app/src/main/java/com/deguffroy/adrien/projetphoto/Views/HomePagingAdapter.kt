@@ -1,6 +1,5 @@
 package com.deguffroy.adrien.projetphoto.Views
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.deguffroy.adrien.projetphoto.Models.Picture

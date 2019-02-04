@@ -40,7 +40,6 @@ open class BaseFragment : Fragment(), GoogleApiClient.OnConnectionFailedListener
     private lateinit var mLocationCallback : LocationCallback
 
     lateinit var geoFirestore: GeoFirestore
-    lateinit var geoQuery: GeoQuery
 
     var mGoogleApiClient: GoogleApiClient? = null
 
@@ -100,7 +99,7 @@ open class BaseFragment : Fragment(), GoogleApiClient.OnConnectionFailedListener
     // -------------------
 
     open fun configureLocationFunctions(hasPermissions:Boolean){
-        Log.e("BaseFragment","ENTER configureLocationFunctions, permissions value = $hasPermissions")
+        Log.i("BaseFragment","ENTER configureLocationFunctions, permissions value = $hasPermissions")
         if (hasPermissions){
             this.configureLocationRequest()
             this.configureLocationCallback()
@@ -116,6 +115,7 @@ open class BaseFragment : Fragment(), GoogleApiClient.OnConnectionFailedListener
         }
     }
 
+    // Request device position every 10s
     private fun configureLocationRequest(){
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(activity!!)
         mLocationRequest = LocationRequest.create()
@@ -146,6 +146,7 @@ open class BaseFragment : Fragment(), GoogleApiClient.OnConnectionFailedListener
         }
     }
 
+    // Force request device location
     @SuppressLint("MissingPermission")
     fun forceRequestLocation(){
         mFusedLocationClient!!.requestLocationUpdates(mLocationRequest,mLocationCallback,null)
@@ -166,6 +167,7 @@ open class BaseFragment : Fragment(), GoogleApiClient.OnConnectionFailedListener
 
     override fun onConnectionSuspended(p0: Int) {}
 
+    // Stop requesting device position
     fun stopLocationUpdate(){
         if (mFusedLocationClient != null){
             mFusedLocationClient!!.removeLocationUpdates(mLocationCallback)
@@ -184,12 +186,12 @@ open class BaseFragment : Fragment(), GoogleApiClient.OnConnectionFailedListener
     // PERMISSIONS
     // -------------------
 
-    fun locationPermissionsGranted(): Boolean = (ContextCompat.checkSelfPermission(activity!!, Manifest.permission.ACCESS_COARSE_LOCATION)
+    private fun locationPermissionsGranted(): Boolean = (ContextCompat.checkSelfPermission(activity!!, Manifest.permission.ACCESS_COARSE_LOCATION)
             == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(activity!!, Manifest.permission.ACCESS_FINE_LOCATION)
             == PackageManager.PERMISSION_GRANTED)
 
-    fun requestLocationPermissions(){
-        Log.e("BaseFragment","Request location permissions")
+    private fun requestLocationPermissions(){
+        Log.i("BaseFragment","Request location permissions")
         requestPermissions(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION),
             RC_PERM_LOCATION)
     }

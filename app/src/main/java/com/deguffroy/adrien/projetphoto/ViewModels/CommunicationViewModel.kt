@@ -55,7 +55,7 @@ class CommunicationViewModel : ViewModel() {
     fun getPicture(pictureId:String):LiveData<Picture>{
         if (currentPicture.value == null){
             PicturesHelper().getPicturesCollection().document(pictureId).addSnapshotListener { p0, p1 ->
-                if (p0?.exists()!!){
+                if (p0 != null){
                     val picture = p0.toObject(Picture::class.java)
                     currentPicture.postValue(picture)
                 }else{

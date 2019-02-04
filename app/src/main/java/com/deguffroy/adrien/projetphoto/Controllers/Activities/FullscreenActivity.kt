@@ -33,7 +33,7 @@ class FullscreenActivity : BaseActivity() {
     // -------------------
 
     private fun loadImage(url:String){
-        Log.e("DetailFragment","ImageURL value : $url")
+        Log.i("DetailFragment","ImageURL value : $url")
         Glide.with(this).load(url).apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)).into(fullscreen_image)
     }
 

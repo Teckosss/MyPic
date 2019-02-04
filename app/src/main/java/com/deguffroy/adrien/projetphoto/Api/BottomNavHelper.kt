@@ -15,6 +15,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
  * Created by Adrien Deguffroy on 04/01/2019.
  */
 class BottomNavHelper {
+
     fun showBadge(context: Context,bottomNavigationView: BottomNavigationView, @IdRes itemId:Int){
         val itemView = bottomNavigationView.findViewById<BottomNavigationItemView>(itemId)
         val badge = LayoutInflater.from(context).inflate(R.layout.layout_bnv_badge, bottomNavigationView, false)
@@ -34,21 +35,5 @@ class BottomNavHelper {
                 Log.e("BottomNavHelper","Error : ${e.localizedMessage}")
             }
         }
-        /*(0 until menuView.childCount).forEach {
-            Log.e("BottomNavHelper","Menu $it = $menuView")
-            val itemView = menuView.getChildAt(it) as BottomNavigationItemView
-            (2 until itemView.childCount).forEach {itemViewCount ->
-                // 0 IS ICON | 1 IS ICON_TEXT | SO WE NEED TO START AT 2
-                Log.e("BottomNavHelper","Item $itemViewCount = $itemView")
-                if (itemView.id == itemId){
-                    Log.e("BottomNavHelper","Item found! Menu item = $it && Item view = $itemViewCount")
-                    try {
-                        itemView.removeViewAt(itemViewCount)
-                    }catch (e:Exception){
-                        Log.e("BottomNavHelper","Error : ${e.localizedMessage}")
-                    }
-                }
-            }
-        }*/
     }
 }

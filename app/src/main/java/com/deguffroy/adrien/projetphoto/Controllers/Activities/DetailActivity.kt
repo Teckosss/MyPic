@@ -64,37 +64,25 @@ class DetailActivity : BaseActivity(), DetailActivityAdapter.Listener, OptionsMo
             BaseActivity().showSnackbarMessage(detail_activity_coordinator_layout,resources.getString(R.string.detail_activity_error_retrieving_document_uid))
         }
 
-        mViewModel.getPicture(this.documentId!!).observe(this, Observer {
-            Log.e("DetailActivity","Observe change!")
-            this.updateOnObserve(it)
-        })
+        mViewModel.getPicture(this.documentId!!).observe(this,
+            Observer<Picture> { t ->
+                Log.i("DetailActivity","Observe change!")
+                if (t != null) {
+                    updateOnObserve(t)
+                }
+            })
 
         this.getCurrentUserFromFirestore()
         this.configureRecyclerView()
         this.setOnClickListener()
         this.incrementView()
-        //this.createImage()
-    }
-
-    //ONLY FOR TESTING
-    private fun createImage(){
-        UserHelper().getUser(FirebaseAuth.getInstance().currentUser?.uid!!).addOnCompleteListener {
-            if (it.isSuccessful){
-                val user = it.result?.toObject(User::class.java)!!
-                (0 until 2).forEach {
-                    PicturesHelper().createPicture(user,"",true,"").addOnSuccessListener {pictureAdd->
-                        Log.e("DetailActivity","Image successfully created!")
-                        PicturesHelper().updatePictureDocumentID(pictureAdd.id)
-                    }
-                }
-            }
-        }
     }
 
     // -------------------
     // CONFIGURATION
     // -------------------
 
+    // Create adapter and attach it on the recyclerView
     private fun configureRecyclerView(){
         if (this.documentId != null){
 
@@ -108,16 +96,19 @@ class DetailActivity : BaseActivity(), DetailActivityAdapter.Listener, OptionsMo
         }
     }
 
+    // Defining a query, and how many picture will be loaded first for the PagingAdapter
     private fun generateOptionsForAdapter(query: Query) = FirestorePagingOptions.Builder<Comment>()
         .setQuery(query, generateConfig() ,Comment::class.java)
         .setLifecycleOwner(this)
         .build()
 
+    // Define how many comment will be loaded first, some will remain in cache so when user scroll display them in cache and reloaded others in cache for next scroll
     private fun generateConfig() = PagedList.Config.Builder()
         .setPrefetchDistance(10)
         .setPageSize(20)
         .build()
 
+    // Set listener for button
     private fun setOnClickListener(){
         detail_activity_image.setOnClickListener {
             if (this.imageURL != null) {
@@ -140,7 +131,7 @@ class DetailActivity : BaseActivity(), DetailActivityAdapter.Listener, OptionsMo
         ViewsHelper().checkIfUserAlreadyViewThisPicture(this.documentId!!,userUID).addOnCompleteListener {
             if(it.isSuccessful){
                 if (it.result?.isEmpty!!){ // USER DIDN'T SEEN THIS PICTURE YET
-                    Log.e("DetailActivity","User didn't seen this picture, incrementing counter!")
+                    Log.i("DetailActivity","User didn't seen this picture, incrementing counter!")
                     ViewsHelper().createNewView(this.documentId!!, userUID).addOnCompleteListener { createTask ->
                         if (createTask.isSuccessful){
                             val db = FirebaseFirestore.getInstance()
@@ -150,7 +141,7 @@ class DetailActivity : BaseActivity(), DetailActivityAdapter.Listener, OptionsMo
                                 val newCount = (snapshot.get("views")!! as Long) + 1
                                 transaction.update(docRef, "views", newCount)
                             }.addOnSuccessListener {
-                                Log.e("DetailActivity","Success incrementing views! ")
+                                Log.i("DetailActivity","Success incrementing views! ")
                             }.addOnFailureListener {errorTask->
                                 Log.e("DetailActivity","Error incrementing views : ${errorTask.localizedMessage}")
                             }
@@ -158,7 +149,7 @@ class DetailActivity : BaseActivity(), DetailActivityAdapter.Listener, OptionsMo
                     }
 
                 }else{ // USER ALREADY SEEN THIS PICTURE
-                    Log.e("DetailActivity","User already seen this picture")
+                    Log.i("DetailActivity","User already seen this picture")
                 }
             }
         }
@@ -185,7 +176,7 @@ class DetailActivity : BaseActivity(), DetailActivityAdapter.Listener, OptionsMo
                     val newCommentCount = (currentCommentCount.get("comments") as Long) + 1
                     transaction.update(docRef, "comments", newCommentCount)
                 }.addOnSuccessListener {
-                    Log.e("DetailActivity","Success incrementing comments count! ")
+                    Log.i("DetailActivity","Success incrementing comments count! ")
                 }.addOnFailureListener { failure ->
                     Log.e("DetailActivity","Error incrementing comments count : ${failure.localizedMessage}")
                 }
@@ -247,10 +238,10 @@ class DetailActivity : BaseActivity(), DetailActivityAdapter.Listener, OptionsMo
             }else{
                 (currentLikeCount.get("likes")!! as Long) - 1
             }
-            Log.e("DetailActivity","Transaction like new cunt : $newLikeCount")
+            Log.i("DetailActivity","Transaction like new count : $newLikeCount")
             transaction.update(docRef,"likes", if (newLikeCount >=0) newLikeCount else 0)
         }.addOnSuccessListener { success->
-            Log.e("DetailActivity","Transaction success")
+            Log.i("DetailActivity","Transaction success")
             this.userLikeThisPicture = toIncrement
             this.toggleLike(this.userLikeThisPicture)
 
@@ -272,7 +263,6 @@ class DetailActivity : BaseActivity(), DetailActivityAdapter.Listener, OptionsMo
     }
 
     private fun displayChipsContainer(mustDisplayContainer:Boolean, isPublicPicture:Boolean){
-        Log.e("DetailActivity","isPublicPicture = $isPublicPicture")
         this.userIsOwner = mustDisplayContainer
         this.isPublicPicture = isPublicPicture
         if(mustDisplayContainer){
@@ -309,7 +299,6 @@ class DetailActivity : BaseActivity(), DetailActivityAdapter.Listener, OptionsMo
     // -------------------
 
     private fun toggleVisibilityOnUI(setToPublic: Boolean){
-        Log.e("DetailActivity","toggleVisibilityOnUI = $setToPublic")
         if (setToPublic){
             detail_activity_chip_public.isChecked = true
             detail_activity_chip_private.isChecked = false
@@ -325,7 +314,7 @@ class DetailActivity : BaseActivity(), DetailActivityAdapter.Listener, OptionsMo
         PicturesHelper().getPictureById(documentId!!).addOnSuccessListener {
             val denyReason = (it.get("denyReason") as String?)
             if (denyReason != null) {
-                Log.e("DetailActivity", "isPictureDenyByModeration = ${!denyReason.isBlank()}")
+                Log.i("DetailActivity", "isPictureDenyByModeration = ${!denyReason.isBlank()}")
                 this.isPictureDenyByModeration = !denyReason.isBlank()
             }else{
                 this.isPictureDenyByModeration = false
@@ -362,6 +351,7 @@ class DetailActivity : BaseActivity(), DetailActivityAdapter.Listener, OptionsMo
         }
     }
 
+    // Update View/Like/Comments when picture change
     private fun updateOnObserve(picture: Picture){
         social_view_views.text = picture.views.toString()
         social_view_likes.text = picture.likes.toString()
@@ -372,13 +362,13 @@ class DetailActivity : BaseActivity(), DetailActivityAdapter.Listener, OptionsMo
         }
 
         if (picture.comments?.toLong() != previousCommentCount) this.configureRecyclerView()
-
     }
 
     override fun displayMessage(message: String) {
         this.showSnackbarMessage(detail_activity_coordinator_layout,message, Snackbar.LENGTH_LONG)
     }
 
+    // Create a circle to display when comments are loading
     private fun getCircularPlaceHolder(strokeWidth:Float, centerRadius:Float):CircularProgressDrawable{
         val circularPlaceHolder = CircularProgressDrawable(this)
         circularPlaceHolder.strokeWidth = strokeWidth

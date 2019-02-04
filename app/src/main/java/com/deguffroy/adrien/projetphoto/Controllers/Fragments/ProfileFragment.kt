@@ -1,8 +1,6 @@
 package com.deguffroy.adrien.projetphoto.Controllers.Fragments
 
-
 import android.app.AlertDialog
-import android.app.Dialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.Resources
@@ -17,14 +15,11 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.LinearLayout
 import com.deguffroy.adrien.projetphoto.Api.UserHelper
-import com.deguffroy.adrien.projetphoto.Controllers.Activities.BaseActivity
 import com.deguffroy.adrien.projetphoto.Controllers.Activities.LoginActivity
-import com.deguffroy.adrien.projetphoto.Controllers.Activities.MainActivity
 
 import com.deguffroy.adrien.projetphoto.R
 import com.firebase.ui.auth.AuthUI
 import kotlinx.android.synthetic.main.fragment_profile.*
-import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.auth.FirebaseAuth
 import android.widget.FrameLayout
 import com.bumptech.glide.Glide
@@ -56,7 +51,7 @@ class ProfileFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        Log.e("ProfileActivity","USER INFO || USER IS ANONYMOUS : ${FirebaseAuth.getInstance().currentUser?.isAnonymous}")
+        Log.i("ProfileActivity","USER INFO || USER IS ANONYMOUS : ${FirebaseAuth.getInstance().currentUser?.isAnonymous}")
 
         this.configureOnClickListener()
     }
@@ -72,10 +67,10 @@ class ProfileFragment : BaseFragment() {
 
     private fun configureOnClickListener(){
         profile_sign_out_button.setOnClickListener {this.createSignOutAlertDialog() }
-
         profile_username.setOnClickListener { this.createChangeUsernameAlertDialog() }
     }
 
+    // Creating AlertDialog for SignOut
     private fun createSignOutAlertDialog(){
         val builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
             AlertDialog.Builder(activity!!, android.R.style.Theme_Material_Light_Dialog_Alert)
@@ -114,6 +109,7 @@ class ProfileFragment : BaseFragment() {
         dialog.show()
     }
 
+    // Creating AlertDialog for username
     private fun createChangeUsernameAlertDialog(){
         val builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
             AlertDialog.Builder(activity!!, android.R.style.Theme_Material_Light_Dialog_Alert)
@@ -176,13 +172,16 @@ class ProfileFragment : BaseFragment() {
         UserHelper().getUser(FirebaseAuth.getInstance().currentUser?.uid!!).addOnCompleteListener {
             if (it.isSuccessful){
                 this.username = it.result?.get("username").toString()
-                if (it.result?.get("userPicture") == null){
-                    glide.load(R.drawable.ic_no_image_available).apply(RequestOptions().diskCacheStrategy(
-                        DiskCacheStrategy.ALL)).into(profile_image_view)
-                }else{
-                    glide.load(it.result?.get("userPicture")).apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)).into(profile_image_view)
+                if (profile_image_view != null){
+                    if (it.result?.get("userPicture") == null){
+                        glide.load(R.drawable.ic_no_image_available).apply(RequestOptions().diskCacheStrategy(
+                            DiskCacheStrategy.ALL)).into(profile_image_view)
+                    }else{
+                        glide.load(it.result?.get("userPicture")).apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)).into(profile_image_view)
+                    }
                 }
-                profile_username.text = it.result?.get("username").toString()
+
+                if (profile_username != null) profile_username.text = it.result?.get("username").toString()
             }
         }
     }
@@ -194,20 +193,23 @@ class ProfileFragment : BaseFragment() {
     private fun updateUsername(username:String){
         val userUID = FirebaseAuth.getInstance().currentUser?.uid!!
         if (username.isNotBlank()){
+            // If there is a username, updating user's username
             UserHelper().updateUsername(userUID, username).addOnSuccessListener {
-                Log.e("ProfileFragment","Successfully update username!")
+                Log.i("ProfileFragment","Successfully update username!")
                 profile_username.text = username
 
                 PicturesHelper().getAllPicturesFromUser(userUID).get().addOnCompleteListener {pictureTask ->
+                    // Update all user's picture with his new username
                     if (pictureTask.isSuccessful){
                         for (document in pictureTask.result!!){
                             PicturesHelper().updatePictureDocumentUsername(document.id, username).addOnSuccessListener { updatePicture->
-                                Log.e("ProfileFragment","Successfully update picture's username")
+                                Log.i("ProfileFragment","Successfully update picture's username")
                                 CommentsHelper().getAllCommentsForUser(userUID).get().addOnCompleteListener { commentTask->
+                                    // Update all user's comment with his new username
                                     if (commentTask.isSuccessful){
                                         for (comment in commentTask.result!!){
                                             CommentsHelper().updateCommentDocumentUsername(comment.id, username).addOnSuccessListener {
-                                                Log.e("ProfileFragment","Successfully update comment's username")
+                                                Log.i("ProfileFragment","Successfully update comment's username")
                                             }.addOnFailureListener { commentFail->
                                                 Log.e("ProfileFragment","Error updating comment's username! ${commentFail.localizedMessage}")
                                             }
@@ -231,11 +233,16 @@ class ProfileFragment : BaseFragment() {
     // UTILS
     // -------------------
 
+    // Convert pixel density to pixel
     private fun dpToPx(dp: Int): Int {
         return (dp * Resources.getSystem().displayMetrics.density).toInt()
     }
 
+    // Disconnect user from firestore and display LoginActivity
     private fun signOutUserFromFirebase(){
+        mViewModel.currentPicture.removeObserver {  }
+        mViewModel.getPicture("1").removeObservers(activity!!)
+
         AuthUI.getInstance().signOut(activity!!).addOnCompleteListener {
             val intent = Intent(context,LoginActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
@@ -243,6 +250,4 @@ class ProfileFragment : BaseFragment() {
             startActivity(intent)
         }
     }
-
-    private fun isUserAnonymous() = FirebaseAuth.getInstance().currentUser?.isAnonymous!!
 }

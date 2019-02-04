@@ -26,8 +26,6 @@ class LikesHelper {
         .whereEqualTo("pictureId", pictureId)
         .whereEqualTo("userId", userId)
 
-    fun getLikeForPictureById(pictureId: String) = LikesHelper().getLikesCollection().document(pictureId).get()
-
     // --- DELETE ---
 
     fun deleteLikeForUser(likeId:String) = LikesHelper()

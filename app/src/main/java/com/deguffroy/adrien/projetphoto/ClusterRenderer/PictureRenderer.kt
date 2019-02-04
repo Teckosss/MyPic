@@ -1,10 +1,7 @@
 package com.deguffroy.adrien.projetphoto.ClusterRenderer
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-import android.util.Log
 import android.view.LayoutInflater
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -23,7 +20,6 @@ import com.bumptech.glide.request.transition.Transition
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.Marker
 import com.google.maps.android.ui.IconGenerator
-import java.lang.Exception
 
 
 /**
@@ -36,7 +32,6 @@ class PictureRenderer(private val context: Context, googleMap: GoogleMap, cluste
     private var mImageView: ImageView
     private var mClusterImageView: ImageView
     private val mDimension: Int = (context.resources.getDimension(R.dimen.map_image_size)).toInt()
-    private lateinit var picturesList:ArrayList<Drawable>
 
     init {
         val multiProfile = LayoutInflater.from(context).inflate(R.layout.multi_profile, null)
@@ -69,8 +64,6 @@ class PictureRenderer(private val context: Context, googleMap: GoogleMap, cluste
                 }
             })
     }
-
-
 
     override fun shouldRenderAsCluster(cluster: Cluster<PictureCluster>?): Boolean {
         return cluster!!.size > 1

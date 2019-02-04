@@ -24,8 +24,6 @@ open class CommentsHelper {
 
     // --- GET ---
 
-    fun getAllComments() = CommentsHelper().getCommentsCollection().get()
-
     fun getCommentsForPicture(pictureId: String) = CommentsHelper()
         .getCommentsCollection()
         .whereEqualTo("pictureId", pictureId)
@@ -51,8 +49,4 @@ open class CommentsHelper {
 
     fun updateCommentTextById(documentId: String, replacementText:String) =
         CommentsHelper().getCommentsCollection().document(documentId).update("commentText", replacementText )
-
-    // --- DELETE ---
-
-    fun deleteCommentById(commentId: String) = CommentsHelper().getCommentsCollection().document(commentId).delete()
 }

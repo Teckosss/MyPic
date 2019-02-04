@@ -7,8 +7,6 @@ import android.Manifest
  */
 
 // PERMISSIONS
-const val PERM_FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION
-const val PERM_COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION
 const val PERM_CAMERA = Manifest.permission.CAMERA
 
 const val MAP_FRAGMENT_DEFAULT_ZOOM = 4F
@@ -20,10 +18,7 @@ const val RC_PERM_LOCATION = 200
 const val MAX_NUMBER_IMAGE_DELETE = 50
 const val MAX_NUMBER_LIST_SIZE_DELETE = 30
 
-const val SIGN_OUT_TASK = 10
-
 const val URI_EXTRA_NAME = "URI"
-const val UID_EXTRA_NAME = "UID"
 
 const val COMMENTS_MIN_NUMBER_TO_NEED_VERIFICATION = 0
 

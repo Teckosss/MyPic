@@ -85,15 +85,17 @@ class PicturesPageFragment : ModerationBaseFragment() , BottomSheetInterface {
                 "description",
                 rootView.findViewById<TextView>(R.id.picture_page_text_view).text.toString())
         }
+        // Set verificationDone to true, picture will be visible for everyone
         batch.update(PicturesHelper().getPicturesCollection().document(this.documentId), "verificationDone", true)
         batch.commit().addOnSuccessListener {
-            Log.e("PicturePage","Batch success")
+            Log.i("PicturePage","Batch success")
             (activity as ModerationActivity).moveToNext(this.position)
         }.addOnFailureListener {failureTask->
             Log.e("PicturePage","Batch failure! ${failureTask.localizedMessage}")
         }
     }
 
+    // On Click deny creating bottomSheet view to add a reason
     override fun onClickDenyButton() {
         val transaction = (activity!!).supportFragmentManager.beginTransaction()
         PictureBottomSheet.newInstance(this.documentId, this).show(transaction, "PICTURE_SHEET")
@@ -107,13 +109,14 @@ class PicturesPageFragment : ModerationBaseFragment() , BottomSheetInterface {
     // UI
     // -------------------
 
+    // Update Image and Text View when creating Fragment
     private fun updateUI(){
         val glide = Glide.with(activity!!)
 
         activity?.title = resources.getString(R.string.moderation_fragment_title_pictures)
 
-        Log.e("PageFragment","Position : $position")
-        Log.e("PageFragment","DocumentId : $documentId")
+        Log.i("PageFragment","Position : $position")
+        Log.i("PageFragment","DocumentId : $documentId")
 
         PicturesHelper().getPictureById(documentId).addOnSuccessListener {
             val picture = it.toObject(Picture::class.java)
