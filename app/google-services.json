@@ -23,6 +23,14 @@
           }
         },
         {
+          "client_id": "517406008142-6kvslvf6me8s9ajbelhdmitqihg0t3ci.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.deguffroy.adrien.projetphoto",
+            "certificate_hash": "24c1a0f3853fa5709ce69c0122bbeb8559e01451"
+          }
+        },
+        {
           "client_id": "517406008142-agkrql0k8q1j9cgpd2nkol4omidufu76.apps.googleusercontent.com",
           "client_type": 3
         }
