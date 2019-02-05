@@ -23,13 +23,13 @@ class DateExtensionUnitTest {
     fun timestampToLocaleStringDate(){
         val date = timestamp.toDate()
 
-        assertEquals("28/01/19" , date.toLocaleStringDate())
+        assertEquals("28/01/19" , date.toLocaleStringDate(Locale.FRANCE))
     }
 
     @Test
     fun timestampToLocaleStringDateMedium(){
         val date = timestamp.toDate()
 
-        assertEquals("28/01/19 14:00:00" , date.toLocaleStringDateMedium())
+        assertEquals("28/01/19 14:00:00" , date.toLocaleStringDateMedium(Locale.FRANCE))
     }
 }

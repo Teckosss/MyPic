@@ -8,10 +8,14 @@ import java.util.*
  */
 
 // Format date to a string depending on user's language in a short format (dd/MM/yyyy)
-fun Date.toLocaleStringDate():String {
-    val dateFormat =  java.text.DateFormat.getDateInstance(DateFormat.SHORT)
+fun Date.toLocaleStringDate(locale: Locale? = null):String {
+    val dateFormat =  if (locale != null) java.text.DateFormat.getDateInstance(DateFormat.SHORT, locale) else java.text.DateFormat.getDateInstance(DateFormat.SHORT)
     return dateFormat.format(this)
 }
 
 // Format date to a string depending on user's language in a medium format (dd/MM/yyyy hh:mm:ss)
-fun Date.toLocaleStringDateMedium():String = java.text.DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM,Locale.getDefault()).format(this)
+fun Date.toLocaleStringDateMedium(locale: Locale? = null):String =
+    if (locale != null)
+        java.text.DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM,locale).format(this)
+    else
+        java.text.DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM,Locale.getDefault()).format(this)
