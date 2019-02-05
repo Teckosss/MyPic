@@ -18,15 +18,8 @@ import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.GeoPoint
 import org.imperiumlabs.geofirestore.GeoFirestore
-import org.imperiumlabs.geofirestore.GeoQuery
-import org.imperiumlabs.geofirestore.GeoQueryDataEventListener
-import java.lang.ClassCastException
-import java.lang.Exception
-import java.lang.NullPointerException
 
 /**
  * Created by Adrien Deguffroy on 23/11/2018.
@@ -133,6 +126,7 @@ open class BaseFragment : Fragment(), GoogleApiClient.OnConnectionFailedListener
             .build()
     }
 
+    // If we find location we trigger HandleNewLocation with this new location
     private fun configureLocationCallback(){
         mLocationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult?) {
@@ -186,16 +180,19 @@ open class BaseFragment : Fragment(), GoogleApiClient.OnConnectionFailedListener
     // PERMISSIONS
     // -------------------
 
+    // Check if location permissions are granted
     private fun locationPermissionsGranted(): Boolean = (ContextCompat.checkSelfPermission(activity!!, Manifest.permission.ACCESS_COARSE_LOCATION)
             == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(activity!!, Manifest.permission.ACCESS_FINE_LOCATION)
             == PackageManager.PERMISSION_GRANTED)
 
+    // Request location permissions
     private fun requestLocationPermissions(){
         Log.i("BaseFragment","Request location permissions")
         requestPermissions(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION),
             RC_PERM_LOCATION)
     }
 
+    // Handle permissions request's result
     override fun onRequestPermissionsResult(requestCode: Int,
                                             permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)

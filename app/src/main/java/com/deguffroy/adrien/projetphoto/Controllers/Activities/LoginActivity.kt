@@ -7,13 +7,9 @@ import android.util.Log
 import com.firebase.ui.auth.AuthUI
 import java.util.*
 import android.widget.Toast
-import androidx.lifecycle.ViewModelProviders
 import com.firebase.ui.auth.ErrorCodes
 import com.firebase.ui.auth.IdpResponse
 import com.deguffroy.adrien.projetphoto.Api.UserHelper
-import com.deguffroy.adrien.projetphoto.ViewModels.CommunicationViewModel
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUserMetadata
 import kotlinx.android.synthetic.main.activity_login.*
 
 
@@ -42,6 +38,7 @@ class LoginActivity : BaseActivity() {
         }
     }
 
+    // Create an login activity with 3 providers : Google, Email and Anonymous
     private fun startSignInActivity() {
         startActivityForResult(
             AuthUI.getInstance()
@@ -89,10 +86,9 @@ class LoginActivity : BaseActivity() {
     // UTILS
     // --------------------
 
+    // Handle response from SignInActivity's result
     private fun handleResponseAfterSignIn(requestCode: Int, resultCode: Int, data: Intent) {
-
         val response = IdpResponse.fromResultIntent(data)
-
         if (requestCode == RC_SIGN_IN) {
             if (resultCode == RESULT_OK) { // SUCCESS
                 this.createUserInFirestore()

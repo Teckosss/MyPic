@@ -56,7 +56,7 @@ class PicturesPageFragment : ModerationBaseFragment() , BottomSheetInterface {
 
         callback = this
 
-        Log.e("PicturePageFrag","View Created!")
+        Log.i("PicturePageFrag","View Created!")
 
         this.position = arguments?.getInt(POSITION)!!
         this.documentId = arguments?.getString(DOCUMENT_ID)!!

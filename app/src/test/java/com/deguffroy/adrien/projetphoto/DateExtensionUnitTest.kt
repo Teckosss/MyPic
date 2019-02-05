@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.deguffroy.adrien.projetphoto
 
 import com.deguffroy.adrien.projetphoto.Utils.toLocaleStringDate

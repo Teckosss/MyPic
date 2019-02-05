@@ -37,6 +37,7 @@ class ClusterItemsActivity : BaseActivity() {
         this.configureOnClickRecyclerView()
     }
 
+    // Retrieve every picture we need to display from Json
     private fun retrieveDataFromJson(){
         val gson = Gson()
         val arrayAsString = intent.getStringExtra(PICTURES_OBJECT)
@@ -50,6 +51,7 @@ class ClusterItemsActivity : BaseActivity() {
         activity_cluster_recycler.adapter = this.adapter
     }
 
+    // On item click, open selected picture's detail
     private fun configureOnClickRecyclerView(){
         ItemClickSupport
             .addTo(activity_cluster_recycler, R.layout.activity_cluster_item)

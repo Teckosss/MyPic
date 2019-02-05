@@ -69,15 +69,16 @@ class AddActivity : BaseActivity() {
     // ACTION
     // --------------------
 
+    // Compress file, upload it to Storage, create picture in Firestore and set its location
     @SuppressLint("MissingPermission")
     private fun savePicture(needToCompress:Boolean = true) {
         add_activity_upload_layout.visibility = View.VISIBLE
 
-        val uuid: String = UUID.randomUUID().toString()
+        val uuid: String = UUID.randomUUID().toString() // Generate a random name for picture file to save in Firebase Storage
         val mImageRef = FirebaseStorage.getInstance().reference.child("images/${this.modelCurrentUser.uid}/$uuid.jpg")
         lateinit var uploadTask:UploadTask
 
-        if (needToCompress){
+        if (needToCompress){ // Compress picture to save space in Firebase Storage
             var bmp:Bitmap? = null
             try {
                 bmp = MediaStore.Images.Media.getBitmap(contentResolver,this.retrievedURI)
@@ -92,6 +93,7 @@ class AddActivity : BaseActivity() {
             uploadTask = mImageRef.putFile(this.retrievedURI)
         }
 
+        // With ProgressListener we can show the current upload percent to user
         uploadTask.addOnProgressListener {
             val progress = 100.0 * it.bytesTransferred / it.totalByteCount
             Log.i("AddActivity","Upload progress : $progress")
@@ -128,8 +130,6 @@ class AddActivity : BaseActivity() {
                                 // Got last known location. In some rare situations this can be null.
                                 if (location != null){
                                     this.geoFirestore.setLocation(it.id, GeoPoint(location.latitude,location.longitude))
-                                }else{
-                                    // LOCATION NULL | DISPLAY ERROR MESSAGE
                                 }
                             }
                     }
@@ -138,15 +138,13 @@ class AddActivity : BaseActivity() {
                     finish()
                 }
 
-            } else {
-                // Handle failures
-                // ...
             }
         }.addOnFailureListener {
             Log.e("AddActivity","Failure ! ${it.localizedMessage}")
         }
     }
 
+    // When user click save button, disable all buttons and editText
     private fun disableUI(){
         add_activity_save_fab.isEnabled = false
         add_activity_cancel_button.isEnabled = false
@@ -159,6 +157,7 @@ class AddActivity : BaseActivity() {
     // PERMISSIONS
     // -------------------
 
+    // Check if needed location permissions are granted
     private fun locationPermissionsGranted() : Boolean = (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
             == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
             == PackageManager.PERMISSION_GRANTED)

@@ -3,9 +3,7 @@ package com.deguffroy.adrien.projetphoto.Controllers.Activities
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
-import android.graphics.ColorFilter
 import android.os.Bundle
-import android.text.Editable
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -14,7 +12,6 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -23,13 +20,11 @@ import com.deguffroy.adrien.projetphoto.Api.*
 import com.deguffroy.adrien.projetphoto.Controllers.Fragments.OptionsModalFragment
 import com.deguffroy.adrien.projetphoto.Models.Comment
 import com.deguffroy.adrien.projetphoto.Models.Picture
-import com.deguffroy.adrien.projetphoto.Models.User
 import com.deguffroy.adrien.projetphoto.R
 import com.deguffroy.adrien.projetphoto.Utils.DividerItemDecoration
 import com.deguffroy.adrien.projetphoto.Views.DetailActivityAdapter
 import com.firebase.ui.firestore.paging.FirestorePagingOptions
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.android.synthetic.main.activity_detail.*
@@ -126,6 +121,7 @@ class DetailActivity : BaseActivity(), DetailActivityAdapter.Listener, OptionsMo
         detail_activity_chip_private.setOnClickListener { this.toggleVisibilityScope((!this.isPublicPicture!!),false, this.isPictureDenyByModeration!!) }
     }
 
+    // Check if user already seen this picture, if it first time, create a new view object and update picture's viewCount + 1
     private fun incrementView(){
         val userUID = getCurrentUser()?.uid!!
         ViewsHelper().checkIfUserAlreadyViewThisPicture(this.documentId!!,userUID).addOnCompleteListener {
@@ -159,6 +155,7 @@ class DetailActivity : BaseActivity(), DetailActivityAdapter.Listener, OptionsMo
     // ACTION
     // -------------------
 
+    // Create a comment, close the keyboard and run batch to safely update picture's comment count
     private fun sendComment(commentText:String){
         if (this.documentId != null){
             CommentsHelper().createComment(commentText, this.documentId!!, this.modelCurrentUser).addOnSuccessListener {
@@ -190,6 +187,7 @@ class DetailActivity : BaseActivity(), DetailActivityAdapter.Listener, OptionsMo
         }
     }
 
+    // When user click on 3 dots icon, open bottom sheet fragment
     override fun onOptionsClickButton(comment: Comment) {
         if (comment.documentId != null){
             OptionsModalFragment.newInstance(comment.documentId!!, modelCurrentUser.uid).show(supportFragmentManager, "MODAL")
@@ -199,11 +197,13 @@ class DetailActivity : BaseActivity(), DetailActivityAdapter.Listener, OptionsMo
         }
     }
 
+    // Callback from adapter, notify recyclerView start loading comment
     override fun startLoading() {
         detail_activity_comment_recycler_view.visibility = View.GONE
         detail_activity_recycler_loading.visibility = View.VISIBLE
     }
 
+    // Callback from adapter, notify recyclerView has loaded comment
     override fun loaded() {
         detail_activity_comment_recycler_view.visibility = View.VISIBLE
         detail_activity_recycler_loading.visibility = View.GONE
@@ -226,6 +226,7 @@ class DetailActivity : BaseActivity(), DetailActivityAdapter.Listener, OptionsMo
         }
     }
 
+    // Run batch to safely modify picture's like count
     private fun runTransactionToUpdateLikeCount(toIncrement:Boolean){
         val db = FirebaseFirestore.getInstance()
         val docRef = PicturesHelper().getPicturesCollection().document(this.documentId!!)
@@ -262,6 +263,7 @@ class DetailActivity : BaseActivity(), DetailActivityAdapter.Listener, OptionsMo
         activity_detail_fab.show()
     }
 
+    // If user is picture's owner, display chips container to allow him switch visibility
     private fun displayChipsContainer(mustDisplayContainer:Boolean, isPublicPicture:Boolean){
         this.userIsOwner = mustDisplayContainer
         this.isPublicPicture = isPublicPicture
@@ -298,6 +300,7 @@ class DetailActivity : BaseActivity(), DetailActivityAdapter.Listener, OptionsMo
     // UI
     // -------------------
 
+    // Check the correct visibility when retrieving picture
     private fun toggleVisibilityOnUI(setToPublic: Boolean){
         if (setToPublic){
             detail_activity_chip_public.isChecked = true

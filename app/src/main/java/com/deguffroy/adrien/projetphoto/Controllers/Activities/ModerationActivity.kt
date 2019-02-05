@@ -40,6 +40,7 @@ class ModerationActivity : BaseActivity() {
     // ACTION
     // -------------------
 
+    // Move to next item in ViewPager by deleting the current one, if no more item finish activity
     fun moveToNext(position:Int){
         adapter.deletePage(position)
         if (adapter.count == 0) finish() // NOTHING ELSE TO SHOW CLOSE THIS ACTIVITY

@@ -58,6 +58,7 @@ open class BaseActivity : AppCompatActivity(){
         }
     }
 
+    // Set the correct icon checked in BottomNavigationView when user press Back
     override fun onBackPressed() {
         if(supportFragmentManager.backStackEntryCount != 1){
             super.onBackPressed()
@@ -136,6 +137,7 @@ open class BaseActivity : AppCompatActivity(){
         transaction.commit()
     }
 
+    // Display message in Snackbar, we can change it duration and dismiss FAB if needed
     fun showSnackbarMessage(coordinatorLayout: CoordinatorLayout,messageToShow:String, duration:Int = Snackbar.LENGTH_SHORT, dismissFAB:FloatingActionButton? = null){
         snackbar = Snackbar.make(coordinatorLayout,messageToShow, duration)
         snackbar.addCallback(object : Snackbar.Callback(){
@@ -167,7 +169,7 @@ open class BaseActivity : AppCompatActivity(){
         return this.getCurrentUser() != null
     }
 
-    // Retrieve current user and check if user is Admin or Moderator. Display Moderation in BottomNav is Admin or Mod
+    // Retrieve current user and check if user is Admin or Moderator. Display Moderation tab in BottomNav is Admin or Mod
     fun getCurrentUserFromFirestore(changeBottomNav:Boolean = false) {
         UserHelper().getUser(getCurrentUser()?.uid!!)
             .addOnSuccessListener {
