@@ -51,7 +51,7 @@ class MainActivity : BaseActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        this.handleResponse(requestCode,resultCode,data)
+        this.handleResponse(requestCode, resultCode)
 
     }
 
@@ -94,7 +94,7 @@ class MainActivity : BaseActivity() {
     private fun createImageFile(): File {
         // Create an image file name
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-        val storageDir: File = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        val storageDir: File? = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         return File.createTempFile(
             "JPEG_${timeStamp}_", /* prefix */
             ".jpg", /* suffix */
@@ -106,7 +106,7 @@ class MainActivity : BaseActivity() {
     }
 
     //  Handle activity response (after user has chosen or not a picture)
-    private fun handleResponse(requestCode: Int, resultCode: Int, data: Intent?) {
+    private fun handleResponse(requestCode: Int, resultCode: Int) {
         if(requestCode == RC_TAKE_PHOTO) {
             if (resultCode == Activity.RESULT_OK) { // Everything is Ok, starting AddActivity
                 val intent = Intent(this,AddActivity::class.java)

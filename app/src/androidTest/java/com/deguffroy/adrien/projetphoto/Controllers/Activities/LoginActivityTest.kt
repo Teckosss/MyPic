@@ -4,9 +4,9 @@ package com.deguffroy.adrien.projetphoto.Controllers.Activities
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import androidx.test.espresso.ViewAction
-import androidx.test.espresso.action.ViewActions.*
-import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.filters.LargeTest
@@ -18,18 +18,13 @@ import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.TypeSafeMatcher
-import org.hamcrest.core.IsInstanceOf
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import android.widget.TextView
-import androidx.test.espresso.Espresso.*
-import androidx.test.espresso.UiController
-
 
 @LargeTest
 @RunWith(AndroidJUnit4::class)
-class MainActivityTest {
+class LoginActivityTest {
 
     @Rule
     @JvmField
@@ -44,7 +39,7 @@ class MainActivityTest {
         )
 
     // ONLY TO TEST SIGN IN FLOW, FIRST SIGN OUT USER ON DEVICE & DELETE ACCOUNT IN FIREBASE
-    @Test
+    /*@Test
     fun loginSignInWithEmailTest(){
         val signUpButton = onView(allOf(withId(R.id.email_button), isDisplayed()))
         signUpButton.perform(click())
@@ -63,7 +58,7 @@ class MainActivityTest {
 
         val doneButton = onView(allOf(withId(R.id.button_create), withText("Save"), isDisplayed()))
         doneButton.perform(click())
-    }
+    }*/
 
     @Test
     fun checkIsUIDisplayedTest(){
@@ -75,6 +70,7 @@ class MainActivityTest {
 
     @Test
     fun clickRecyclerView(){
+        Thread.sleep(3000)
         onView(allOf(withId(R.id.fragment_home_recycler_view), isDisplayed())).perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(0, click()))
 
         val imageView = onView(allOf(withId(R.id.detail_activity_image), isDisplayed()))
@@ -100,7 +96,7 @@ class MainActivityTest {
         )
         backButton.perform(click())
 
-        imageView.check(matches(isDisplayed()))
+        imageView.check(ViewAssertions.matches(isDisplayed()))
 
         backButton.perform(click())
 

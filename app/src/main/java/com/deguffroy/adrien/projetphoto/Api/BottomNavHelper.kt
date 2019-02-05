@@ -1,10 +1,8 @@
 package com.deguffroy.adrien.projetphoto.Api
 
 import android.content.Context
-import android.graphics.PorterDuff
 import android.util.Log
 import android.view.LayoutInflater
-import android.widget.ImageView
 import androidx.annotation.IdRes
 import com.deguffroy.adrien.projetphoto.R
 import com.google.android.material.bottomnavigation.BottomNavigationItemView
@@ -22,7 +20,7 @@ class BottomNavHelper {
         itemView.addView(badge)
     }
 
-    fun removeBadge(bottomNavigationView: BottomNavigationView, @IdRes itemId: Int){
+    fun removeBadge(bottomNavigationView: BottomNavigationView){
         val menuView = bottomNavigationView.getChildAt(0) as BottomNavigationMenuView
         val itemView = menuView.getChildAt(4) as BottomNavigationItemView
         var retryCount = 0

@@ -20,14 +20,14 @@ class MyPicViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val glide = Glide.with(itemView)
 
         val colorSelected = ContextCompat.getColor(itemView.context,R.color.colorPrimaryDark)
-        val icon = itemView.resources.getDrawable(R.drawable.baseline_check_circle_outline_white_24)
+        val icon = ContextCompat.getDrawable(itemView.context, R.drawable.baseline_check_circle_outline_white_24)
         val filter = LightingColorFilter(colorSelected,colorSelected)
         glide.load(data.urlImage).apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).centerCrop()).into(itemView.fragment_my_pic_item_image)
 
         if (isSelected){
             itemView.fragment_my_pic_background.setBackgroundColor(ContextCompat.getColor(itemView.context, R.color.colorBlackBackground))
             itemView.fragment_my_pic_constraint_layout.visibility = View.VISIBLE
-            icon.colorFilter = filter
+            icon!!.colorFilter = filter
             itemView.fragment_my_pic_item_selected_icon.background = icon
         }else{
             itemView.fragment_my_pic_constraint_layout.visibility = View.GONE

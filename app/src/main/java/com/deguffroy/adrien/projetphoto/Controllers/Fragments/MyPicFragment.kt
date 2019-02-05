@@ -121,7 +121,7 @@ class MyPicFragment : BaseFragment(), MyPicAdapter.Listener, ActionMode.Callback
 
     private fun configureOnClickItemRecyclerView(){
         ItemClickSupport.addTo(my_pic_recycler_view,R.layout.fragment_my_pic_item)
-            .setOnItemClickListener{recyclerView, position, v ->
+            .setOnItemClickListener{ _, position, _ ->
                 if (mViewModel.myPicSelectingMode && actionMode != null){ // If user is selecting picture, we add it into the list
                     val image = adapter.getItem(position)
                     this.manageListToDelete(image, position)
@@ -131,7 +131,7 @@ class MyPicFragment : BaseFragment(), MyPicAdapter.Listener, ActionMode.Callback
                 }
             }
                 // On long click, start selecting mode or just add picture to list
-            .setOnItemLongClickListener { recyclerView, position, v ->
+            .setOnItemLongClickListener { _, position, _ ->
                 Log.e("MyPicFragment","LongClick on item : $position")
                 val image = adapter.getItem(position)
                 if (actionMode == null) actionMode = activity!!.startActionMode(this)

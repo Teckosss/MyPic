@@ -95,7 +95,7 @@ class HomeFragment : BaseFragment() {
     // If no error when clicking on recyclerView item, launch DetailActivity with item's documentId
     private fun configureOnClickItemRecyclerView(){
         ItemClickSupport.addTo(fragment_home_recycler_view, R.layout.fragment_home_item)
-            .setOnItemClickListener { recyclerView, position, v ->
+            .setOnItemClickListener { _, position, _ ->
                 if(adapter.getItemAtPosition(position)?.documentId.isNullOrEmpty()){
                     (activity as MainActivity).showSnackbarMessage(home_fragment_coordinator,resources.getString(R.string.home_fragment_error_getting_picture_detail), Snackbar.LENGTH_LONG, (activity as MainActivity).main_activity_fab )
                 }else{

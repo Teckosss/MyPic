@@ -103,7 +103,7 @@ class ModerationFragment : BaseFragment() {
                     if (fragment_moderation_coordinator_layout != null){
                         (activity as MainActivity).showSnackbarMessage(fragment_moderation_coordinator_layout, resources.getString(R.string.moderation_fragment_nothing_to_do_message))
                     }
-                    BottomNavHelper().removeBadge((activity as MainActivity).bottom_navigation_view, R.id.bnv_moderation)
+                    BottomNavHelper().removeBadge((activity as MainActivity).bottom_navigation_view)
                 }else{
                     BottomNavHelper().showBadge((activity as MainActivity), (activity as MainActivity).bottom_navigation_view, R.id.bnv_moderation)
                 }

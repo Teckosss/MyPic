@@ -53,7 +53,7 @@ class ClusterItemsActivity : BaseActivity() {
     private fun configureOnClickRecyclerView(){
         ItemClickSupport
             .addTo(activity_cluster_recycler, R.layout.activity_cluster_item)
-            .setOnItemClickListener { recyclerView, position, v ->
+            .setOnItemClickListener { _, position, _ ->
                 startActivity(DetailActivity.newInstance(this , adapter.getItemAtPosition(position).documentId))
         }
     }

@@ -240,7 +240,7 @@ class DetailActivity : BaseActivity(), DetailActivityAdapter.Listener, OptionsMo
             }
             Log.i("DetailActivity","Transaction like new count : $newLikeCount")
             transaction.update(docRef,"likes", if (newLikeCount >=0) newLikeCount else 0)
-        }.addOnSuccessListener { success->
+        }.addOnSuccessListener {
             Log.i("DetailActivity","Transaction success")
             this.userLikeThisPicture = toIncrement
             this.toggleLike(this.userLikeThisPicture)
