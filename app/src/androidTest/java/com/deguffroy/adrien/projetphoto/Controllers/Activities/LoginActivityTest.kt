@@ -1,9 +1,8 @@
 package com.deguffroy.adrien.projetphoto.Controllers.Activities
 
 
-import android.view.View
-import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions
@@ -14,10 +13,7 @@ import androidx.test.rule.ActivityTestRule
 import androidx.test.rule.GrantPermissionRule
 import androidx.test.runner.AndroidJUnit4
 import com.deguffroy.adrien.projetphoto.R
-import org.hamcrest.Description
-import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
-import org.hamcrest.TypeSafeMatcher
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -60,6 +56,7 @@ class LoginActivityTest {
         doneButton.perform(click())
     }*/
 
+    // If this test is not perform with loginSignInWithEmailTest before, ensure that user is already connected in application
     @Test
     fun checkIsUIDisplayedTest(){
         onView(allOf(withId(R.id.main_activity_layout), isDisplayed()))
@@ -68,6 +65,7 @@ class LoginActivityTest {
         onView(allOf(withId(R.id.bottom_navigation_view), isDisplayed()))
     }
 
+    // If this test is not perform with loginSignInWithEmailTest before, ensure that user is already connected in application
     @Test
     fun clickRecyclerView(){
         Thread.sleep(3000)
@@ -78,47 +76,13 @@ class LoginActivityTest {
 
         onView(allOf(withId(R.id.fullscreen_image), isDisplayed()))
 
-        val backButton = onView(
-            allOf(
-                withContentDescription("Navigate up"),
-                childAtPosition(
-                    allOf(
-                        withId(R.id.action_bar),
-                        childAtPosition(
-                            withId(R.id.action_bar_container),
-                            0
-                        )
-                    ),
-                    1
-                ),
-                isDisplayed()
-            )
-        )
-        backButton.perform(click())
+        Espresso.pressBack()
 
         imageView.check(ViewAssertions.matches(isDisplayed()))
 
-        backButton.perform(click())
+        Espresso.pressBack()
 
         onView(allOf(withId(R.id.main_activity_layout), isDisplayed()))
 
-    }
-
-    private fun childAtPosition(
-        parentMatcher: Matcher<View>, position: Int
-    ): Matcher<View> {
-
-        return object : TypeSafeMatcher<View>() {
-            override fun describeTo(description: Description) {
-                description.appendText("Child at position $position in parent ")
-                parentMatcher.describeTo(description)
-            }
-
-            public override fun matchesSafely(view: View): Boolean {
-                val parent = view.parent
-                return parent is ViewGroup && parentMatcher.matches(parent)
-                        && view == parent.getChildAt(position)
-            }
-        }
     }
 }
