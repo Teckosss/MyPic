@@ -173,36 +173,40 @@ open class BaseActivity : AppCompatActivity(){
     fun getCurrentUserFromFirestore(changeBottomNav:Boolean = false) {
         UserHelper().getUser(getCurrentUser()?.uid!!)
             .addOnSuccessListener {
-                this.modelCurrentUser = it.toObject<User>(User::class.java)!!
-                if (changeBottomNav){
-                    Log.i("BaseActivity","Need to change BottomNav! Does user need to see moderation : ${modelCurrentUser.admin || modelCurrentUser.moderator}")
-                    bottom_navigation_view.menu.findItem(R.id.bnv_moderation).isVisible = modelCurrentUser.admin || modelCurrentUser.moderator
-                    if (modelCurrentUser.admin || modelCurrentUser.moderator){
-                        PicturesHelper().getAllPublicPictureNeedingVerification().get().addOnCompleteListener { taskResult ->
-                            var needToShowBadge = false
-                            Log.i("BaseActivity","Picture needing verification : ${taskResult.result?.count()}")
-                            if (taskResult.isSuccessful){
-                                if (taskResult.result?.count()!! > 0) needToShowBadge = true
-                            }else{
-                                Log.e("BaseActivity","Picture needing verification : ERROR")
-                            }
-
-                            CommentsHelper().getCommentsReported().get().addOnCompleteListener {commentTask->
-                                Log.i("BaseActivity","Comment needing verification : ${commentTask.result?.count()}")
-                                if(commentTask.isSuccessful){
-                                    if (commentTask.result?.count()!! > 0) needToShowBadge = true
+                val user = it.toObject(User::class.java)
+                if (user != null){
+                    this.modelCurrentUser = user
+                    if (changeBottomNav){
+                        Log.i("BaseActivity","Need to change BottomNav! Does user need to see moderation : ${modelCurrentUser.admin || modelCurrentUser.moderator}")
+                        bottom_navigation_view.menu.findItem(R.id.bnv_moderation).isVisible = modelCurrentUser.admin || modelCurrentUser.moderator
+                        if (modelCurrentUser.admin || modelCurrentUser.moderator){
+                            PicturesHelper().getAllPublicPictureNeedingVerification().get().addOnCompleteListener { taskResult ->
+                                var needToShowBadge = false
+                                Log.i("BaseActivity","Picture needing verification : ${taskResult.result?.count()}")
+                                if (taskResult.isSuccessful){
+                                    if (taskResult.result?.count()!! > 0) needToShowBadge = true
+                                }else{
+                                    Log.e("BaseActivity","Picture needing verification : ERROR")
                                 }
 
-                                if (needToShowBadge) BottomNavHelper().showBadge(this,bottom_navigation_view,R.id.bnv_moderation)
-                            }.addOnFailureListener {errorComment ->
-                                Log.e("BaseActivity","Comment needing verification : ${errorComment.localizedMessage}")
-                            }
+                                CommentsHelper().getCommentsReported().get().addOnCompleteListener {commentTask->
+                                    Log.i("BaseActivity","Comment needing verification : ${commentTask.result?.count()}")
+                                    if(commentTask.isSuccessful){
+                                        if (commentTask.result?.count()!! > 0) needToShowBadge = true
+                                    }
 
-                        }.addOnFailureListener {error ->
-                            Log.e("BaseActivity","Picture needing verification : ${error.localizedMessage}")
+                                    if (needToShowBadge) BottomNavHelper().showBadge(this,bottom_navigation_view,R.id.bnv_moderation)
+                                }.addOnFailureListener {errorComment ->
+                                    Log.e("BaseActivity","Comment needing verification : ${errorComment.localizedMessage}")
+                                }
+
+                            }.addOnFailureListener {error ->
+                                Log.e("BaseActivity","Picture needing verification : ${error.localizedMessage}")
+                            }
                         }
                     }
                 }
+
             }.addOnFailureListener {
                 Log.e("BaseActivity","getCurrentUserFromFirestore FAILURE LISTENER : ${it.localizedMessage}")
             }

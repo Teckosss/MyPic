@@ -21,6 +21,8 @@ open class UserHelper {
 
     fun getUser(uid:String) = UserHelper().getUsersCollection().document(uid).get()
 
+    fun getUserById(uid: String) = UserHelper().getUsersCollection().whereEqualTo("uid", uid ).get()
+
     // --- UPDATE ---
 
     fun updateUsername(uid: String, username: String) = UserHelper().getUsersCollection().document(uid).update("username", username)

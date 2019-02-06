@@ -65,18 +65,25 @@ class LoginActivity : BaseActivity() {
     // Http request that create user in firestore
     private fun createUserInFirestore() {
         if (this.getCurrentUser() != null) {
-           if(this.getCurrentUser()?.metadata!!.creationTimestamp == this.getCurrentUser()?.metadata!!.lastSignInTimestamp){ // NEW USER
-               Log.i("LoginActivity","User doesn't exist in Firestore! Need to create a new one!")
-               val urlPicture =
-                   if (this.getCurrentUser()!!.photoUrl != null) this.getCurrentUser()!!.photoUrl!!.toString() else null
-               val username =
-                   if (this.getCurrentUser()!!.displayName != null) this.getCurrentUser()!!.displayName else resources.getString(R.string.user_default_name)
-               val uid = this.getCurrentUser()!!.uid
-               UserHelper().createUser(uid, username, urlPicture).addOnFailureListener(this.onFailureListener())
-           }else{ // EXISTING USER
-               Log.i("LoginActivity","User already exist in Firestore!")
-           }
-            this.mViewModel.updateCurrentUserUID(this.getCurrentUser()?.uid!!)
+            val userUID = getCurrentUser()?.uid
+            if (userUID != null){
+                UserHelper().getUserById(userUID).addOnCompleteListener {
+                  if (it.isSuccessful){
+                     if (it.result?.isEmpty!!){
+                         Log.i("LoginActivity","User doesn't exist in Firestore! Need to create a new one!")
+                         val urlPicture =
+                             if (this.getCurrentUser()!!.photoUrl != null) this.getCurrentUser()!!.photoUrl!!.toString() else null
+                         val username =
+                             if (this.getCurrentUser()!!.displayName != null) this.getCurrentUser()!!.displayName else resources.getString(R.string.user_default_name)
+                         val uid = this.getCurrentUser()!!.uid
+                         UserHelper().createUser(uid, username, urlPicture).addOnFailureListener(this.onFailureListener())
+                     }else{
+                         Log.i("LoginActivity","User already exist in Firestore!")
+                     }
+                  }
+                    this.mViewModel.updateCurrentUserUID(this.getCurrentUser()?.uid!!)
+                }
+            }
         } else {
             Log.i("LOGIN_ACTIVITY", "createUserInFirestore: NOT LOGGED")
         }
