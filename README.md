@@ -1,4 +1,4 @@
-# ProjetPhoto
+# MyPic
 MyPic est une application dédiée au partage de photos entre utilisateurs. Elle a pour but de permettre de découvrir les paysages ou autres qui nous entourent.
 
 Les utilisateurs peuvent prendre directement depuis l’application des photos et, s’ils le désirent, les rendre publique afin de les montrer aux autres. 
